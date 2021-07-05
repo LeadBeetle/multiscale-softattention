@@ -39,6 +39,7 @@
 import pickle
 import zipfile
 import json
+from networkx.algorithms.assortativity import neighbor_degree
 
 
 import numpy as np
@@ -52,6 +53,10 @@ from torch.utils.data import DataLoader, Dataset
 
 from utils.constants import *
 from utils.visualizations import plot_in_out_degree_distributions, visualize_graph
+
+class AdjacencyMode(enum.Enum):
+    OneStep = 0,
+    Partial = 1
 
 
 def load_graph_data(training_config, device):
@@ -76,14 +81,10 @@ def load_graph_data(training_config, device):
             # Build edge index explicitly (faster than nx ~100 times and as fast as PyGeometric imp but less complex)
             # shape = (2, E), where E is the number of edges, and 2 for source and target nodes. Basically edge index
             # contains tuples of the format S->T, e.g. 0->3 means that node with id 0 points to a node with id 3.
-            topology = build_edge_index(adjacency_list_dict, num_of_nodes, add_self_edges=True)
+            topology = build_edge_index(adjacency_list_dict, num_of_nodes, add_self_edges=True, neighbor_degree=1, mode=AdjacencyMode.OneStep)
         elif layer_type == LayerType.IMP2 or layer_type == LayerType.IMP1:
             # adjacency matrix shape = (N, N)
-            topology = nx.adjacency_matrix(nx.from_dict_of_lists(adjacency_list_dict)).todense().astype(np.float)
-            topology += np.identity(topology.shape[0])  # add self connections
-            topology[topology > 0] = 1  # multiple edges not allowed
-            topology[topology == 0] = -np.inf  # make it a mask instead of adjacency matrix (used to mask softmax)
-            topology[topology == 1] = 0
+            topology = build_edge_index_nx1(adjacency_list_dict, neighbor_degree, mode=AdjacencyMode.OneStep)
         else:
             raise Exception(f'Layer type {layer_type} not yet supported.')
 
@@ -164,7 +165,7 @@ def load_graph_data(training_config, device):
                 mask = graph_ids == graph_id  # find the nodes which belong to the current graph (identified via id)
                 graph_node_ids = np.asarray(mask).nonzero()[0]
                 graph = collection_of_graphs.subgraph(graph_node_ids)  # returns the induced subgraph over these nodes
-                print(f'Loading {split} graph {graph_id} to CPU. '
+                print(f'Loading {split} graph {graph_id} to {device}. '
                       f'It has {graph.number_of_nodes()} nodes and {graph.number_of_edges()} edges.')
 
                 # shape = (2, E) - where E is the number of edges in the graph
@@ -341,7 +342,8 @@ def normalize_features_dense(node_features_dense):
     return node_features_dense / np.clip(node_features_dense.sum(1), a_min=1, a_max=None)
 
 
-def build_edge_index(adjacency_list_dict, num_of_nodes, add_self_edges=True):
+## Adjacency operations are put here
+def build_edge_index(adjacency_list_dict, num_of_nodes, add_self_edges=True, neighbor_degree = None, mode = AdjacencyMode.OneStep):
     source_nodes_ids, target_nodes_ids = [], []
     seen_edges = set()
 
@@ -364,9 +366,19 @@ def build_edge_index(adjacency_list_dict, num_of_nodes, add_self_edges=True):
     return edge_index
 
 
+def build_edge_index_nx1(adjacency_list_dict, neighbor_degree = None, mode = AdjacencyMode.OneStep):
+    topology = nx.adjacency_matrix(nx.from_dict_of_lists(adjacency_list_dict)).todense().astype(np.float)
+    topology += np.identity(topology.shape[0])  # add self connections
+    topology[topology > 0] = 1  # multiple edges not allowed
+    topology[topology == 0] = -np.inf  # make it a mask instead of adjacency matrix (used to mask softmax)
+    topology[topology == 1] = 0
+    
+    return topology
+    
+    
 # Not used - this is yet another way to construct the edge index by leveraging the existing package (networkx)
 # (it's just slower than my simple implementation build_edge_index())
-def build_edge_index_nx(adjacency_list_dict):
+def build_edge_index_nx2(adjacency_list_dict):
     nx_graph = nx.from_dict_of_lists(adjacency_list_dict)
     adj = nx.adjacency_matrix(nx_graph)
     adj = adj.tocoo()  # convert to COO (COOrdinate sparse format)
