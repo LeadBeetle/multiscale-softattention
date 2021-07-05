@@ -47,6 +47,7 @@ import networkx as nx
 from networkx.readwrite import json_graph
 import scipy.sparse as sp
 import torch
+from torch._C import dtype
 from torch.hub import download_url_to_file
 from torch.utils.data import DataLoader, Dataset
 
@@ -56,12 +57,12 @@ from utils.visualizations import plot_in_out_degree_distributions, visualize_gra
 
 def applyMultiScaling(A, neighbor_degree = 1, mode = AdjacencyMode.OneStep):
     start = time.time()
-    A = torch.as_tensor(A, dtype=float)
+    A = torch.as_tensor(A, dtype=torch.float)
     if mode == AdjacencyMode.OneStep and neighbor_degree > 1: 
         delta_A = None
         powers = [A]
         for k in range(2, neighbor_degree + 1):
-            powers.append(torch.gt(torch.matmul(powers[k-2], A), 0)*1)
+            powers.append(torch.as_tensor(torch.gt(torch.matmul(powers[k-2], A), 0)*1, dtype=torch.float))
             if delta_A is None:
                 delta_A = powers[-1] - A
             else:
