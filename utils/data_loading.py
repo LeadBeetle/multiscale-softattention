@@ -47,6 +47,7 @@ import networkx as nx
 from networkx.readwrite import json_graph
 import scipy.sparse as sp
 import torch
+from torch._C import dtype
 from torch.hub import download_url_to_file
 from torch.utils.data import DataLoader, Dataset
 
@@ -54,30 +55,37 @@ from networkx.linalg import graphmatrix
 from utils.constants import *
 from utils.visualizations import plot_in_out_degree_distributions, visualize_graph
 
-def applyMultiScaling(A, device, neighbor_degree = 1, mode = AdjacencyMode.OneStep):
-    print("Start")
+def applyMultiScaling(A, neighbor_degree = 1, mode = AdjacencyMode.OneStep):
     start = time.time()
-    A = torch.as_tensor(A, dtype=float)
+    A = torch.as_tensor(A, dtype=torch.float)
     if mode == AdjacencyMode.OneStep and neighbor_degree > 1: 
         delta_A = None
         powers = [A]
         for k in range(2, neighbor_degree + 1):
-            powers.append(torch.gt(torch.matmul(powers[k-2], A), 0)*1)
+            powers.append(torch.as_tensor(torch.gt(torch.matmul(powers[k-2], A), 0)*1, dtype=torch.float))
             if delta_A is None:
                 delta_A = powers[-1] - A
             else:
                 delta_A += powers[-1] - A
             
         A = A + delta_A
+        end = time.time()
+        
+        print("Elapsed time:", end - start)
+        return A.numpy()
+    
     elif mode == AdjacencyMode.Partial:
         ## To be completed
-        pass
+        delta_A = None
+        powers = [A]
+        for k in range(2, neighbor_degree + 1):
+            powers.append(torch.gt(torch.matmul(powers[k-2], A), 0)*1)
+        
+        return powers 
+    else:
+        return A.numpy() 
     
-    end = time.time()
-    print("Elapsed Time:", end - start)
-    return A.numpy()
-
-
+    
 def load_graph_data(training_config, device):
     dataset_name = training_config['dataset_name'].lower()
     layer_type = training_config['layer_type']
@@ -196,7 +204,7 @@ def load_graph_data(training_config, device):
                 
                 # We need the adjacency matrix for the multi-scaling approach - right now it's very slow
                 adjacancy_matrix = graphmatrix.adjacency_matrix(graph).todense()
-                adjacancy_matrix = applyMultiScaling(adjacancy_matrix, neighbor_degree=training_config['neighbourhood_degree'], mode=training_config['adjacency_mode'], device = device)
+                adjacancy_matrix = applyMultiScaling(adjacancy_matrix, neighbor_degree=training_config['neighbourhood_degree'], mode=training_config['adjacency_mode'])
                 graph = nx.DiGraph(adjacancy_matrix)
                 
                 print(f'Loading {split} graph {graph_id} to CPU. '
