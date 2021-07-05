@@ -81,10 +81,16 @@ def load_graph_data(training_config, device):
             # Build edge index explicitly (faster than nx ~100 times and as fast as PyGeometric imp but less complex)
             # shape = (2, E), where E is the number of edges, and 2 for source and target nodes. Basically edge index
             # contains tuples of the format S->T, e.g. 0->3 means that node with id 0 points to a node with id 3.
-            topology = build_edge_index(adjacency_list_dict, num_of_nodes, add_self_edges=True, neighbor_degree=1, mode=AdjacencyMode.OneStep)
+            topology = build_edge_index(adjacency_list_dict, 
+                                        num_of_nodes, 
+                                        add_self_edges=True, 
+                                        neighbor_degree=training_config['neighboorhood_degree'], 
+                                        mode=training_config['adjacency_mode'])
         elif layer_type == LayerType.IMP2 or layer_type == LayerType.IMP1:
             # adjacency matrix shape = (N, N)
-            topology = build_edge_index_nx1(adjacency_list_dict, neighbor_degree, mode=AdjacencyMode.OneStep)
+            topology = build_edge_index_nx1(adjacency_list_dict, 
+                                            neighbor_degree=training_config['neighboorhood_degree'], 
+                                            mode=training_config['adjacency_mode'])
         else:
             raise Exception(f'Layer type {layer_type} not yet supported.')
 
