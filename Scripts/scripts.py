@@ -1,8 +1,1 @@
-import json
-
-    
-def json_read(path):
-    with open(path, 'r') as file:
-        data = json.load(file)
-
-    return data
+### Tbc - shall contain scripts that will be implemented for fast experimenting
