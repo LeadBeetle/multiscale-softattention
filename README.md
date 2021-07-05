@@ -35,5 +35,4 @@ Bisher von Marco bereitgestellte Literatur:
 
 ## Code Explainer
 
-Ein gutes Video kann hier gefunden werden:  
-[Code Explainer](https://www.youtube.com/watch?v=uFLeKkXWq2c)
+Ein gutes Video kann hier gefunden werden: [Code Explainer](https://www.youtube.com/watch?v=364hpoRB4PQ)
