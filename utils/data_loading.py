@@ -53,6 +53,10 @@ from torch.utils.data import DataLoader, Dataset
 from utils.constants import *
 from utils.visualizations import plot_in_out_degree_distributions, visualize_graph
 
+class AdjacencyMode(enum.Enum):
+    OneStep = 0,
+    Partial = 1
+
 
 def load_graph_data(training_config, device):
     dataset_name = training_config['dataset_name'].lower()
@@ -76,7 +80,7 @@ def load_graph_data(training_config, device):
             # Build edge index explicitly (faster than nx ~100 times and as fast as PyGeometric imp but less complex)
             # shape = (2, E), where E is the number of edges, and 2 for source and target nodes. Basically edge index
             # contains tuples of the format S->T, e.g. 0->3 means that node with id 0 points to a node with id 3.
-            topology = build_edge_index(adjacency_list_dict, num_of_nodes, add_self_edges=True)
+            topology = build_edge_index(adjacency_list_dict, num_of_nodes, add_self_edges=True, neighbor_degree=1, mode=AdjacencyMode.OneStep)
         elif layer_type == LayerType.IMP2 or layer_type == LayerType.IMP1:
             # adjacency matrix shape = (N, N)
             topology = nx.adjacency_matrix(nx.from_dict_of_lists(adjacency_list_dict)).todense().astype(np.float)
@@ -341,7 +345,8 @@ def normalize_features_dense(node_features_dense):
     return node_features_dense / np.clip(node_features_dense.sum(1), a_min=1, a_max=None)
 
 
-def build_edge_index(adjacency_list_dict, num_of_nodes, add_self_edges=True):
+## Adjacency operations are put here
+def build_edge_index(adjacency_list_dict, num_of_nodes, add_self_edges=True, neighbor_degree = None, mode = AdjacencyMode.OneStep):
     source_nodes_ids, target_nodes_ids = [], []
     seen_edges = set()
 
