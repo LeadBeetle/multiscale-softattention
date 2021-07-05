@@ -40,7 +40,7 @@ import pickle
 import zipfile
 import json
 from networkx.readwrite.json_graph.adjacency import adjacency_graph
-
+import time
 
 import numpy as np
 import networkx as nx
@@ -54,9 +54,28 @@ from networkx.linalg import graphmatrix
 from utils.constants import *
 from utils.visualizations import plot_in_out_degree_distributions, visualize_graph
 
-
-def applyMultiScaling(adjacency_matrix, neighbor_degree = 1, mode = AdjacencyMode.OneStep):
-    return adjacency_matrix
+def applyMultiScaling(A, device, neighbor_degree = 1, mode = AdjacencyMode.OneStep):
+    print("Start")
+    start = time.time()
+    A = torch.as_tensor(A, dtype=float)
+    if mode == AdjacencyMode.OneStep and neighbor_degree > 1: 
+        delta_A = None
+        powers = [A]
+        for k in range(2, neighbor_degree + 1):
+            powers.append(torch.gt(torch.matmul(powers[k-2], A), 0)*1)
+            if delta_A is None:
+                delta_A = powers[-1] - A
+            else:
+                delta_A += powers[-1] - A
+            
+        A = A + delta_A
+    elif mode == AdjacencyMode.Partial:
+        ## To be completed
+        pass
+    
+    end = time.time()
+    print("Elapsed Time:", end - start)
+    return A.numpy()
 
 
 def load_graph_data(training_config, device):
@@ -163,11 +182,8 @@ def load_graph_data(training_config, device):
             # The reason I use a NetworkX's directed graph is because we need to explicitly model both directions
             # because of the edge index and the way GAT implementation #3 works
             
-            # We need the adjacency matrix for the multi-scaling approach - right now it's very slow
-            adjacancy_matrix = graphmatrix.adjacency_matrix(json_graph.node_link_graph(nodes_links_dict)).todense()
-            adjacancy_matrix = applyMultiScaling(adjacancy_matrix, neighbor_degree=training_config['neighbourhood_degree'], mode=training_config['adjacency_mode'])
             
-            collection_of_graphs = nx.DiGraph(adjacancy_matrix)
+            collection_of_graphs = nx.DiGraph(json_graph.node_link_graph(nodes_links_dict))
             # For each node in the above collection, ids specify to which graph the node belongs to
             graph_ids = np.load(os.path.join(PPI_PATH, F'{split}_graph_id.npy'))
             num_graphs_per_split_cumulative.append(num_graphs_per_split_cumulative[-1] + len(np.unique(graph_ids)))
@@ -177,6 +193,12 @@ def load_graph_data(training_config, device):
                 mask = graph_ids == graph_id  # find the nodes which belong to the current graph (identified via id)
                 graph_node_ids = np.asarray(mask).nonzero()[0]
                 graph = collection_of_graphs.subgraph(graph_node_ids)  # returns the induced subgraph over these nodes
+                
+                # We need the adjacency matrix for the multi-scaling approach - right now it's very slow
+                adjacancy_matrix = graphmatrix.adjacency_matrix(graph).todense()
+                adjacancy_matrix = applyMultiScaling(adjacancy_matrix, neighbor_degree=training_config['neighbourhood_degree'], mode=training_config['adjacency_mode'], device = device)
+                graph = nx.DiGraph(adjacancy_matrix)
+                
                 print(f'Loading {split} graph {graph_id} to CPU. '
                       f'It has {graph.number_of_nodes()} nodes and {graph.number_of_edges()} edges.')
 
