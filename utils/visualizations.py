@@ -3,6 +3,7 @@ import numpy as np
 import networkx as nx
 import igraph as ig
 
+import torch
 
 from utils.constants import DatasetType, GraphVisualizationTool, network_repository_cora_url, cora_label_to_color_map
 from utils.utils import convert_adj_to_edge_index
@@ -15,11 +16,12 @@ def plot_in_out_degree_distributions(edge_index, num_of_nodes, dataset_name):
         calculate the graph diameter, number of triangles and many other concepts from the network analysis field.
 
     """
+    if isinstance(edge_index, torch.Tensor):
+        edge_index = edge_index.cpu().numpy()
+        
     assert isinstance(edge_index, np.ndarray), f'Expected NumPy array got {type(edge_index)}.'
-    if edge_index.shape[0] == edge_index.shape[1]:
-        edge_index = convert_adj_to_edge_index(edge_index)
 
-    # Store each node's input and output degree (they're the same for undirected graphs such as Cora)
+    # Store each node's input and output degree (they're the same for undirected graphs such as Cora/PPI)
     in_degrees = np.zeros(num_of_nodes, dtype=np.int)
     out_degrees = np.zeros(num_of_nodes, dtype=np.int)
 
@@ -37,7 +39,7 @@ def plot_in_out_degree_distributions(edge_index, num_of_nodes, dataset_name):
     for out_degree in out_degrees:
         hist[out_degree] += 1
 
-    fig = plt.figure()
+    fig = plt.figure(figsize=(12,8), dpi=100)  # otherwise plots are really small in Jupyter Notebook
     fig.subplots_adjust(hspace=0.6)
 
     plt.subplot(311)
@@ -51,7 +53,7 @@ def plot_in_out_degree_distributions(edge_index, num_of_nodes, dataset_name):
     plt.subplot(313)
     plt.plot(hist, color='blue')
     plt.xlabel('node degree'); plt.ylabel('# nodes for a given out-degree'); plt.title(f'Node out-degree distribution for {dataset_name} dataset')
-    plt.xticks(np.arange(0, len(hist), 5.0))
+    plt.xticks(np.arange(0, len(hist), 20.0))
 
     plt.grid(True)
     plt.show()
