@@ -39,7 +39,7 @@
 import pickle
 import zipfile
 import json
-from networkx.algorithms.assortativity import neighbor_degree
+from networkx.readwrite.json_graph.adjacency import adjacency_graph
 
 
 import numpy as np
@@ -50,18 +50,13 @@ import torch
 from torch.hub import download_url_to_file
 from torch.utils.data import DataLoader, Dataset
 
-
+from networkx.linalg import graphmatrix
 from utils.constants import *
 from utils.visualizations import plot_in_out_degree_distributions, visualize_graph
 
-class AdjacencyMode(enum.Enum):
-    OneStep = 0,
-    Partial = 1
 
-
-def applyMultiScaling(adjacency_list_dict, neighbor_degree = 1, mode = AdjacencyMode.OneStep):
-
-    return adjacency_list_dict
+def applyMultiScaling(adjacency_matrix, neighbor_degree = 1, mode = AdjacencyMode.OneStep):
+    return adjacency_matrix
 
 
 def load_graph_data(training_config, device):
@@ -86,9 +81,9 @@ def load_graph_data(training_config, device):
             # Build edge index explicitly (faster than nx ~100 times and as fast as PyGeometric imp but less complex)
             # shape = (2, E), where E is the number of edges, and 2 for source and target nodes. Basically edge index
             # contains tuples of the format S->T, e.g. 0->3 means that node with id 0 points to a node with id 3.
-            topology = build_edge_index(adjacency_list_dict, 
-                                        num_of_nodes, 
-                                        add_self_edges=True, 
+            topology = build_edge_index_nx1(adjacency_list_dict, 
+                                        #num_of_nodes, 
+                                        #add_self_edges=True, 
                                         neighbor_degree=training_config['neighboorhood_degree'], 
                                         mode=training_config['adjacency_mode'])
         elif layer_type == LayerType.IMP2 or layer_type == LayerType.IMP1:
@@ -163,10 +158,16 @@ def load_graph_data(training_config, device):
 
             # Graph topology stored in a special nodes-links NetworkX format
             nodes_links_dict = json_read(os.path.join(PPI_PATH, f'{split}_graph.json'))
+            
             # PPI contains undirected graphs with self edges - 20 train graphs, 2 validation graphs and 2 test graphs
             # The reason I use a NetworkX's directed graph is because we need to explicitly model both directions
             # because of the edge index and the way GAT implementation #3 works
-            collection_of_graphs = nx.DiGraph(json_graph.node_link_graph(nodes_links_dict))
+            
+            # We need the adjacency matrix for the multi-scaling approach - right now it's very slow
+            adjacancy_matrix = graphmatrix.adjacency_matrix(json_graph.node_link_graph(nodes_links_dict)).todense()
+            adjacancy_matrix = applyMultiScaling(adjacancy_matrix, neighbor_degree=training_config['neighbourhood_degree'], mode=training_config['adjacency_mode'])
+            
+            collection_of_graphs = nx.DiGraph(adjacancy_matrix)
             # For each node in the above collection, ids specify to which graph the node belongs to
             graph_ids = np.load(os.path.join(PPI_PATH, F'{split}_graph_id.npy'))
             num_graphs_per_split_cumulative.append(num_graphs_per_split_cumulative[-1] + len(np.unique(graph_ids)))
@@ -233,6 +234,7 @@ def load_graph_data(training_config, device):
                 batch_size=training_config['batch_size'],
                 shuffle=False
             )
+            print()
 
             return data_loader_train, data_loader_val, data_loader_test
     else:
@@ -354,8 +356,6 @@ def normalize_features_dense(node_features_dense):
 
 ## Adjacency operations are put here
 def build_edge_index(adjacency_list_dict, num_of_nodes, add_self_edges=True, neighbor_degree = None, mode = AdjacencyMode.OneStep):
-    adjacency_list_dict = applyMultiScaling(adjacency_list_dict, neighbor_degree, mode)
-    
     source_nodes_ids, target_nodes_ids = [], []
     seen_edges = set()
 
@@ -379,7 +379,6 @@ def build_edge_index(adjacency_list_dict, num_of_nodes, add_self_edges=True, nei
 
 
 def build_edge_index_nx1(adjacency_list_dict, neighbor_degree = 1, mode = AdjacencyMode.OneStep):
-    adjacency_list_dict = applyMultiScaling(adjacency_list_dict, neighbor_degree, mode)
     topology = nx.adjacency_matrix(nx.from_dict_of_lists(adjacency_list_dict)).todense().astype(np.float)
     topology += np.identity(topology.shape[0])  # add self connections
     topology[topology > 0] = 1  # multiple edges not allowed
@@ -392,9 +391,7 @@ def build_edge_index_nx1(adjacency_list_dict, neighbor_degree = 1, mode = Adjace
 # Not used - this is yet another way to construct the edge index by leveraging the existing package (networkx)
 # (it's just slower than my simple implementation build_edge_index())
 def build_edge_index_nx2(adjacency_list_dict, neighbor_degree = 1, mode = AdjacencyMode.OneStep):
-    adjacency_list_dict = applyMultiScaling(adjacency_list_dict, neighbor_degree, mode)
     nx_graph = nx.from_dict_of_lists(adjacency_list_dict)
     adj = nx.adjacency_matrix(nx_graph)
     adj = adj.tocoo()  # convert to COO (COOrdinate sparse format)
-
     return np.row_stack((adj.row, adj.col))
