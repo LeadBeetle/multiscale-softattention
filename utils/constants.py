@@ -39,7 +39,10 @@ class VisualizationType(enum.Enum):
     EMBEDDINGS = 1,
     ENTROPY = 2,
 
-
+class AdjacencyMode(enum.Enum):
+    OneStep = 0,
+    Partial = 1
+    
 writer = SummaryWriter()  # (tensorboard) writer will output to ./runs/ directory by default
 
 

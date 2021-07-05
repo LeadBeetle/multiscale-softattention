@@ -54,10 +54,6 @@ from torch.utils.data import DataLoader, Dataset
 from utils.constants import *
 from utils.visualizations import plot_in_out_degree_distributions, visualize_graph
 
-class AdjacencyMode(enum.Enum):
-    OneStep = 0,
-    Partial = 1
-
 
 def applyMultiScaling(adjacency_list_dict, neighbor_degree = 1, mode = AdjacencyMode.OneStep):
 

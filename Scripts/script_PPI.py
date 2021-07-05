@@ -231,7 +231,9 @@ def get_training_args():
         "add_skip_connection": True,  # skip connection is very important! (keep it otherwise micro-F1 is almost 0)
         "bias": True,  # bias doesn't matter that much
         "dropout": 0.0,  # dropout hurts the performance (best to keep it at 0)
-        "layer_type": LayerType.IMP3  # the only implementation that supports the inductive setting
+        "layer_type": LayerType.IMP3,  # the only implementation that supports the inductive setting
+        'neighboorhood_degree': 1,
+        'adjacency_mode': AdjacencyMode.OneStep
     }
 
     # Wrapping training configuration into a dictionary
