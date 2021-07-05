@@ -1,8 +1,7 @@
 # Graph Neural Networks with Multiscale Soft Attention
 
-## Table Of Contents
+**Table Of Contents**
 - [Graph Neural Networks with Multiscale Soft Attention](#graph-neural-networks-with-multiscale-soft-attention)
-  - [Table Of Contents](#table-of-contents)
     - [Einleitung](#einleitung)
     - [Aufgabenstellung](#aufgabenstellung)
     - [Code Explainer](#code-explainer)
