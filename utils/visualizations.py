@@ -9,7 +9,7 @@ from utils.constants import DatasetType, GraphVisualizationTool, network_reposit
 from utils.utils import convert_adj_to_edge_index
 
 
-def plot_in_out_degree_distributions(edge_index, num_of_nodes, dataset_name):
+def plot_in_out_degree_distributions(edge_index, num_of_nodes, dataset_name, file_name):
     """
         Note: It would be easy to do various kinds of powerful network analysis using igraph/networkx, etc.
         I chose to explicitly calculate only the node degree statistics here, but you can go much further if needed and
@@ -56,7 +56,9 @@ def plot_in_out_degree_distributions(edge_index, num_of_nodes, dataset_name):
     plt.xticks(np.arange(0, len(hist), 20.0))
 
     plt.grid(True)
+    plt.savefig('visualizations/' + file_name)
     plt.show()
+    
 
 
 def visualize_graph(edge_index, node_labels, dataset_name, visualization_tool=GraphVisualizationTool.IGRAPH):
