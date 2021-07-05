@@ -1,7 +1,6 @@
 #### Graph Neural Networks with Multiscale Soft Attention
 - [Code Explainer](#code-explainer)
-- [Aufgabenstellung:](#aufgabenstellung)
-
+- [Aufgabenstellung](#aufgabenstellung)
 
 Dieses Repository umfasst den Code und die Dokumente, die bei der Untersuchung von GATs und Graph Transformern hinsichtlich ihrer Erweiterung um eine Multi-Scale-Soft-Attention im Rahmen eines Projektseminars an der TU Ilmenau entstanden sind. 
 
@@ -22,7 +21,7 @@ Ein gutes Video kann hier gefunden werden:
 [Code Explainer](https://www.youtube.com/watch?v=uFLeKkXWq2c)
 
 
-## Aufgabenstellung:
+## Aufgabenstellung
 
 1. Literaturrecherche
 2. Einbeziehung höherer Nachbarschaftsordnung in GATs
