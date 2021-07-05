@@ -59,6 +59,11 @@ class AdjacencyMode(enum.Enum):
     Partial = 1
 
 
+def applyMultiScaling(adjacency_list_dict, neighbor_degree = 1, mode = AdjacencyMode.OneStep):
+
+    return adjacency_list_dict
+
+
 def load_graph_data(training_config, device):
     dataset_name = training_config['dataset_name'].lower()
     layer_type = training_config['layer_type']
@@ -81,10 +86,16 @@ def load_graph_data(training_config, device):
             # Build edge index explicitly (faster than nx ~100 times and as fast as PyGeometric imp but less complex)
             # shape = (2, E), where E is the number of edges, and 2 for source and target nodes. Basically edge index
             # contains tuples of the format S->T, e.g. 0->3 means that node with id 0 points to a node with id 3.
-            topology = build_edge_index(adjacency_list_dict, num_of_nodes, add_self_edges=True, neighbor_degree=1, mode=AdjacencyMode.OneStep)
+            topology = build_edge_index(adjacency_list_dict, 
+                                        num_of_nodes, 
+                                        add_self_edges=True, 
+                                        neighbor_degree=training_config['neighboorhood_degree'], 
+                                        mode=training_config['adjacency_mode'])
         elif layer_type == LayerType.IMP2 or layer_type == LayerType.IMP1:
             # adjacency matrix shape = (N, N)
-            topology = build_edge_index_nx1(adjacency_list_dict, neighbor_degree, mode=AdjacencyMode.OneStep)
+            topology = build_edge_index_nx1(adjacency_list_dict, 
+                                            neighbor_degree=training_config['neighboorhood_degree'], 
+                                            mode=training_config['adjacency_mode'])
         else:
             raise Exception(f'Layer type {layer_type} not yet supported.')
 
@@ -341,9 +352,10 @@ def normalize_features_dense(node_features_dense):
     # Note: 1 is a neutral element for division i.e. it won't modify the feature vector
     return node_features_dense / np.clip(node_features_dense.sum(1), a_min=1, a_max=None)
 
-
 ## Adjacency operations are put here
 def build_edge_index(adjacency_list_dict, num_of_nodes, add_self_edges=True, neighbor_degree = None, mode = AdjacencyMode.OneStep):
+    adjacency_list_dict = applyMultiScaling(adjacency_list_dict, neighbor_degree, mode)
+    
     source_nodes_ids, target_nodes_ids = [], []
     seen_edges = set()
 
@@ -366,7 +378,8 @@ def build_edge_index(adjacency_list_dict, num_of_nodes, add_self_edges=True, nei
     return edge_index
 
 
-def build_edge_index_nx1(adjacency_list_dict, neighbor_degree = None, mode = AdjacencyMode.OneStep):
+def build_edge_index_nx1(adjacency_list_dict, neighbor_degree = 1, mode = AdjacencyMode.OneStep):
+    adjacency_list_dict = applyMultiScaling(adjacency_list_dict, neighbor_degree, mode)
     topology = nx.adjacency_matrix(nx.from_dict_of_lists(adjacency_list_dict)).todense().astype(np.float)
     topology += np.identity(topology.shape[0])  # add self connections
     topology[topology > 0] = 1  # multiple edges not allowed
@@ -378,7 +391,8 @@ def build_edge_index_nx1(adjacency_list_dict, neighbor_degree = None, mode = Adj
     
 # Not used - this is yet another way to construct the edge index by leveraging the existing package (networkx)
 # (it's just slower than my simple implementation build_edge_index())
-def build_edge_index_nx2(adjacency_list_dict):
+def build_edge_index_nx2(adjacency_list_dict, neighbor_degree = 1, mode = AdjacencyMode.OneStep):
+    adjacency_list_dict = applyMultiScaling(adjacency_list_dict, neighbor_degree, mode)
     nx_graph = nx.from_dict_of_lists(adjacency_list_dict)
     adj = nx.adjacency_matrix(nx_graph)
     adj = adj.tocoo()  # convert to COO (COOrdinate sparse format)
