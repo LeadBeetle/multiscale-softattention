@@ -1,21 +1,27 @@
 # Graph Neural Networks with Multiscale Soft Attention
 
+## Table Of Contents
+- [Einleitung](#einleitung)
+- [Aufgabenstellung](#aufgabenstellung)
+- [Code Explainer](#code-explainer)
+
+## Einleitung
+
 Dieses Repository umfasst den Code und die Dokumente, die bei der Untersuchung von GATs und Graph Transformern hinsichtlich ihrer Erweiterung um eine Multi-Scale-Soft-Attention im Rahmen eines Projektseminars an der TU Ilmenau entstanden sind. 
 
-Die erste Themenbeschreibung befindet sich hier: Dokumente\Multi-Scale-SoftAttention-Topic.pdf  
-Bisher von uns eingesetzte Literatur liegt in: Dokumente\Literatur
+Die erste Themenbeschreibung befindet sich hier: [Themenbeschreibung](Dokumente/Multi-Scale-SoftAttention-Topic.pdf)  
+Bisher von uns eingesetzte Literatur liegt in: [Literatur](Dokumente/Literatur)
 
 Bisher von Marco bereitgestellte Literatur: 
 
-- Graph attention networks -> https://arxiv.org/abs/1710.10903
-- MixHop: Higher-Order Graph Convolutional Architectures via Sparsified Neighborhood
-- Mixing -> https://arxiv.org/abs/1905.00067
-- SIGN: Scalable Inception Graph Neural Networks -> https://arxiv.org/abs/2004.11198
-- A generalization of transformer networks to graphs -> https://arxiv.org/abs/2012.09699
-- Fast Graph Representation Learning with PyTorch Geometric -> https://arxiv.org/abs/1903.02428
+- [Graph attention networks](https://arxiv.org/abs/1710.10903)
+- [MixHop: Higher-Order Graph Convolutional Architectures via Sparsified Neighborhood Mixing](https://arxiv.org/abs/1905.00067)
+- [SIGN: Scalable Inception Graph Neural Networks](https://arxiv.org/abs/2004.11198)
+- [A generalization of transformer networks to graphs](https://arxiv.org/abs/2012.09699)
+- [Fast Graph Representation Learning with PyTorch Geometric](https://arxiv.org/abs/1903.02428)
 
 
-**Aufgabenstellung:**
+## Aufgabenstellung
 
 1. Literaturrecherche
 2. Einbeziehung höherer Nachbarschaftsordnung in GATs
@@ -25,3 +31,8 @@ Bisher von Marco bereitgestellte Literatur:
     2.  Hat separierte Berechnung durch K Äste Vorteile gegenüber der einmaligen Berechnung
     3.  Wie korreliert der maximale Grad der Nachbarschaft mit der potenziellen Verringerung der Netzwerktiefe
 5. Auswertung der Ergebnisse
+
+
+## Code Explainer
+
+Ein gutes Video kann hier gefunden werden: [Code Explainer](https://www.youtube.com/watch?v=364hpoRB4PQ)
