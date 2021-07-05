@@ -1,4 +1,7 @@
-# Graph Neural Networks with Multiscale Soft Attention
+#### Graph Neural Networks with Multiscale Soft Attention
+- [Code Explainer](#code-explainer)
+- [Aufgabenstellung:](#aufgabenstellung)
+
 
 Dieses Repository umfasst den Code und die Dokumente, die bei der Untersuchung von GATs und Graph Transformern hinsichtlich ihrer Erweiterung um eine Multi-Scale-Soft-Attention im Rahmen eines Projektseminars an der TU Ilmenau entstanden sind. 
 
@@ -13,8 +16,13 @@ Bisher von Marco bereitgestellte Literatur:
 - [A generalization of transformer networks to graphs](https://arxiv.org/abs/2012.09699)
 - [Fast Graph Representation Learning with PyTorch Geometric](https://arxiv.org/abs/1903.02428)
 
+## Code Explainer
 
-**Aufgabenstellung:**
+Ein gutes Video kann hier gefunden werden:  
+[Code Explainer](https://www.youtube.com/watch?v=uFLeKkXWq2c)
+
+
+## Aufgabenstellung:
 
 1. Literaturrecherche
 2. Einbeziehung höherer Nachbarschaftsordnung in GATs
@@ -24,3 +32,5 @@ Bisher von Marco bereitgestellte Literatur:
     2.  Hat separierte Berechnung durch K Äste Vorteile gegenüber der einmaligen Berechnung
     3.  Wie korreliert der maximale Grad der Nachbarschaft mit der potenziellen Verringerung der Netzwerktiefe
 5. Auswertung der Ergebnisse
+
+
