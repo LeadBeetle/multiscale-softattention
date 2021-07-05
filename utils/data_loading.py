@@ -165,7 +165,7 @@ def load_graph_data(training_config, device):
                 mask = graph_ids == graph_id  # find the nodes which belong to the current graph (identified via id)
                 graph_node_ids = np.asarray(mask).nonzero()[0]
                 graph = collection_of_graphs.subgraph(graph_node_ids)  # returns the induced subgraph over these nodes
-                print(f'Loading {split} graph {graph_id} to {device}. '
+                print(f'Loading {split} graph {graph_id} to CPU. '
                       f'It has {graph.number_of_nodes()} nodes and {graph.number_of_edges()} edges.')
 
                 # shape = (2, E) - where E is the number of edges in the graph
