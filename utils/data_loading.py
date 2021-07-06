@@ -62,7 +62,7 @@ def applyMultiScaling(A, neighbor_degree = 1, mode = AdjacencyMode.OneStep):
         delta_A = None
         powers = [A]
         for k in range(2, neighbor_degree + 1):
-            powers.append(torch.as_tensor(torch.gt(torch.matmul(powers[k-2], A), 0)*1, dtype=torch.float))
+            powers.append(torch.as_tensor(torch.gt(torch.matmul(powers[k-2], A), 0), dtype=torch.float))
             if delta_A is None:
                 delta_A = powers[-1] - A
             else:
@@ -79,7 +79,7 @@ def applyMultiScaling(A, neighbor_degree = 1, mode = AdjacencyMode.OneStep):
         delta_A = None
         powers = [A]
         for k in range(2, neighbor_degree + 1):
-            powers.append(torch.gt(torch.matmul(powers[k-2], A), 0)*1)
+            powers.append(torch.as_tensor(torch.gt(torch.matmul(powers[k-2], A), 0), dtype=torch.float))
         
         return powers 
     else:
