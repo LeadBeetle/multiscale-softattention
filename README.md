@@ -19,6 +19,7 @@ Bisher von Marco bereitgestellte Literatur:
 - [SIGN: Scalable Inception Graph Neural Networks](https://arxiv.org/abs/2004.11198)
 - [A generalization of transformer networks to graphs](https://arxiv.org/abs/2012.09699)
 - [Fast Graph Representation Learning with PyTorch Geometric](https://arxiv.org/abs/1903.02428)
+- [How Attentive are Graph Attention Networks?](https://arxiv.org/abs/2105.14491)
 
 
 ## Aufgabenstellung
