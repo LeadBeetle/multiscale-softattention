@@ -56,7 +56,6 @@ from PyTorchGat.utils.constants import *
 from PyTorchGat.utils.visualizations import plot_in_out_degree_distributions, visualize_graph
 
 def applyMultiScaling(A, neighbor_degree = 1, mode = AdjacencyMode.OneStep):
-    start = time.time()
     A = torch.as_tensor(A, dtype=torch.float)
     if mode == AdjacencyMode.OneStep and neighbor_degree > 1: 
         delta_A = None
@@ -69,9 +68,6 @@ def applyMultiScaling(A, neighbor_degree = 1, mode = AdjacencyMode.OneStep):
                 delta_A += powers[-1] - A
             
         A = A + delta_A
-        end = time.time()
-        
-        print("Elapsed time:", end - start)
         return A.numpy()
     
     elif mode == AdjacencyMode.Partial:
