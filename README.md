@@ -14,12 +14,12 @@ Bisher von uns eingesetzte Literatur liegt in: [Literatur](Dokumente/Literatur)
 
 Bisher von Marco bereitgestellte Literatur: 
 
-- [Graph attention networks](https://arxiv.org/abs/1710.10903)
+- [Graph attention networks (GATV1)](https://arxiv.org/abs/1710.10903)
 - [MixHop: Higher-Order Graph Convolutional Architectures via Sparsified Neighborhood Mixing](https://arxiv.org/abs/1905.00067)
 - [SIGN: Scalable Inception Graph Neural Networks](https://arxiv.org/abs/2004.11198)
 - [A generalization of transformer networks to graphs](https://arxiv.org/abs/2012.09699)
 - [Fast Graph Representation Learning with PyTorch Geometric](https://arxiv.org/abs/1903.02428)
-- [How Attentive are Graph Attention Networks?](https://arxiv.org/abs/2105.14491)
+- [How Attentive are Graph Attention Networks? (GATV2)](https://arxiv.org/abs/2105.14491)
 - [Graph Representation Learning](https://www.cs.mcgill.ca/~wlh/grl_book/files/GRL_Book.pdf)
 - [Geometric Deep Learning: Grids, Groups, Graphs, Geodesics, and Gauges](https://arxiv.org/abs/2104.13478)
 
@@ -38,22 +38,27 @@ Bisher von Marco bereitgestellte Literatur:
 ## Code Explainer
 
 Ein gutes Video kann hier gefunden werden: [Code Explainer](https://www.youtube.com/watch?v=364hpoRB4PQ)
+Zu PyTorch-Geometric gibt es eine Videoreihe : [PyTorch-Geometric](https://www.youtube.com/playlist?list=PLGMXrbDNfqTzqxB1IGgimuhtfAhGd8lHF)  
 
 ## Datensätze 
 
 In den Papern zu den beiden GAT-Version wurden Benchmarks für die folgenden Datensätze eingefahren.  
 
-| GAT-V1-Datasets | Nodes | Edges | Classes | 
-| :-------------: | :-------------: | :-------------: | :-------------: | 
-| [Cora](https://paperswithcode.com/dataset/cora) | 2.708  |  5.429 | 7 | 
-| [Citeseer](https://paperswithcode.com/dataset/citeseer) |  3.312  | 4.732  | 6 | 
-| [Pubmed](https://paperswithcode.com/dataset/pubmed)|  19.717 |  44.338  | 3 | 
-| [PIP](https://paperswithcode.com/dataset/ppi) |  Ø 2.373 |  -  | 121 | 
+In der folgenden Tabelle ist zu erkennen, dass [Graph attention networks](https://arxiv.org/abs/1710.10903) sowohl im induktiven als auch im transduktiven Setting durchgeführt wurde.  
 
-| GAT-V2-Datasets | Nodes | Edges | Classes |
-| :-------------: | :-------------: | :-------------: | :-------------: | 
-| [ogbn-arxiv](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-arxiv) | 169.343 |  1.166.243 | 40 | 
-| [ogbn-products](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-products) | 2.449.029 |  61.859.140 | 47 | 
-| [ogbn-mag](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-mag) | 1.939.743 |  21.111.007 | 349 | 
-| [ogbn-proteins](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-proteins) | 132.534 |  39.561.252 | 8 | 
+| GAT-V1-Datasets | Nodes | Edges | Classes | Transductive | Inductive |
+| :-------------: | :-------------: | :-------------: | :-------------: | :-------------: | :-------------: |
+| [Cora](https://paperswithcode.com/dataset/cora) | 2.708  |  5.429 | 7 | 83.0 | - |
+| [Citeseer](https://paperswithcode.com/dataset/citeseer) |  3.312  | 4.732  | 6 | 72.5 | - |
+| [Pubmed](https://paperswithcode.com/dataset/pubmed)|  19.717 |  44.338  | 3 | 79.0 | - |
+| [PIP](https://paperswithcode.com/dataset/ppi) |  56.944 |  818.716  | 121 | - | 0.973 |
+
+Im Gegensatz dazu wurde in [How Attentive are Graph Attention Networks?](https://arxiv.org/abs/2105.14491) ausschließlich im induktiven Setting experimentiert. Im folgenden sind GAT-V1 und GAT-V2 auf den OGBN-Daten gegenübergestellt. Auf den obigen Daten wurde im Rahmen des Papers nicht experimentiert.  
+
+| GAT-V2-Datasets | Nodes | Edges | Classes | GAT-V1 | GAT-V2 |
+| :-------------: | :-------------: | :-------------: | :-------------: | :-------------: | :-------------: | 
+| [ogbn-arxiv](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-arxiv) | 169.343 |  1.166.243 | 40 | 71.54 | **71.87** | 
+| [ogbn-products](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-products) | 2.449.029 |  61.859.140 | 47 | 77.23 | **78.46** |
+| [ogbn-mag](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-mag) | 1.939.743 |  21.111.007 | 349 | 31.75 | **32.52** |
+| [ogbn-proteins](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-proteins) | 132.534 |  39.561.252 | 8 | 78.63 | **79.52** | 
 
