@@ -13,6 +13,9 @@ class DatasetType(enum.Enum):
     CORA = 0,
     PPI = 1
 
+class AdjacencyMode(enum.Enum):
+    OneStep = 0,
+    Partial = 1
 
 # Networkx is not precisely made with drawing as it's main feature but I experimented with it a bit
 class GraphVisualizationTool(enum.Enum):
@@ -38,10 +41,6 @@ class VisualizationType(enum.Enum):
     ATTENTION = 0,
     EMBEDDINGS = 1,
     ENTROPY = 2,
-
-class AdjacencyMode(enum.Enum):
-    OneStep = 0,
-    Partial = 1
     
 writer = SummaryWriter()  # (tensorboard) writer will output to ./runs/ directory by default
 

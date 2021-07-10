@@ -4,8 +4,8 @@ import networkx as nx
 import igraph as ig
 
 
-from utils.constants import DatasetType, GraphVisualizationTool, network_repository_cora_url, cora_label_to_color_map
-from utils.utils import convert_adj_to_edge_index
+from PyTorchGat.utils.constants import DatasetType, GraphVisualizationTool, network_repository_cora_url, cora_label_to_color_map
+from PyTorchGat.utils.utils import convert_adj_to_edge_index
 
 
 def plot_in_out_degree_distributions(edge_index, num_of_nodes, dataset_name):

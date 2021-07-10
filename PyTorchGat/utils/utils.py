@@ -6,7 +6,7 @@ import git
 import numpy as np
 
 
-from utils.constants import BINARIES_PATH, LayerType
+from PyTorchGat.utils.constants import BINARIES_PATH, LayerType
 
 
 def convert_adj_to_edge_index(adjacency_matrix):

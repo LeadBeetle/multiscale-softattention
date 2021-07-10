@@ -7,10 +7,10 @@ import torch.nn as nn
 from torch.optim import Adam
 
 
-from models.definitions.GAT import GAT
-from utils.data_loading import load_graph_data
-from utils.constants import *
-import utils.utils as utils
+from PyTorchGat.models.definitions.GAT import GAT
+from PyTorchGat.utils.data_loading import load_graph_data
+from PyTorchGat.utils.constants import *
+import PyTorchGat.utils.utils as utils
 
 
 # Simple decorator function so that I don't have to pass arguments that don't change from epoch to epoch

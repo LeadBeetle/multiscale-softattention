@@ -13,12 +13,12 @@ import numpy as np
 import igraph as ig
 
 
-from utils.data_loading import normalize_features_sparse, normalize_features_dense, pickle_save, pickle_read, load_graph_data
-from utils.constants import CORA_PATH, BINARIES_PATH, DatasetType, LayerType, DATA_DIR_PATH, cora_label_to_color_map, VisualizationType
-from utils.visualizations import draw_entropy_histogram
-from models.definitions.GAT import GAT
-from utils.utils import print_model_metadata, convert_adj_to_edge_index, name_to_layer_type
-from training_script_cora import train_gat_cora, get_training_args
+from PyTorchGat.utils.data_loading import normalize_features_sparse, normalize_features_dense, pickle_save, pickle_read, load_graph_data
+from PyTorchGat.utils.constants import CORA_PATH, BINARIES_PATH, DatasetType, LayerType, DATA_DIR_PATH, cora_label_to_color_map, VisualizationType
+from PyTorchGat.utils.visualizations import draw_entropy_histogram
+from PyTorchGat.models.definitions.GAT import GAT
+from PyTorchGat.utils.utils import print_model_metadata, convert_adj_to_edge_index, name_to_layer_type
+from PyTorchGat.training_script_cora import train_gat_cora, get_training_args
 
 
 def profile_sparse_matrix_formats(node_features_csr):
