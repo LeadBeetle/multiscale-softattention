@@ -52,7 +52,7 @@ from torch.hub import download_url_to_file
 from torch.utils.data import DataLoader, Dataset
 
 from networkx.linalg import graphmatrix
-from utils.constants import *
+from PyTorchGat.utils.constants import *
 from utils.visualizations import plot_in_out_degree_distributions, visualize_graph
 
 def applyMultiScaling(A, neighbor_degree = 1, mode = AdjacencyMode.OneStep):
