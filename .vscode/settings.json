@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "C:\\Users\\doria\\anaconda3\\envs\\PS\\python.exe"
+    "python.pythonPath": "C:\\Users\\doria\\anaconda3\\envs\\PS\\python.exe",
+    "jupyter.jupyterServerType": "local"
 }
