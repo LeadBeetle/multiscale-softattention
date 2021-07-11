@@ -45,7 +45,7 @@ Zu PyTorch-Geometric gibt es eine Videoreihe : [PyTorch-Geometric](https://www.y
 
 In den Papern zu den beiden GAT-Version wurden Benchmarks für die folgenden Datensätze eingefahren.  
 
-In der folgenden Tabelle ist zu erkennen, dass [Graph attention networks](https://arxiv.org/abs/1710.10903) sowohl im induktiven als auch im transduktiven Setting durchgeführt wurde.  
+In der folgenden Tabelle ist zu erkennen, dass in [Graph attention networks](https://arxiv.org/abs/1710.10903) sowohl im **induktiven** als auch im **transduktiven** Setting experimentiert und dabei über die **Accuracy** ausgewertet wurde.
 
 | GAT-V1-Datasets | Nodes | Edges | Classes | Transductive | Inductive |
 | :-------------: | :-------------: | :-------------: | :-------------: | :-------------: | :-------------: |
