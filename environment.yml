@@ -2,9 +2,10 @@ name: PS
 channels:
   - defaults
   - pytorch
+  - conda-forge
 dependencies:
-  - python==3.9.6
-  - pip==21.1.3
+  - python=3.8.10
+  - pip==21.1.2
   - pytorch==1.9.0
   - cudatoolkit==11.3.1
   - rusty1s::pytorch-geometric
