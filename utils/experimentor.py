@@ -35,7 +35,7 @@ class Experimentor:
                                         num_workers=self.config["num_workers"])  
         self.device = torch.device('cuda' if torch.cuda.is_available() and not self.config['force_cpu'] else 'cpu')
         
-        self.model = GAT(self.dataset.num_features, 128, self.dataset.num_classes, num_layers=self.config["num_of_layers"],
+        self.model = GAT(self.dataset.num_features, self.config["hidden_size"], self.dataset.num_classes, num_layers=self.config["num_of_layers"],
             heads=self.config["num_heads"], dataset = self.dataset, device = self.device)
         
         self.model = self.model.to(self.device)
@@ -94,7 +94,9 @@ class Experimentor:
 
         return train_acc, val_acc, test_acc
     
-    def run(self): 
+    def run(self):
+        test_freq = self.config['test_frequency'] or 10
+
         test_accs = []
         for run in range(1, 1 + self.config["num_of_runs"]):
             print('')
@@ -105,17 +107,23 @@ class Experimentor:
             self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.config["lr"])
 
             best_val_acc = final_test_acc = 0
+            waited_iterations = 0
             for epoch in range(1, 1 + self.config["num_of_epochs"]):
                 loss, acc = self.train(epoch)
                 print(f'Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
 
-                if epoch % 10 == 0:
+                if epoch % test_freq == 0:
                     train_acc, val_acc, test_acc = self.test()
                     print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
                         f'Test: {test_acc:.4f}')
+                    waited_iterations += test_freq
                     if val_acc > best_val_acc:
                         best_val_acc = val_acc
                         final_test_acc = test_acc
+                        waited_iterations = 0
+                    if waited_iterations > self.config["patience_period"]:
+                        break
+                        
             test_accs.append(final_test_acc)
         test_acc = torch.tensor(test_accs)
         print('============================')
