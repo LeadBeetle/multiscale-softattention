@@ -1,26 +1,28 @@
 name: PS
 channels:
-  - defaults
   - pytorch
   - conda-forge
+  - rusty1s
+  - defaults
 dependencies:
   - python=3.8.10
   - pip==21.1.2
-  - pytorch==1.9.0
-  - cudatoolkit==11.3.1
-  - rusty1s::pytorch-geometric
+  - ipykernel
+  - cudatoolkit==11.1.1
+  - torchaudio
+  - torchvision
+  - pytorch
+  - pytorch-geometric
+  
   - pip:
-    - matplotlib==3.4.2
-    - GitPython==3.1.18
-    - jupyter==1.0.0
-    - numpy==1.21.0
-    - scipy==1.7.0
-    - scikit-learn==0.24.2
-    - tensorboard==2.5.0
+    - matplotlib
+    - GitPython
+    - jupyter
+    - numpy
+    - scipy
+    - scikit-learn
+    - tensorboard
     - networkx==2.6.1
     - python-igraph==0.9.6
     - pycairo==1.20.1
-    - ipykernel==6.0.1
-    - torchvision
-    - torchaudio
     - ogb
