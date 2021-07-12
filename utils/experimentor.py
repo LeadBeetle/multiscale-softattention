@@ -11,32 +11,35 @@ from utils.constants import *
 
 class Experimentor:
     
-    def __init__(self, dataset_type):
+    def __init__(self, config):
         print("torch.cuda is available:", torch.cuda.is_available())
-        self.dataset_type = dataset_type
+        self.config = config
+        self.dataset_name = config["dataset_name"]
+        print(self.dataset_name)
         self.initData()
      
     def initData(self):
         root = osp.abspath( 'data')
         
-        self.dataset = PygNodePropPredDataset(datasetMapping[self.dataset_type], root)
+        self.dataset = PygNodePropPredDataset(datasetMapping[self.dataset_name], root)
         self.split_idx = self.dataset.get_idx_split()
-        self.evaluator = Evaluator(name=datasetMapping[self.dataset_type])
+        self.evaluator = Evaluator(name=datasetMapping[self.dataset_name])
         data = self.dataset[0]
 
         self.train_idx = self.split_idx['train']
         self.train_loader = NeighborSampler(data.edge_index, node_idx=self.train_idx,
-                                    sizes=[10, 10, 10], batch_size=512,
-                                    shuffle=True, num_workers=6)
+                                    sizes=[10, 10, 10], batch_size=self.config["batch_size"],
+                                    shuffle=True, num_workers=self.config["num_workers"])
         self.subgraph_loader = NeighborSampler(data.edge_index, node_idx=None, sizes=[-1],
-                                        batch_size=1024, shuffle=False,
-                                        num_workers=6)  
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.model = GAT(self.dataset.num_features, 128, self.dataset.num_classes, num_layers=3,
-            heads=4, dataset = self.dataset, device = self.device)
+                                        batch_size=self.config["test_batch_size"], shuffle=False,
+                                        num_workers=self.config["num_workers"])  
+        self.device = torch.device('cuda' if torch.cuda.is_available() and not self.config['force_cpu'] else 'cpu')
+        
+        self.model = GAT(self.dataset.num_features, 128, self.dataset.num_classes, num_layers=self.config["num_of_layers"],
+            heads=self.config["num_heads"], dataset = self.dataset, device = self.device)
         
         self.model = self.model.to(self.device)
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.001)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.config["lr"])
 
         self.x = data.x.to(self.device)
         self.y = data.y.squeeze().to(self.device)
@@ -93,29 +96,27 @@ class Experimentor:
     
     def run(self): 
         test_accs = []
-        for run in range(1, 11):
+        for run in range(1, 1 + self.config["num_of_runs"]):
             print('')
             print(f'Run {run:02d}:')
             print('')
 
             self.model.reset_parameters()
-            self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.001)
+            self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.config["lr"])
 
             best_val_acc = final_test_acc = 0
-            for epoch in range(1, 101):
+            for epoch in range(1, 1 + self.config["num_of_epochs"]):
                 loss, acc = self.train(epoch)
-                print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
+                print(f'Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
 
-                if epoch > 50 and epoch % 10 == 0:
+                if epoch % 10 == 0:
                     train_acc, val_acc, test_acc = self.test()
                     print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
                         f'Test: {test_acc:.4f}')
-
                     if val_acc > best_val_acc:
                         best_val_acc = val_acc
                         final_test_acc = test_acc
             test_accs.append(final_test_acc)
-
         test_acc = torch.tensor(test_accs)
         print('============================')
         print(f'Final Test: {test_acc.mean():.4f} ± {test_acc.std():.4f}')
