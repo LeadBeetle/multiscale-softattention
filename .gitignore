@@ -9,6 +9,8 @@ __pycache__
 models/checkpoints
 models/binaries
 
+checkpoints/*
+
 data/*
 # Tensorboard dump dir
 runs/
