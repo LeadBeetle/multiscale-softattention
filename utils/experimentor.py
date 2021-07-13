@@ -1,3 +1,4 @@
+from models.GATv2 import GATV2
 import os.path as osp
 
 import torch 
@@ -15,7 +16,7 @@ class Experimentor:
         print("torch.cuda is available:", torch.cuda.is_available())
         self.config = config
         self.dataset_name = config["dataset_name"]
-        print(self.dataset_name)
+        print("Used Dataset:", self.dataset_name)
         self.initData()
      
     def initData(self):
@@ -35,8 +36,12 @@ class Experimentor:
                                         num_workers=self.config["num_workers"])  
         self.device = torch.device('cuda' if torch.cuda.is_available() and not self.config['force_cpu'] else 'cpu')
         
-        self.model = GAT(self.dataset.num_features, self.config["hidden_size"], self.dataset.num_classes, num_layers=self.config["num_of_layers"],
-            heads=self.config["num_heads"], dataset = self.dataset, device = self.device)
+        if self.config["model_type"] == ModelType.GATV1:
+            self.model = GAT(self.dataset.num_features, self.config["hidden_size"], self.dataset.num_classes, num_layers=self.config["num_of_layers"],
+                heads=self.config["num_heads"], dataset = self.dataset, device = self.device)
+        elif self.config["model_type"] == ModelType.GATV2:
+            self.model = GATV2(self.dataset.num_features, self.config["hidden_size"], self.dataset.num_classes, num_layers=self.config["num_of_layers"],
+                heads=self.config["num_heads"], dataset = self.dataset, device = self.device)    
         
         self.model = self.model.to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.config["lr"])
