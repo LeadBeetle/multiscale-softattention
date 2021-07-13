@@ -1,10 +1,12 @@
 # Graph Neural Networks with Multiscale Soft Attention
 
 ## Table Of Contents
-- [Einleitung](#einleitung)
-- [Aufgabenstellung](#aufgabenstellung)
-- [Code Explainer](#code-explainer)
-- [Datensätze](#datensätze)
+- [Graph Neural Networks with Multiscale Soft Attention](#graph-neural-networks-with-multiscale-soft-attention)
+  - [Table Of Contents](#table-of-contents)
+  - [Einleitung](#einleitung)
+  - [Aufgabenstellung](#aufgabenstellung)
+  - [Code Explainer](#code-explainer)
+  - [Datensätze](#datensätze)
 
 ## Einleitung
 
@@ -23,6 +25,7 @@ Bisher von Marco bereitgestellte Literatur:
 - [How Attentive are Graph Attention Networks? (GATV2)](https://arxiv.org/abs/2105.14491)
 - [Graph Representation Learning](https://www.cs.mcgill.ca/~wlh/grl_book/files/GRL_Book.pdf)
 - [Geometric Deep Learning: Grids, Groups, Graphs, Geodesics, and Gauges](https://arxiv.org/abs/2104.13478)
+- [Label Prediction With Graph Transformers](https://arxiv.org/abs/2009.03509)
 
 
 ## Aufgabenstellung
