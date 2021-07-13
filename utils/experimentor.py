@@ -1,4 +1,4 @@
-from models.GATv2 import GATV2
+
 import os.path as osp
 
 import torch 
@@ -8,6 +8,9 @@ from torch_geometric.data import NeighborSampler
 import torch.nn.functional as F
 
 from models.GAT import GAT
+from models.GATv2 import GATV2
+from models.Transformer import Transformer
+
 from utils.constants import * 
 
 class Experimentor:
@@ -41,6 +44,9 @@ class Experimentor:
                 heads=self.config["num_heads"], dataset = self.dataset, device = self.device)
         elif self.config["model_type"] == ModelType.GATV2:
             self.model = GATV2(self.dataset.num_features, self.config["hidden_size"], self.dataset.num_classes, num_layers=self.config["num_of_layers"],
+                heads=self.config["num_heads"], dataset = self.dataset, device = self.device)  
+        elif self.config["model_type"] == ModelType.TRANS:
+            self.model = Transformer(self.dataset.num_features, self.config["hidden_size"], self.dataset.num_classes, num_layers=self.config["num_of_layers"],
                 heads=self.config["num_heads"], dataset = self.dataset, device = self.device)    
         
         self.model = self.model.to(self.device)
