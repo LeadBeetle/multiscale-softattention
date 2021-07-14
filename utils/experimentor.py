@@ -44,10 +44,10 @@ class Experimentor:
             ##Currently not supported since multi-task dataset
             _, col = data.edge_index
             data.x = scatter(data.edge_attr, col, 0, dim_size=data.num_nodes, reduce='add')
-            data.y = data.y[:,:1].to(torch.float)
+            #data.y = data.y[:,:1].to(torch.float)
             self.criterion = torch.nn.BCEWithLogitsLoss()
         if self.config["model_type"] == ModelType.GATV1:
-            self.model = GAT(self.dataset.num_features, self.config["hidden_size"], 1, num_layers=self.config["num_of_layers"],
+            self.model = GAT(self.dataset.num_features, self.config["hidden_size"], self.dataset.num_classes, num_layers=self.config["num_of_layers"],
                 heads=self.config["num_heads"], dataset = self.dataset, dropout = self.config["dropout"], device = self.device)
         elif self.config["model_type"] == ModelType.GATV2:
             self.model = GATV2(self.dataset.num_features, self.config["hidden_size"], self.dataset.num_classes, num_layers=self.config["num_of_layers"],
@@ -62,7 +62,6 @@ class Experimentor:
         
         self.x = data.x.to(self.device)
         self.y = data.y.squeeze().to(self.device)
-        print("sffj", self.y)
          
     def train(self, epoch):
         self.model.train()
