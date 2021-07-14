@@ -65,8 +65,10 @@ class Experimentor:
          
     def train(self, epoch):
         self.model.train()
-        pbar = tqdm(total=self.train_idx.size(0))
-        pbar.set_description(f'Epoch {epoch:02d}')
+        do_logging = epoch == 1 or self.config["do_train_tqdm_logging"]
+        if do_logging:
+            pbar = tqdm(total=self.train_idx.size(0))
+            pbar.set_description(f'Epoch {epoch:02d}')
         total_loss = total_correct = 0
         for batch_size, n_id, adjs in self.train_loader:
             # `adjs` holds a list of `(edge_index, e_id, size)` tuples.
@@ -79,9 +81,11 @@ class Experimentor:
 
             total_loss += float(loss)
             total_correct += int(out.argmax(dim=-1).eq(self.y[n_id[:batch_size]]).sum())
-            pbar.update(batch_size)
+            if do_logging:
+                pbar.update(batch_size)
 
-        pbar.close()
+        if do_logging:
+            pbar.close()
 
         loss = total_loss / len(self.train_loader)
         approx_acc = total_correct / self.train_idx.size(0)
@@ -128,7 +132,9 @@ class Experimentor:
             waited_iterations = 0
             for epoch in range(1, 1 + self.config["num_of_epochs"]):
                 loss, acc = self.train(epoch)
-                print(f'Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
+                do_logging = epoch % self.config["console_log_freq"] == 0 or epoch == 1
+                if do_logging:
+                    print(f'Epoch {epoch:02d}: Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
 
                 if epoch % test_freq == 0:
                     train_acc, val_acc, test_acc = self.test()
