@@ -10,7 +10,7 @@ from torch_scatter import scatter
 import numpy as np
 
 from models.GAT import GAT
-from models.GATv2 import GATV2
+from models.GATV2 import GATV2
 from models.Transformer import Transformer
 
 from utils.constants import * 
