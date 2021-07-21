@@ -5,6 +5,7 @@ import torch
 from tqdm import tqdm
 from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
 from torch_geometric.data import NeighborSampler
+from torch_geometric.data import GraphSAINTRandomWalkSampler
 import torch.nn.functional as F
 from torch_scatter import scatter
 import numpy as np
@@ -30,39 +31,51 @@ class Experimentor:
         self.dataset = PygNodePropPredDataset(datasetMapping[self.dataset_name], root)
         self.split_idx = self.dataset.get_idx_split()
         self.evaluator = Evaluator(name=datasetMapping[self.dataset_name])
-        data = self.dataset[0]
+        self.data = self.dataset[0]
         self.train_idx = self.split_idx['train']
-        self.train_loader = NeighborSampler(data.edge_index, node_idx=self.train_idx,
-                                    sizes=[10] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
-                                    shuffle=True, num_workers=self.config["num_workers"])
-        self.subgraph_loader = NeighborSampler(data.edge_index, node_idx=None, sizes=[-1],
-                                        batch_size=self.config["test_batch_size"], shuffle=False,
-                                        num_workers=self.config["num_workers"])  
+        
         self.device = torch.device('cuda' if torch.cuda.is_available() and not self.config['force_cpu'] else 'cpu')
         self.criterion = F.nll_loss
+        
+        self.setLoaders()
+        
         if self.dataset_name == Dataset.OGBN_PROTEINS:
             ##Currently not supported since multi-task dataset
-            _, col = data.edge_index
-            data.x = scatter(data.edge_attr, col, 0, dim_size=data.num_nodes, reduce='add')
-            #data.y = data.y[:,:1].to(torch.float)
+            _, col = self.data.edge_index
+            self.data.x = scatter(self.data.edge_attr, col, 0, dim_size=self.data.num_nodes, reduce='add')
             self.criterion = torch.nn.BCEWithLogitsLoss()
+            
+        self.setModel()
+        
+        self.x = self.data.x.to(self.device)
+        self.y = self.data.y.squeeze().to(self.device)
+        
+    
+    def setLoaders(self):
+        if not self.config["use_saint"]:
+            self.train_loader = NeighborSampler(self.data.edge_index, node_idx=self.train_idx,
+                                        sizes=[10] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
+                                        shuffle=True, num_workers=self.config["num_workers"])
+            self.subgraph_loader = NeighborSampler(self.data.edge_index, node_idx=None, sizes=[-1],
+                                            batch_size=self.config["test_batch_size"], shuffle=False,
+                                            num_workers=self.config["num_workers"])  
+        else: 
+            self.loader = GraphSAINTRandomWalkSampler(self.data, batch_size = self.config["batch_size"], walk_length=30, num_steps=10,)
+    
+    def setModel(self):
         if self.config["model_type"] == ModelType.GATV1:
             self.model = GAT(self.dataset.num_features, self.config["hidden_size"], self.dataset.num_classes, num_layers=self.config["num_of_layers"],
                 heads=self.config["num_heads"], dataset = self.dataset, dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"])
         elif self.config["model_type"] == ModelType.GATV2:
             self.model = GATV2(self.dataset.num_features, self.config["hidden_size"], self.dataset.num_classes, num_layers=self.config["num_of_layers"],
-                heads=self.config["num_heads"], dataset = self.dataset, device = self.device)  
+                heads=self.config["num_heads"], dataset = self.dataset, dropout = self.config["dropout"], device = self.device)  
         elif self.config["model_type"] == ModelType.TRANS:
             self.model = Transformer(self.dataset.num_features, self.config["hidden_size"], self.dataset.num_classes, num_layers=self.config["num_of_layers"],
-                heads=self.config["num_heads"], dataset = self.dataset, device = self.device)    
+                heads=self.config["num_heads"], dataset = self.dataset, dropout = self.config["dropout"], device = self.device)    
         
         self.model = self.model.to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.config["lr"])
-        
-        
-        self.x = data.x.to(self.device)
-        self.y = data.y.squeeze().to(self.device)
-         
+               
     def train(self, epoch):
         self.model.train()
         do_logging = epoch == 1 or self.config["do_train_tqdm_logging"]
@@ -89,6 +102,34 @@ class Experimentor:
 
         loss = total_loss / len(self.train_loader)
         approx_acc = total_correct / self.train_idx.size(0)
+
+        return loss, approx_acc
+
+    def trainSaint(self, epoch):
+        self.model.train()
+        do_logging = epoch == 1 or self.config["do_train_tqdm_logging"]
+        if do_logging:
+            pbar = tqdm(total=self.train_idx.size(0))
+            pbar.set_description(f'Epoch {epoch:02d}')
+        total_loss = total_examples = 0
+        for data in self.loader:
+            data = data.to(self.device)
+            self.optimizer.zero_grad()
+
+            out = self.model(data.x, data.edge_index)
+            loss = F.nll_loss(out[data.train_mask], data.y[data.train_mask])
+
+            loss.backward()
+            self.optimizer.step()
+            total_loss += loss.item() * data.num_nodes
+            total_examples += data.num_nodes
+            if do_logging:
+                pbar.update(self.batch_size)
+        if do_logging:
+            pbar.close()
+
+        loss = total_loss / len(self.train_loader)
+        approx_acc = total_examples / self.train_idx.size(0)
 
         return loss, approx_acc
 
@@ -131,7 +172,10 @@ class Experimentor:
             best_val_acc = final_test_acc = 0
             waited_iterations = 0
             for epoch in range(1, 1 + self.config["num_of_epochs"]):
-                loss, acc = self.train(epoch)
+                if not self.config["use_saint"]:
+                    loss, acc = self.train(epoch)
+                else:
+                    loss, acc = self.trainSaint(epoch)
                 do_logging = epoch % self.config["console_log_freq"] == 0 or epoch == 1
                 if do_logging:
                     print(f'Epoch {epoch:02d}| Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
