@@ -1,4 +1,4 @@
-from models.Net import Net
+from models.base.Net import Net
 import torch
 
 from torch_geometric.nn import GATConv
@@ -15,7 +15,7 @@ class GAT(Net):
         
         self.convs = torch.nn.ModuleList()
         self.convs.append(GATConv(dataset.num_features, hidden_channels,
-                                  heads))
+                                  heads, dropout=dropout))
         
         self._layers_normalization = []
         if self._use_layer_norm:
@@ -23,14 +23,14 @@ class GAT(Net):
         
         for _ in range(num_layers - 2):
             self.convs.append(
-                GATConv(heads * hidden_channels, hidden_channels, heads))
+                GATConv(heads * hidden_channels, hidden_channels, heads, dropout=dropout))
             if self._use_layer_norm:
                 self._layers_normalization.append(
                     torch.nn.LayerNorm(hidden_channels)
                 )
         self.convs.append(
             GATConv(heads * hidden_channels, out_channels, heads,
-                    concat=False))
+                    concat=False, dropout=dropout))
         if self._use_layer_norm:
                 self._layers_normalization.append(
                     torch.nn.LayerNorm(out_channels)
