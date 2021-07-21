@@ -8,22 +8,24 @@ from tqdm import tqdm
 
 class GAT(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 heads, dataset, device):
+                 heads, dataset, dropout, device):
         super(GAT, self).__init__()
 
         self.device = device
         self.num_layers = num_layers
-
+        self._dropout = dropout
+        
         self.convs = torch.nn.ModuleList()
         self.convs.append(GATConv(dataset.num_features, hidden_channels,
                                   heads))
+        
+        
         for _ in range(num_layers - 2):
             self.convs.append(
                 GATConv(heads * hidden_channels, hidden_channels, heads))
         self.convs.append(
             GATConv(heads * hidden_channels, out_channels, heads,
                     concat=False))
-
         self.skips = torch.nn.ModuleList()
         self.skips.append(Lin(dataset.num_features, hidden_channels * heads))
         for _ in range(num_layers - 2):
@@ -48,9 +50,10 @@ class GAT(torch.nn.Module):
             x_target = x[:size[1]]  # Target nodes are always placed first.
             x = self.convs[i]((x, x_target), edge_index)
             x = x + self.skips[i](x_target)
+            
             if i != self.num_layers - 1:
                 x = F.elu(x)
-                x = F.dropout(x, p=0.5, training=self.training)
+                x = F.dropout(x, p=self._dropout, training=self.training)
         return x.log_softmax(dim=-1)
 
     def inference(self, x_all, loader):
