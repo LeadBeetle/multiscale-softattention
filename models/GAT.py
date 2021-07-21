@@ -8,30 +8,44 @@ from tqdm import tqdm
 
 class GAT(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 heads, dataset, dropout, device):
+                 heads, dataset, dropout, device, use_layer_norm=False):
         super(GAT, self).__init__()
 
         self.device = device
         self.num_layers = num_layers
         self._dropout = dropout
+        self._use_layer_norm=use_layer_norm
         
         self.convs = torch.nn.ModuleList()
         self.convs.append(GATConv(dataset.num_features, hidden_channels,
                                   heads))
         
+        self._layers_normalization = []
+        if self._use_layer_norm:
+            self._layers_normalization.append(torch.nn.LayerNorm(hidden_channels))
         
         for _ in range(num_layers - 2):
             self.convs.append(
                 GATConv(heads * hidden_channels, hidden_channels, heads))
+            if self._use_layer_norm:
+                self._layers_normalization.append(
+                    torch.nn.LayerNorm(hidden_channels)
+                )
         self.convs.append(
             GATConv(heads * hidden_channels, out_channels, heads,
                     concat=False))
+        if self._use_layer_norm:
+                self._layers_normalization.append(
+                    torch.nn.LayerNorm(out_channels)
+                )
         self.skips = torch.nn.ModuleList()
         self.skips.append(Lin(dataset.num_features, hidden_channels * heads))
         for _ in range(num_layers - 2):
             self.skips.append(
                 Lin(hidden_channels * heads, hidden_channels * heads))
         self.skips.append(Lin(hidden_channels * heads, out_channels))
+        self.layer_normalizations = torch.nn.ModuleList(self._layers_normalization)
+        
 
     def reset_parameters(self):
         for conv in self.convs:
@@ -49,8 +63,9 @@ class GAT(torch.nn.Module):
         for i, (edge_index, _, size) in enumerate(adjs):
             x_target = x[:size[1]]  # Target nodes are always placed first.
             x = self.convs[i]((x, x_target), edge_index)
+            if self._use_layer_norm:
+                x = self._layers_normalization[i](x)
             x = x + self.skips[i](x_target)
-            
             if i != self.num_layers - 1:
                 x = F.elu(x)
                 x = F.dropout(x, p=self._dropout, training=self.training)
