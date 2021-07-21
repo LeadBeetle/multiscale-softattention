@@ -85,7 +85,6 @@ class Experimentor:
         total_loss = total_correct = 0
         for batch_size, n_id, adjs in self.train_loader:
             # `adjs` holds a list of `(edge_index, e_id, size)` tuples.
-            print(adjs)
             adjs = [adj.to(self.device) for adj in adjs]
             self.optimizer.zero_grad()
             out = self.model(self.x[n_id], adjs)
