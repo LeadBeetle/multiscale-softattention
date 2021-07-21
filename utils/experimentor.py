@@ -48,7 +48,7 @@ class Experimentor:
             self.criterion = torch.nn.BCEWithLogitsLoss()
         if self.config["model_type"] == ModelType.GATV1:
             self.model = GAT(self.dataset.num_features, self.config["hidden_size"], self.dataset.num_classes, num_layers=self.config["num_of_layers"],
-                heads=self.config["num_heads"], dataset = self.dataset, dropout = self.config["dropout"], device = self.device)
+                heads=self.config["num_heads"], dataset = self.dataset, dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"])
         elif self.config["model_type"] == ModelType.GATV2:
             self.model = GATV2(self.dataset.num_features, self.config["hidden_size"], self.dataset.num_classes, num_layers=self.config["num_of_layers"],
                 heads=self.config["num_heads"], dataset = self.dataset, device = self.device)  
@@ -134,7 +134,7 @@ class Experimentor:
                 loss, acc = self.train(epoch)
                 do_logging = epoch % self.config["console_log_freq"] == 0 or epoch == 1
                 if do_logging:
-                    print(f'Epoch {epoch:02d}: Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
+                    print(f'Epoch {epoch:02d}| Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
 
                 if epoch % test_freq == 0:
                     train_acc, val_acc, test_acc = self.test()
@@ -145,7 +145,7 @@ class Experimentor:
                         best_val_acc = val_acc
                         final_test_acc = test_acc
                         waited_iterations = 0
-                    if waited_iterations > self.config["patience_period"]:
+                    if waited_iterations >= self.config["patience_period"]:
                         break
                         
             test_accs.append(final_test_acc)
