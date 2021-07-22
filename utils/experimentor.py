@@ -11,7 +11,7 @@ from torch_scatter import scatter
 import numpy as np
 
 from models.GAT import GAT
-from models.GATV2 import GATV2
+from models.GATv2 import GATV2
 from models.Transformer import Transformer
 
 from utils.constants import * 
@@ -52,6 +52,7 @@ class Experimentor:
         
     
     def setLoaders(self):
+        print(self.data)
         if not self.config["use_saint"]:
             self.train_loader = NeighborSampler(self.data.edge_index, node_idx=self.train_idx,
                                         sizes=[10] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
