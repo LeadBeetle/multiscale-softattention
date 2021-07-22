@@ -2,9 +2,6 @@ from models.base.Net import Net
 import torch
 
 from torch_geometric.nn import GATConv
-from torch.nn import Linear as Lin
-import torch.nn.functional as F
-from tqdm import tqdm
 
 
 class GAT(Net):

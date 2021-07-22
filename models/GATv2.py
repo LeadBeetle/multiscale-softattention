@@ -2,9 +2,6 @@ from models.base.Net import Net
 import torch
 
 from torch_geometric.nn import GATv2Conv
-from torch.nn import Linear as Lin
-import torch.nn.functional as F
-from tqdm import tqdm
 
 class GATV2(Net):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
