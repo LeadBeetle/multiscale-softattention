@@ -1,6 +1,5 @@
 import torch
 
-from torch_geometric.nn import GATConv
 from torch.nn import Linear as Lin
 import torch.nn.functional as F
 from tqdm import tqdm
@@ -46,6 +45,7 @@ class Net(torch.nn.Module):
             if i != self.num_layers - 1:
                 x = F.elu(x)
                 x = F.dropout(x, p=self._dropout, training=self.training)
+                              
         return x.log_softmax(dim=-1)
 
     def inference(self, x_all, loader):
