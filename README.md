@@ -59,10 +59,9 @@ In der folgenden Tabelle ist zu erkennen, dass in [Graph attention networks](htt
 
 Im Gegensatz dazu wurde in [How Attentive are Graph Attention Networks?](https://arxiv.org/abs/2105.14491) ausschließlich im induktiven Setting experimentiert. Im folgenden sind GAT-V1 und GAT-V2 auf den OGBN-Daten gegenübergestellt. Auf den obigen Daten wurde im Rahmen des Papers nicht experimentiert.  
 
-| GAT-V2-Datasets | Nodes | Edges | Classes | GAT-V1 | GAT-V2 |
-| :-------------: | :-------------: | :-------------: | :-------------: | :-------------: | :-------------: | 
-| [ogbn-arxiv](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-arxiv) | 169.343 |  1.166.243 | 40 | 71.54 | **71.87** | 
-| [ogbn-products](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-products) | 2.449.029 |  61.859.140 | 47 | 77.23 | **78.46** |
-| [ogbn-mag](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-mag) | 1.939.743 |  21.111.007 | 349 | 31.75 | **32.52** |
-| [ogbn-proteins](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-proteins) | 132.534 |  39.561.252 | 8 | 78.63 | **79.52** | 
-
+| GAT-V2-Datasets | Nodes | Edges | Classes | GAT-V1 | GAT-V2 | Transformer |
+| :-------------: | :-------------: | :-------------: | :-------------: | :-------------: | :-------------: | :-------:|
+| [ogbn-arxiv](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-arxiv) | 169.343 |  1.166.243 | 40 | 71.54(1h) | 71.87(1h) | **73.11** |
+| [ogbn-products](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-products) | 2.449.029 |  61.859.140 | 47 | 77.23(1h) | 80.63(1h) | **82.56** |
+| [ogbn-mag](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-mag) | 1.939.743 |  21.111.007 | 349 | 32.20(1h) | **32.61**(1h) | - |
+| [ogbn-proteins](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-proteins) | 132.534 |  39.561.252 | 8 | 78.63 | **79.52**(8h) | **86.42**(8h) |
