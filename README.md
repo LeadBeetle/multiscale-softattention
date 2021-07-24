@@ -64,4 +64,4 @@ Im Gegensatz dazu wurde in [How Attentive are Graph Attention Networks?](https:/
 | [ogbn-arxiv](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-arxiv) | 169.343 |  1.166.243 | 40 | 71.54(1h) | 71.87(1h) | **73.11** |
 | [ogbn-products](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-products) | 2.449.029 |  61.859.140 | 47 | 77.23(1h) | 80.63(1h) | **82.56** |
 | [ogbn-mag](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-mag) | 1.939.743 |  21.111.007 | 349 | 32.20(1h) | **32.61**(1h) | - |
-| [ogbn-proteins](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-proteins) | 132.534 |  39.561.252 | 8 | 78.63 | **79.52**(8h) | **86.42**(8h) |
+| [ogbn-proteins (ROC-AUC)](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-proteins) | 132.534 |  39.561.252 | 8 | 78.63 | **79.52**(8h) | **86.42**(8h) |
