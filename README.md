@@ -26,6 +26,7 @@ Bisher von Marco bereitgestellte Literatur:
 - [Graph Representation Learning](https://www.cs.mcgill.ca/~wlh/grl_book/files/GRL_Book.pdf)
 - [Geometric Deep Learning: Grids, Groups, Graphs, Geodesics, and Gauges](https://arxiv.org/abs/2104.13478)
 - [Label Prediction With Graph Transformers](https://arxiv.org/abs/2009.03509)
+- [Multi-Hop - Motif-Based](https://arxiv.org/abs/1809.07697)
 
 
 ## Aufgabenstellung
