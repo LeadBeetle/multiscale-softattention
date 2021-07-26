@@ -37,7 +37,6 @@ class Experimentor:
         self.device = torch.device('cuda' if torch.cuda.is_available() and not self.config['force_cpu'] else 'cpu')
         self.criterion = F.nll_loss
         
-        self.setLoaders()
         
         if self.dataset_name == Dataset.OGBN_PROTEINS:
             ##Currently not supported since multi-task dataset
