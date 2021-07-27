@@ -43,8 +43,6 @@ class Experimentor:
     
     def setLoaders(self):
         edge_index = self.data.edge_index
-        self.x = self.data.x
-        self.y = self.data.y
         if self.dataset_name == Dataset.OGBN_PROTEINS:
             ##Currently not supported since multi-task dataset
             _, col = self.data.edge_index
@@ -65,12 +63,12 @@ class Experimentor:
             # Convert to undirected paper <-> paper relation.
             edge_index = to_undirected(edge_index_dict[('paper', 'cites', 'paper')])
             edge_index_dict[('paper', 'cites', 'paper')] = edge_index
-            out = group_hetero_graph(self.data.edge_index_dict, self.data.num_nodes_dict)
+            out = group_hetero_graph(edge_index_dict, self.data.num_nodes_dict)
             edge_index, edge_type, node_type, idx, local2global, key2int = out
             self.train_idx = local2global['paper'][self.split_idx['train']['paper']]
             #self.train_idx = self.split_idx['train']["paper"]
-            self.x = self.data.x_dict["paper"]
-            self.y = self.data.y_dict["paper"]
+            self.data.x = self.data.x_dict["paper"]
+            self.data.y = self.data.y_dict["paper"]
             
         self.train_loader = NeighborSampler(edge_index, node_idx=self.train_idx,
                                     sizes=[10] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
@@ -79,8 +77,8 @@ class Experimentor:
                                         batch_size=self.config["test_batch_size"], shuffle=False,
                                         num_workers=self.config["num_workers"])  
         
-        self.x = self.x.to(self.device)
-        self.y = self.y.squeeze().to(self.device)
+        self.x = self.data.x.to(self.device)
+        self.y = self.data.y.squeeze().to(self.device)
     
     def setModel(self):
         if self.config["model_type"] == ModelType.GATV1:
