@@ -67,7 +67,8 @@ class Experimentor:
             edge_index_dict[('paper', 'cites', 'paper')] = edge_index
             out = group_hetero_graph(self.data.edge_index_dict, self.data.num_nodes_dict)
             edge_index, edge_type, node_type, idx, local2global, key2int = out
-            self.train_idx = self.split_idx['train']["paper"]
+            self.train_idx = local2global['paper'][self.split_idx['train']['paper']]
+            #self.train_idx = self.split_idx['train']["paper"]
             self.x = self.data.x_dict["paper"]
             self.y = self.data.y_dict["paper"]
             

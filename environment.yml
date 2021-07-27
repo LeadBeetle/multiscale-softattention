@@ -8,10 +8,10 @@ dependencies:
   - python=3.8.10
   - pip==21.1.2
   - ipykernel
-  - cudatoolkit
+  - cudatoolkit=11.1
   - torchaudio
   - torchvision
-  - pytorch
+  - pytorch=1.9.0
   - pytorch-geometric
   
   - pip:
