@@ -8,10 +8,10 @@ dependencies:
   - python=3.8.10
   - pip==21.1.2
   - ipykernel
-  - cudatoolkit==11.1.1
+  - cudatoolkit=11.1
   - torchaudio
   - torchvision
-  - pytorch
+  - pytorch=1.9.0
   - pytorch-geometric
   
   - pip:
@@ -22,7 +22,7 @@ dependencies:
     - scipy
     - scikit-learn
     - tensorboard
-    - networkx==2.6.1
-    - python-igraph==0.9.6
-    - pycairo==1.20.1
+    - networkx
+    - python-igraph
+    - pycairo
     - ogb
