@@ -43,6 +43,7 @@ class Experimentor:
             self.data.x = scatter(self.data.edge_attr, col, 0, dim_size=self.data.num_nodes, reduce='add')
             self.criterion = torch.nn.BCEWithLogitsLoss()
             
+        self.setLoaders()
         self.setModel()
         
         self.x = self.data.x.to(self.device)
