@@ -22,7 +22,7 @@ dependencies:
     - scipy
     - scikit-learn
     - tensorboard
-    - networkx==2.6.1
-    - python-igraph==0.9.6
-    - pycairo==1.20.1
+    - networkx
+    - python-igraph
+    - pycairo
     - ogb
