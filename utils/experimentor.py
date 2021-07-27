@@ -1,6 +1,7 @@
 import os.path as osp
 
-import torch 
+import torch
+from torch.functional import Tensor 
 from tqdm import tqdm
 from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
 from torch_geometric.data import NeighborSampler
@@ -42,43 +43,60 @@ class Experimentor:
           
     
     def setLoaders(self):
-        edge_index = self.data.edge_index
         if self.dataset_name == Dataset.OGBN_PROTEINS:
             ##Currently not supported since multi-task dataset
-            _, col = self.data.edge_index
-            self.data.x = scatter(self.data.edge_attr, col, 0, dim_size=self.data.num_nodes, reduce='add')
-            self.criterion = torch.nn.BCEWithLogitsLoss()
+            self.setProteinsData()
         elif self.dataset_name == Dataset.OGBN_MAG:
-            edge_index_dict = self.data.edge_index_dict
-            # We need to add reverse edges to the heterogeneous graph.
-            r, c = edge_index_dict[('author', 'affiliated_with', 'institution')]
-            edge_index_dict[('institution', 'to', 'author')] = torch.stack([c, r])
-
-            r, c = edge_index_dict[('author', 'writes', 'paper')]
-            edge_index_dict[('paper', 'to', 'author')] = torch.stack([c, r])
-
-            r, c = edge_index_dict[('paper', 'has_topic', 'field_of_study')]
-            edge_index_dict[('field_of_study', 'to', 'paper')] = torch.stack([c, r])
-
-            # Convert to undirected paper <-> paper relation.
-            edge_index = to_undirected(edge_index_dict[('paper', 'cites', 'paper')])
-            edge_index_dict[('paper', 'cites', 'paper')] = edge_index
-            out = group_hetero_graph(edge_index_dict, self.data.num_nodes_dict)
-            edge_index, edge_type, node_type, idx, local2global, key2int = out
-            self.train_idx = local2global['paper'][self.split_idx['train']['paper']]
-            #self.train_idx = self.split_idx['train']["paper"]
-            self.data.x = self.data.x_dict["paper"]
-            self.data.y = self.data.y_dict["paper"]
-            
-        self.train_loader = NeighborSampler(edge_index, node_idx=self.train_idx,
+            self.setMagData()
+        else:
+            self.x = self.data.x.to(self.device)
+            self.y = self.data.y.squeeze().to(self.device)
+        
+        self.train_loader = NeighborSampler(self.data.edge_index, node_idx=self.train_idx,
                                     sizes=[10] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
                                     shuffle=True, num_workers=self.config["num_workers"])
-        self.subgraph_loader = NeighborSampler(edge_index, node_idx=None, sizes=[-1],
+        self.subgraph_loader = NeighborSampler(self.data.edge_index, node_idx=None, sizes=[-1],
                                         batch_size=self.config["test_batch_size"], shuffle=False,
                                         num_workers=self.config["num_workers"])  
         
+    def setMagData(self):
+        edge_index_dict = self.data.edge_index_dict
+        r, c = edge_index_dict[('author', 'affiliated_with', 'institution')]
+        edge_index_dict[('institution', 'to', 'author')] = torch.stack([c, r])
+
+        r, c = edge_index_dict[('author', 'writes', 'paper')]
+        edge_index_dict[('paper', 'to', 'author')] = torch.stack([c, r])
+
+        r, c = edge_index_dict[('paper', 'has_topic', 'field_of_study')]
+        edge_index_dict[('field_of_study', 'to', 'paper')] = torch.stack([c, r])
+
+        edge_index = to_undirected(edge_index_dict[('paper', 'cites', 'paper')])
+        edge_index_dict[('paper', 'cites', 'paper')] = edge_index
+        out = group_hetero_graph(self.data.edge_index_dict, self.data.num_nodes_dict)
+        self.data.edge_index, edge_type, node_type, local_node_idx, local2global, key2int = out
+        
+        paper_idx = local2global['paper']
+        self.train_idx = paper_idx[self.split_idx['train']['paper']]
+        self.data.x = {}
+        for key, x in self.data.x_dict.items():
+            self.data.x[key2int[key]] = x
+        
+        self.data.x = {k: v for k, v in self.data.x.items()} 
+        self.data.x = self.data.x[3]
+         
+        self.data.y = node_type.new_full((node_type.size(0), 1), -1)
+        self.data.y[local2global['paper']] = self.data.y_dict['paper']
+        
+        
         self.x = self.data.x.to(self.device)
         self.y = self.data.y.squeeze().to(self.device)
+        
+        
+    def setProteinsData(self):   
+        _, col = self.data.edge_index
+        self.x = scatter(self.data.edge_attr, col, 0, dim_size=self.data.num_nodes, reduce='add').to(self.device())
+        self.y = self.data.y.squeeze().to(self.device)
+        self.criterion = torch.nn.BCEWithLogitsLoss()   
     
     def setModel(self):
         if self.config["model_type"] == ModelType.GATV1:
