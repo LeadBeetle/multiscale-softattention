@@ -1,4 +1,3 @@
-
 import os.path as osp
 
 import torch 
@@ -12,6 +11,8 @@ import numpy as np
 from models.GAT import GAT
 from models.GATv2 import GATV2
 from models.Transformer import Transformer
+from torch_geometric.utils.hetero import group_hetero_graph
+from torch_geometric.utils import to_undirected
 
 from utils.constants import * 
 
@@ -36,27 +37,49 @@ class Experimentor:
         self.device = torch.device('cuda' if torch.cuda.is_available() and not self.config['force_cpu'] else 'cpu')
         self.criterion = F.nll_loss
         
-        
+        self.setLoaders()
+        self.setModel()
+          
+    
+    def setLoaders(self):
+        edge_index = self.data.edge_index
+        self.x = self.data.x
+        self.y = self.data.y
         if self.dataset_name == Dataset.OGBN_PROTEINS:
             ##Currently not supported since multi-task dataset
             _, col = self.data.edge_index
             self.data.x = scatter(self.data.edge_attr, col, 0, dim_size=self.data.num_nodes, reduce='add')
             self.criterion = torch.nn.BCEWithLogitsLoss()
+        elif self.dataset_name == Dataset.OGBN_MAG:
+            edge_index_dict = self.data.edge_index_dict
+            # We need to add reverse edges to the heterogeneous graph.
+            r, c = edge_index_dict[('author', 'affiliated_with', 'institution')]
+            edge_index_dict[('institution', 'to', 'author')] = torch.stack([c, r])
+
+            r, c = edge_index_dict[('author', 'writes', 'paper')]
+            edge_index_dict[('paper', 'to', 'author')] = torch.stack([c, r])
+
+            r, c = edge_index_dict[('paper', 'has_topic', 'field_of_study')]
+            edge_index_dict[('field_of_study', 'to', 'paper')] = torch.stack([c, r])
+
+            # Convert to undirected paper <-> paper relation.
+            edge_index = to_undirected(edge_index_dict[('paper', 'cites', 'paper')])
+            edge_index_dict[('paper', 'cites', 'paper')] = edge_index
+            out = group_hetero_graph(self.data.edge_index_dict, self.data.num_nodes_dict)
+            edge_index, edge_type, node_type, idx, local2global, key2int = out
+            self.train_idx = self.split_idx['train']["paper"]
+            self.x = self.data.x_dict["paper"]
+            self.y = self.data.y_dict["paper"]
             
-        self.setLoaders()
-        self.setModel()
-        
-        self.x = self.data.x.to(self.device)
-        self.y = self.data.y.squeeze().to(self.device)
-        
-    
-    def setLoaders(self):
-        self.train_loader = NeighborSampler(self.data.edge_index, node_idx=self.train_idx,
+        self.train_loader = NeighborSampler(edge_index, node_idx=self.train_idx,
                                     sizes=[10] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
                                     shuffle=True, num_workers=self.config["num_workers"])
-        self.subgraph_loader = NeighborSampler(self.data.edge_index, node_idx=None, sizes=[-1],
+        self.subgraph_loader = NeighborSampler(edge_index, node_idx=None, sizes=[-1],
                                         batch_size=self.config["test_batch_size"], shuffle=False,
                                         num_workers=self.config["num_workers"])  
+        
+        self.x = self.x.to(self.device)
+        self.y = self.y.squeeze().to(self.device)
     
     def setModel(self):
         if self.config["model_type"] == ModelType.GATV1:
