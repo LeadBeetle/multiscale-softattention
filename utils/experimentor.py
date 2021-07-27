@@ -5,7 +5,6 @@ import torch
 from tqdm import tqdm
 from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
 from torch_geometric.data import NeighborSampler
-from torch_geometric.data import GraphSAINTRandomWalkSampler
 import torch.nn.functional as F
 from torch_scatter import scatter
 import numpy as np
@@ -51,16 +50,12 @@ class Experimentor:
         
     
     def setLoaders(self):
-        print(self.data)
-        if not self.config["use_saint"]:
-            self.train_loader = NeighborSampler(self.data.edge_index, node_idx=self.train_idx,
-                                        sizes=[10] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
-                                        shuffle=True, num_workers=self.config["num_workers"])
-            self.subgraph_loader = NeighborSampler(self.data.edge_index, node_idx=None, sizes=[-1],
-                                            batch_size=self.config["test_batch_size"], shuffle=False,
-                                            num_workers=self.config["num_workers"])  
-        else: 
-            self.loader = GraphSAINTRandomWalkSampler(self.data, batch_size = self.config["batch_size"], walk_length=30, num_steps=10,)
+        self.train_loader = NeighborSampler(self.data.edge_index, node_idx=self.train_idx,
+                                    sizes=[10] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
+                                    shuffle=True, num_workers=self.config["num_workers"])
+        self.subgraph_loader = NeighborSampler(self.data.edge_index, node_idx=None, sizes=[-1],
+                                        batch_size=self.config["test_batch_size"], shuffle=False,
+                                        num_workers=self.config["num_workers"])  
     
     def setModel(self):
         if self.config["model_type"] == ModelType.GATV1:
@@ -105,34 +100,6 @@ class Experimentor:
 
         return loss, approx_acc
 
-    def trainSaint(self, epoch):
-        self.model.train()
-        do_logging = epoch == 1 or self.config["do_train_tqdm_logging"]
-        if do_logging:
-            pbar = tqdm(total=self.train_idx.size(0))
-            pbar.set_description(f'Epoch {epoch:02d}')
-        total_loss = total_examples = 0
-        for data in self.loader:
-            data = data.to(self.device)
-            self.optimizer.zero_grad()
-
-            out = self.model(data.x, data.edge_index)
-            loss = F.nll_loss(out[data.train_mask], data.y[data.train_mask])
-
-            loss.backward()
-            self.optimizer.step()
-            total_loss += loss.item() * data.num_nodes
-            total_examples += data.num_nodes
-            if do_logging:
-                pbar.update(self.batch_size)
-        if do_logging:
-            pbar.close()
-
-        loss = total_loss / len(self.train_loader)
-        approx_acc = total_examples / self.train_idx.size(0)
-
-        return loss, approx_acc
-
     @torch.no_grad()
     def test(self):
         self.model.eval()
@@ -172,10 +139,7 @@ class Experimentor:
             best_val_acc = final_test_acc = 0
             waited_iterations = 0
             for epoch in range(1, 1 + self.config["num_of_epochs"]):
-                if not self.config["use_saint"]:
-                    loss, acc = self.train(epoch)
-                else:
-                    loss, acc = self.trainSaint(epoch)
+                loss, acc = self.train(epoch)
                 do_logging = epoch % self.config["console_log_freq"] == 0 or epoch == 1
                 if do_logging:
                     print(f'Epoch {epoch:02d}| Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
