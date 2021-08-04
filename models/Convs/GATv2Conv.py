@@ -175,14 +175,14 @@ class GATv2Conv(MessagePassing):
 
     def message(self, x_j: Tensor, x_i: Tensor,
                 index: Tensor, ptr: OptTensor,
-                size_i: Optional[int]) -> Tensor:
+                size_i: Optional[int], edge_weight: Tensor) -> Tensor:
         x = x_i + x_j
         x = F.leaky_relu(x, self.negative_slope)
         alpha = (x * self.att).sum(dim=-1)
         alpha = softmax(alpha, index, ptr, size_i)
         self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
-        return x_j * alpha.unsqueeze(-1)
+        return  x_j * (edge_weight.view(-1, 1)*alpha).unsqueeze(-1)
 
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,

@@ -141,14 +141,15 @@ class GATConv(MessagePassing):
                     num_nodes = min(num_nodes, x_r.size(0))
                 if size is not None:
                     num_nodes = min(size[0], size[1])
-                edge_index, _ = remove_self_loops(edge_index)
-                edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
+                
+                edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
+                edge_index, edge_weight = add_self_loops(edge_index, edge_weight=edge_weight, num_nodes=num_nodes)
             elif isinstance(edge_index, SparseTensor):
                 edge_index = set_diag(edge_index)
                 
         
         # propagate_type: (x: OptPairTensor, alpha: OptPairTensor)
-        out = self.propagate(edge_index, x=(x_l, x_r),
+        out = self.propagate(edge_index=edge_index, x=(x_l, x_r),
                              alpha=(alpha_l, alpha_r), size=size, edge_weight=edge_weight)
 
         alpha = self._alpha
@@ -173,13 +174,13 @@ class GATConv(MessagePassing):
 
     def message(self, x_j: Tensor, alpha_j: Tensor, alpha_i: OptTensor,
                 index: Tensor, ptr: OptTensor,
-                size_i: Optional[int]) -> Tensor:
+                size_i: Optional[int], edge_weight: Tensor) -> Tensor:
         alpha = alpha_j if alpha_i is None else alpha_j + alpha_i
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, index, ptr, size_i)
         self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
-        return x_j * alpha.unsqueeze(-1)
+        return  x_j * (edge_weight.view(-1, 1)*alpha).unsqueeze(-1)
 
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,

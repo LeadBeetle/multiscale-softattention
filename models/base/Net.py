@@ -42,7 +42,7 @@ class Net(torch.nn.Module):
             
             x_target = x[:size[1]]  # Target nodes are always placed first.
             edge_index, edge_weight = one_step(edge_index, self.nbor_degree)
-            x = self.convs[i]((x, x_target), edge_index, edge_weight)
+            x = self.convs[i]((x, x_target), edge_index, edge_weight.to(self.device))
             if self._use_layer_norm:
                 x = self._layers_normalization[i](x)
             x = x + self.skips[i](x_target)
@@ -68,7 +68,7 @@ class Net(torch.nn.Module):
                 x = x_all[n_id].to(self.device)
                 x_target = x[:size[1]]
                 edge_index, edge_weight = one_step(edge_index, self.nbor_degree)
-                x = self.convs[i]((x, x_target), edge_index)
+                x = self.convs[i]((x, x_target), edge_index, edge_weight)
                 if self._use_layer_norm:
                     x = self._layers_normalization[i](x)
                 x = x + self.skips[i](x_target)

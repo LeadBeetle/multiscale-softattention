@@ -164,7 +164,7 @@ class TransformerConv(MessagePassing):
 
     def message(self, x_i: Tensor, x_j: Tensor, edge_attr: OptTensor,
                 index: Tensor, ptr: OptTensor,
-                size_i: Optional[int]) -> Tensor:
+                size_i: Optional[int], edge_weight: Tensor) -> Tensor:
 
         query = self.lin_query(x_i).view(-1, self.heads, self.out_channels)
         key = self.lin_key(x_j).view(-1, self.heads, self.out_channels)

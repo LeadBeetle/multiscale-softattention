@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.utils import to_dense_adj, to_scipy_sparse_matrix
+from torch_geometric.utils import to_dense_adj, degree
 
 
 def adj_times_x(adj, x):
@@ -16,4 +16,5 @@ def one_step(edge_index, x):
             edge_weight_k = 1/k * torch.ones(edge_index_k.size(1))
             edge_index = torch.cat((edge_index, edge_index_k), dim=1)
             edge_weight = torch.cat((edge_weight, edge_weight_k), dim=0)
+
     return edge_index, edge_weight
