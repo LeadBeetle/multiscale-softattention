@@ -100,9 +100,9 @@ class GATConv(MessagePassing):
         glorot(self.att_r)
         zeros(self.bias)
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
+    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj, edge_weight=None,
                 size: Size = None, return_attention_weights=None):
-        # type: (Union[Tensor, OptPairTensor], Tensor, Size, NoneType) -> Tensor  # noqa
+        # type: (Union[Tensor, OptPairTensor], Tensor, Tensor, Size, NoneType) -> Tensor  # noqa
         # type: (Union[Tensor, OptPairTensor], SparseTensor, Size, NoneType) -> Tensor  # noqa
         # type: (Union[Tensor, OptPairTensor], Tensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
         # type: (Union[Tensor, OptPairTensor], SparseTensor, Size, bool) -> Tuple[Tensor, SparseTensor]  # noqa

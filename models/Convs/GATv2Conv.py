@@ -104,9 +104,9 @@ class GATv2Conv(MessagePassing):
         glorot(self.att)
         zeros(self.bias)
 
-    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
+    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj, edge_weight=None,
                 size: Size = None, return_attention_weights: bool = None):
-        # type: (Union[Tensor, PairTensor], Tensor, Size, NoneType) -> Tensor  # noqa
+        # type: (Union[Tensor, PairTensor], Tensor, Tensor, Size, NoneType) -> Tensor  # noqa
         # type: (Union[Tensor, PairTensor], SparseTensor, Size, NoneType) -> Tensor  # noqa
         # type: (Union[Tensor, PairTensor], Tensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
         # type: (Union[Tensor, PairTensor], SparseTensor, Size, bool) -> Tuple[Tensor, SparseTensor]  # noqa

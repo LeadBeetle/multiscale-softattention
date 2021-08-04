@@ -136,7 +136,7 @@ class TransformerConv(MessagePassing):
         if self.beta:
             self.lin_beta.reset_parameters()
 
-    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
+    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj, edge_weight=None,
                 edge_attr: OptTensor = None):
         """"""
 
