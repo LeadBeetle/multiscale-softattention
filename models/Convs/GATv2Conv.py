@@ -182,7 +182,8 @@ class GATv2Conv(MessagePassing):
         alpha = softmax(alpha, index, ptr, size_i)
         self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
-        return  x_j * (edge_weight.view(-1, 1)*alpha).unsqueeze(-1)
+        edge_weight = edge_weight.view(-1, 1) if edge_weight != None else 1
+        return  x_j * (edge_weight*alpha).unsqueeze(-1)
 
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,

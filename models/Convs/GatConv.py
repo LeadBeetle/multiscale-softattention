@@ -174,13 +174,14 @@ class GATConv(MessagePassing):
 
     def message(self, x_j: Tensor, alpha_j: Tensor, alpha_i: OptTensor,
                 index: Tensor, ptr: OptTensor,
-                size_i: Optional[int], edge_weight: Tensor) -> Tensor:
+                size_i: Optional[int], edge_weight: OptTensor) -> Tensor:
         alpha = alpha_j if alpha_i is None else alpha_j + alpha_i
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, index, ptr, size_i)
         self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
-        return  x_j * (edge_weight.view(-1, 1)*alpha).unsqueeze(-1)
+        edge_weight = edge_weight.view(-1, 1) if edge_weight != None else 1
+        return  x_j * (edge_weight*alpha).unsqueeze(-1)
 
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,
