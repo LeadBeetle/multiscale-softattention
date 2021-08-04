@@ -101,13 +101,16 @@ class Experimentor:
     def setModel(self):
         if self.config["model_type"] == ModelType.GATV1:
             self.model = GAT(self.dataset.num_features, self.config["hidden_size"], self.dataset.num_classes, num_layers=self.config["num_of_layers"],
-                heads=self.config["num_heads"], dataset = self.dataset, dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"])
+                heads=self.config["num_heads"], dataset = self.dataset, dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
+                nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"])
         elif self.config["model_type"] == ModelType.GATV2:
             self.model = GATV2(self.dataset.num_features, self.config["hidden_size"], self.dataset.num_classes, num_layers=self.config["num_of_layers"],
-                heads=self.config["num_heads"], dataset = self.dataset, dropout = self.config["dropout"], device = self.device)  
+                heads=self.config["num_heads"], dataset = self.dataset, dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
+                nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"])  
         elif self.config["model_type"] == ModelType.TRANS:
             self.model = Transformer(self.dataset.num_features, self.config["hidden_size"], self.dataset.num_classes, num_layers=self.config["num_of_layers"],
-                heads=self.config["num_heads"], dataset = self.dataset, dropout = self.config["dropout"], device = self.device)    
+                heads=self.config["num_heads"], dataset = self.dataset, dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
+                nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"])    
         
         self.model = self.model.to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.config["lr"])

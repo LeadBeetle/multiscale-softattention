@@ -1,14 +1,14 @@
 from models.base.Net import Net
 import torch
 
-from models.Convs.GatConv import GATConv
+from models.convs.GatConv import GATConv
 
 
 class GAT(Net):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 heads, dataset, dropout, device, use_layer_norm=False):
+                 heads, dataset, dropout, device, use_layer_norm=False, nbor_degree=1, adj_mode=None):
         super(GAT, self).__init__(in_channels, hidden_channels, out_channels, num_layers,
-                 heads, dataset, dropout, device, use_layer_norm)
+                 heads, dataset, dropout, device, use_layer_norm, nbor_degree, adj_mode)
         
         self.convs = torch.nn.ModuleList()
         self.convs.append(GATConv(dataset.num_features, hidden_channels,
