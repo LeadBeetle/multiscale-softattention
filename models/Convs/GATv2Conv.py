@@ -145,8 +145,8 @@ class GATv2Conv(MessagePassing):
                     num_nodes = min(num_nodes, x_r.size(0))
                 if size is not None:
                     num_nodes = min(size[0], size[1])
-                edge_index, _ = remove_self_loops(edge_index)
-                edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
+                edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
+                edge_index, edge_weight = add_self_loops(edge_index, edge_weight=edge_weight, num_nodes=num_nodes)
             elif isinstance(edge_index, SparseTensor):
                 edge_index = set_diag(edge_index)
 
@@ -175,14 +175,15 @@ class GATv2Conv(MessagePassing):
 
     def message(self, x_j: Tensor, x_i: Tensor,
                 index: Tensor, ptr: OptTensor,
-                size_i: Optional[int]) -> Tensor:
+                size_i: Optional[int], edge_weight: Tensor) -> Tensor:
         x = x_i + x_j
         x = F.leaky_relu(x, self.negative_slope)
         alpha = (x * self.att).sum(dim=-1)
         alpha = softmax(alpha, index, ptr, size_i)
         self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
-        return x_j * alpha.unsqueeze(-1)
+        edge_weight = edge_weight.view(-1, 1) if edge_weight != None else 1
+        return  x_j * (edge_weight*alpha).unsqueeze(-1)
 
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,
