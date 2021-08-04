@@ -10,7 +10,7 @@ def one_step(edge_index, x):
     if x>1: 
         adj = to_dense_adj(edge_index)[0]
         for k in range(2,x+1):
-            adj_k = 1/k * (((adj_times_x(adj, k)>0)*1 - adj) > 0) * 1
+            adj_k = (adj_times_x(adj, k)>0)*1 - adj
             
             edge_index_k = (adj_k > 0).nonzero().t()
             edge_weight_k = 1/k * torch.ones(edge_index_k.size(1))
