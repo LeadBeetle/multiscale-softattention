@@ -3,17 +3,19 @@ import torch
 from torch.nn import Linear as Lin
 import torch.nn.functional as F
 from tqdm import tqdm
-
+from utils.utils import one_step
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 heads, dataset, dropout, device, use_layer_norm=False):
+                 heads, dataset, dropout, device, use_layer_norm=False, nbor_degree=1, adj_mode=None):
         super(Net, self).__init__()
 
         self.device = device
         self.num_layers = num_layers
         self._dropout = dropout
         self._use_layer_norm=use_layer_norm
+        self.nbor_degree = nbor_degree
+        self.adj_mode = adj_mode
         
         self.skips = torch.nn.ModuleList()
         self.skips.append(Lin(dataset.num_features, hidden_channels * heads))
@@ -37,8 +39,10 @@ class Net(torch.nn.Module):
         # Target nodes are also included in the source nodes so that one can
         # easily apply skip-connections or add self-loops.
         for i, (edge_index, _, size) in enumerate(adjs):
+            
             x_target = x[:size[1]]  # Target nodes are always placed first.
-            x = self.convs[i]((x, x_target), edge_index)
+            edge_index, edge_weight = one_step(edge_index, self.nbor_degree)
+            x = self.convs[i]((x, x_target), edge_index, edge_weight)
             if self._use_layer_norm:
                 x = self._layers_normalization[i](x)
             x = x + self.skips[i](x_target)
@@ -63,6 +67,7 @@ class Net(torch.nn.Module):
                 total_edges += edge_index.size(1)
                 x = x_all[n_id].to(self.device)
                 x_target = x[:size[1]]
+                edge_index, edge_weight = one_step(edge_index, self.nbor_degree)
                 x = self.convs[i]((x, x_target), edge_index)
                 if self._use_layer_norm:
                     x = self._layers_normalization[i](x)
