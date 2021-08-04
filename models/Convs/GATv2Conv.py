@@ -151,7 +151,7 @@ class GATv2Conv(MessagePassing):
                 edge_index = set_diag(edge_index)
 
         # propagate_type: (x: PairTensor)
-        out = self.propagate(edge_index, x=(x_l, x_r), size=size)
+        out = self.propagate(edge_index, x=(x_l, x_r), size=size, edge_weight=edge_weight)
 
         alpha = self._alpha
         self._alpha = None

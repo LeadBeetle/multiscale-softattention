@@ -144,7 +144,7 @@ class TransformerConv(MessagePassing):
             x: PairTensor = (x, x)
 
         # propagate_type: (x: PairTensor, edge_attr: OptTensor)
-        out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=None)
+        out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=None, edge_weight=edge_weight)
 
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)

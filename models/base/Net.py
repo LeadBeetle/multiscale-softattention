@@ -68,7 +68,7 @@ class Net(torch.nn.Module):
                 x = x_all[n_id].to(self.device)
                 x_target = x[:size[1]]
                 edge_index, edge_weight = one_step(edge_index, self.nbor_degree)
-                x = self.convs[i]((x, x_target), edge_index, edge_weight)
+                x = self.convs[i]((x, x_target), edge_index)
                 if self._use_layer_norm:
                     x = self._layers_normalization[i](x)
                 x = x + self.skips[i](x_target)

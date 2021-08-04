@@ -114,7 +114,6 @@ class GATConv(MessagePassing):
                 attention weights for each edge. (default: :obj:`None`)
         """
         H, C = self.heads, self.out_channels
-
         x_l: OptTensor = None
         x_r: OptTensor = None
         alpha_l: OptTensor = None
@@ -132,6 +131,7 @@ class GATConv(MessagePassing):
             if x_r is not None:
                 x_r = self.lin_r(x_r).view(-1, H, C)
                 alpha_r = (x_r * self.att_r).sum(dim=-1)
+        
         assert x_l is not None
         assert alpha_l is not None
         if self.add_self_loops:
@@ -149,7 +149,7 @@ class GATConv(MessagePassing):
         
         # propagate_type: (x: OptPairTensor, alpha: OptPairTensor)
         out = self.propagate(edge_index, x=(x_l, x_r),
-                             alpha=(alpha_l, alpha_r), size=size)
+                             alpha=(alpha_l, alpha_r), size=size, edge_weight=edge_weight)
 
         alpha = self._alpha
         self._alpha = None
