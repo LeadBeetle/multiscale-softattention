@@ -1,7 +1,7 @@
 from models.base.Net import Net
 import torch
 
-from torch_geometric.nn import GATConv
+from models.Convs.GatConv import GATConv
 
 
 class GAT(Net):

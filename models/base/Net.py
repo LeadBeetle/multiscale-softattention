@@ -37,7 +37,10 @@ class Net(torch.nn.Module):
         # Target nodes are also included in the source nodes so that one can
         # easily apply skip-connections or add self-loops.
         for i, (edge_index, _, size) in enumerate(adjs):
+            
+            #print(torch.mm(edge_index, edge_index))
             x_target = x[:size[1]]  # Target nodes are always placed first.
+            
             x = self.convs[i]((x, x_target), edge_index)
             if self._use_layer_norm:
                 x = self._layers_normalization[i](x)
