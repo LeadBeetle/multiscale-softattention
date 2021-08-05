@@ -3,11 +3,12 @@ import torch
 from torch.nn import Linear as Lin
 import torch.nn.functional as F
 from tqdm import tqdm
-from utils.utils import one_step
+from utils.utils import one_step, one_step_sparse
+
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 heads, dataset, dropout, device, use_layer_norm=False, nbor_degree=1, adj_mode=None):
+                 heads, dataset, dropout, device, use_layer_norm=False, nbor_degree=1, adj_mode=None, sparse=True):
         super(Net, self).__init__()
 
         self.device = device
@@ -16,6 +17,9 @@ class Net(torch.nn.Module):
         self._use_layer_norm=use_layer_norm
         self.nbor_degree = nbor_degree
         self.adj_mode = adj_mode
+        self.sparse = sparse
+        
+        self.one_step_gen = one_step_sparse if sparse else one_step
         
         self.skips = torch.nn.ModuleList()
         self.skips.append(Lin(dataset.num_features, hidden_channels * heads))
@@ -41,9 +45,8 @@ class Net(torch.nn.Module):
         for i, (edge_index, _, size) in enumerate(adjs):
             
             x_target = x[:size[1]]  # Target nodes are always placed first.
-            edge_index, edge_weight = one_step(edge_index, self.nbor_degree)
-            if edge_weight != None:
-                edge_weight = edge_weight.to(self.device)
+            edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
+            
             x = self.convs[i]((x, x_target), edge_index, edge_weight)
             if self._use_layer_norm:
                 x = self._layers_normalization[i](x)
@@ -69,9 +72,8 @@ class Net(torch.nn.Module):
                 total_edges += edge_index.size(1)
                 x = x_all[n_id].to(self.device)
                 x_target = x[:size[1]]
-                edge_index, edge_weight = one_step(edge_index, self.nbor_degree)
-                if edge_weight != None:
-                    edge_weight = edge_weight.to(self.device)
+                
+                edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
                 x = self.convs[i]((x, x_target), edge_index, edge_weight)
                 if self._use_layer_norm:
                     x = self._layers_normalization[i](x)

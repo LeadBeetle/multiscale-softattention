@@ -6,9 +6,10 @@ import torch
 from torch import Tensor
 import torch.nn.functional as F
 from torch.nn import Parameter, Linear
-from torch_sparse import SparseTensor, set_diag
+from torch_sparse import SparseTensor, set_diag, matmul
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
+from torch_geometric.utils import remove_self_loops, add_self_loops, softmax, to_dense_adj
+from typing import List
 
 from torch_geometric.nn.inits import glorot, zeros
 
@@ -135,20 +136,18 @@ class GATConv(MessagePassing):
         assert x_l is not None
         assert alpha_l is not None
         if self.add_self_loops:
-            if isinstance(edge_index, Tensor):
+
+            if isinstance(edge_index, Tensor) :
                 num_nodes = x_l.size(0)
                 if x_r is not None:
                     num_nodes = min(num_nodes, x_r.size(0))
                 if size is not None:
                     num_nodes = min(size[0], size[1])
-                
                 edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
                 edge_index, edge_weight = add_self_loops(edge_index, edge_weight=edge_weight, num_nodes=num_nodes)
             elif isinstance(edge_index, SparseTensor):
                 edge_index = set_diag(edge_index)
-                
-        
-        # propagate_type: (x: OptPairTensor, alpha: OptPairTensor)
+
         out = self.propagate(edge_index=edge_index, x=(x_l, x_r),
                              alpha=(alpha_l, alpha_r), size=size, edge_weight=edge_weight)
 
@@ -172,9 +171,9 @@ class GATConv(MessagePassing):
         else:
             return out
 
-    def message(self, x_j: Tensor, alpha_j: Tensor, alpha_i: OptTensor,
+    def message(self, x_j: Tensor, x_i: Tensor, alpha_j:Tensor, alpha_i: Tensor,
                 index: Tensor, ptr: OptTensor,
-                size_i: Optional[int], edge_weight: OptTensor) -> Tensor:
+                size_i: Optional[int], edge_weight: Tensor) -> Tensor:
         alpha = alpha_j if alpha_i is None else alpha_j + alpha_i
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, index, ptr, size_i)
