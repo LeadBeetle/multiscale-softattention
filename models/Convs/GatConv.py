@@ -8,7 +8,7 @@ import torch.nn.functional as F
 from torch.nn import Parameter, Linear
 from torch_sparse import SparseTensor, set_diag, matmul
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
+from torch_geometric.utils import remove_self_loops, add_self_loops, softmax, to_dense_adj
 from typing import List
 
 from torch_geometric.nn.inits import glorot, zeros
@@ -72,7 +72,6 @@ class GATConv(MessagePassing):
         self.negative_slope = negative_slope
         self.dropout = dropout
         self.add_self_loops = add_self_loops
-        #self.fuse=True
 
         if isinstance(in_channels, int):
             self.lin_l = Linear(in_channels, heads * out_channels, bias=False)
@@ -148,7 +147,8 @@ class GATConv(MessagePassing):
                 edge_index, edge_weight = add_self_loops(edge_index, edge_weight=edge_weight, num_nodes=num_nodes)
             elif isinstance(edge_index, SparseTensor):
                 edge_index = set_diag(edge_index)
-        # propagate_type: (x: OptPairTensor, alpha: OptPairTensor)
+
+        print(edge_index)
         out = self.propagate(edge_index=edge_index, x=(x_l, x_r),
                              alpha=(alpha_l, alpha_r), size=size, edge_weight=edge_weight)
 

@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.utils import to_dense_adj, add_self_loops
+from torch_geometric.utils import to_dense_adj
 from torch_sparse import SparseTensor
 
 def one_step(edge_index, x, num_nodes, device):
