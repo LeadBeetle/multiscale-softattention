@@ -30,5 +30,4 @@ def one_step_sparse(edge_index, x, num_nodes, device):
             adj_k = adj_powers[k-1] - adj_powers[0]
             adj_k = torch.sparse_coo_tensor(adj_k._indices(), 1/k * (adj_k._values()>0)*1, size = size)
             adj = adj + adj_k   
-    #print("s", size)
     return SparseTensor.from_torch_sparse_coo_tensor(adj), None

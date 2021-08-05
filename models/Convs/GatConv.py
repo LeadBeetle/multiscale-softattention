@@ -149,7 +149,6 @@ class GATConv(MessagePassing):
             elif isinstance(edge_index, SparseTensor):
                 edge_index = set_diag(edge_index)
         # propagate_type: (x: OptPairTensor, alpha: OptPairTensor)
-        print(edge_index)
         out = self.propagate(edge_index=edge_index, x=(x_l, x_r),
                              alpha=(alpha_l, alpha_r), size=size, edge_weight=edge_weight)
 
@@ -181,7 +180,7 @@ class GATConv(MessagePassing):
         alpha = softmax(alpha, index, ptr, size_i)
         self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
-        edge_weight = edge_weight.view(-1, 1) if ew != None else 1
+        edge_weight = edge_weight.view(-1, 1) if edge_weight != None else 1
         return  x_j * (edge_weight*alpha).unsqueeze(-1)
 
     def __repr__(self):
