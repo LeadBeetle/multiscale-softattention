@@ -1,20 +1,20 @@
 
 import enum
 
-class AdjacencyMode(enum.Enum):
-    OneStep = 0,
-    Partial = 1
+class AdjacencyMode(str, enum.Enum):
+    OneStep = "OneStep",
+    Partial = "Partial"
 
-class ModelType(enum.Enum):
-      GATV1 = 0,
-      GATV2 = 1, 
-      TRANS = 2
+class ModelType(str, enum.Enum):
+      GATV1 = "GAT-V1",
+      GATV2 = "GAT-V2", 
+      TRANS = "TRANS"
       
-class Dataset(enum.Enum):
-    OGBN_ARXIV = 0,
-    OGBN_PRODUCTS = 1, 
-    OGBN_PROTEINS = 2,
-    OGBN_MAG = 3
+class Dataset(str, enum.Enum):
+    OGBN_ARXIV = 'ogbn-arxiv',
+    OGBN_PRODUCTS = 'ogbn-products',
+    OGBN_PROTEINS = 'ogbn-proteins',
+    OGBN_MAG = 'ogbn-mag'
     
 datasetMapping = {
     Dataset.OGBN_ARXIV: "ogbn-arxiv",

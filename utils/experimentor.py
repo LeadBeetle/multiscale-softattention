@@ -14,7 +14,7 @@ from models.GATv2 import GATV2
 from models.Transformer import Transformer
 from torch_geometric.utils.hetero import group_hetero_graph
 from torch_geometric.utils import to_undirected
-
+import json
 from utils.constants import * 
 
 class Experimentor:
@@ -171,7 +171,7 @@ class Experimentor:
     def run(self):
         test_freq = self.config['test_frequency'] or 10
 
-        test_accs = []
+        test_accs = train_accs = val_accs = []
         for run in range(1, 1 + self.config["num_of_runs"]):
             print('')
             print(f'Run {run:02d}:')
@@ -180,7 +180,7 @@ class Experimentor:
             self.model.reset_parameters()
             self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.config["lr"])
 
-            best_val_acc = final_test_acc = 0
+            best_val_acc = final_test_acc = final_train_acc = final_val_acc = 0
             waited_iterations = 0
             for epoch in range(1, 1 + self.config["num_of_epochs"]):
                 loss, acc = self.train(epoch)
@@ -196,11 +196,35 @@ class Experimentor:
                     if val_acc > best_val_acc:
                         best_val_acc = val_acc
                         final_test_acc = test_acc
+                        final_train_acc = train_acc
+                        final_val_acc = val_acc
                         waited_iterations = 0
                     if waited_iterations >= self.config["patience_period"]:
                         break
                         
             test_accs.append(final_test_acc)
+            train_accs.append(final_train_acc)
+            val_accs.append(final_val_acc)
+
         test_acc = torch.tensor(test_accs)
+        train_acc = torch.tensor(train_accs)
+        val_acc = torch.tensor(val_accs)
+
         print('============================')
+        print(f'Final Train: {train_acc.mean():.4f} ± {train_acc.std():.4f}')
+        print(f'Final Val: {val_acc.mean():.4f} ± {val_acc.std():.4f}')
         print(f'Final Test: {test_acc.mean():.4f} ± {test_acc.std():.4f}')
+
+        data = self.config
+             
+        data["a_train_acc_mean"] = str(train_acc.mean().item())
+        data["a_train_acc_std"] = str(train_acc.std().item())
+        data["a_val_acc_mean"] = str(val_acc.mean().item())
+        data["Z_val_acc_std"] = str(val_acc.std().item())
+        data["Z_test_acc_mean"] = str(test_acc.mean().item())
+        data["Z_test_acc_std"] = str(test_acc.std().item())
+
+        with open('results/test.json', 'w') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+
+        
