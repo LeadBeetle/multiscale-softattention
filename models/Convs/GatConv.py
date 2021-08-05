@@ -148,7 +148,6 @@ class GATConv(MessagePassing):
             elif isinstance(edge_index, SparseTensor):
                 edge_index = set_diag(edge_index)
 
-        print(edge_index)
         out = self.propagate(edge_index=edge_index, x=(x_l, x_r),
                              alpha=(alpha_l, alpha_r), size=size, edge_weight=edge_weight)
 
