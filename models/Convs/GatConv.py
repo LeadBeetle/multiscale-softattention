@@ -6,9 +6,10 @@ import torch
 from torch import Tensor
 import torch.nn.functional as F
 from torch.nn import Parameter, Linear
-from torch_sparse import SparseTensor, set_diag
+from torch_sparse import SparseTensor, set_diag, matmul
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
+from typing import List
 
 from torch_geometric.nn.inits import glorot, zeros
 
@@ -71,6 +72,7 @@ class GATConv(MessagePassing):
         self.negative_slope = negative_slope
         self.dropout = dropout
         self.add_self_loops = add_self_loops
+        #self.fuse=True
 
         if isinstance(in_channels, int):
             self.lin_l = Linear(in_channels, heads * out_channels, bias=False)
@@ -135,22 +137,21 @@ class GATConv(MessagePassing):
         assert x_l is not None
         assert alpha_l is not None
         if self.add_self_loops:
-            if isinstance(edge_index, Tensor):
+
+            if isinstance(edge_index, Tensor) :
                 num_nodes = x_l.size(0)
                 if x_r is not None:
                     num_nodes = min(num_nodes, x_r.size(0))
                 if size is not None:
                     num_nodes = min(size[0], size[1])
-                
                 edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
                 edge_index, edge_weight = add_self_loops(edge_index, edge_weight=edge_weight, num_nodes=num_nodes)
             elif isinstance(edge_index, SparseTensor):
                 edge_index = set_diag(edge_index)
-                
-        
+        #print(alpha_l.size(), alpha_r.size())
         # propagate_type: (x: OptPairTensor, alpha: OptPairTensor)
         out = self.propagate(edge_index=edge_index, x=(x_l, x_r),
-                             alpha=(alpha_l, alpha_r), size=size, edge_weight=edge_weight)
+                             alpha=(alpha_l, alpha_r), size=size, ew=edge_weight)
 
         alpha = self._alpha
         self._alpha = None
@@ -174,16 +175,46 @@ class GATConv(MessagePassing):
 
     def message(self, x_j: Tensor, alpha_j: Tensor, alpha_i: OptTensor,
                 index: Tensor, ptr: OptTensor,
-                size_i: Optional[int], edge_weight: OptTensor) -> Tensor:
+                size_i: Optional[int], ew: OptTensor) -> Tensor:
         alpha = alpha_j if alpha_i is None else alpha_j + alpha_i
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, index, ptr, size_i)
         self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
-        edge_weight = edge_weight.view(-1, 1) if edge_weight != None else 1
-        return  x_j * (edge_weight*alpha).unsqueeze(-1)
+        ew = ew.view(-1, 1) if ew != None else 1
+        return  x_j * (ew*alpha).unsqueeze(-1)
+
 
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,
                                              self.in_channels,
                                              self.out_channels, self.heads)
+
+    def __check_input__(self, edge_index, size):
+            the_size: List[Optional[int]] = [None, None]
+
+            if isinstance(edge_index, Tensor):
+                assert edge_index.dtype == torch.long
+                assert edge_index.dim() == 2
+                assert edge_index.size(0) == 2
+                if size is not None:
+                    the_size[0] = size[0]
+                    the_size[1] = size[1]
+                return the_size
+
+            elif isinstance(edge_index, SparseTensor):
+                if self.flow == 'target_to_source':
+                    raise ValueError(
+                        ('Flow direction "target_to_source" is invalid for '
+                        'message propagation via `torch_sparse.SparseTensor`. If '
+                        'you really want to make use of a reverse message '
+                        'passing flow, pass in the transposed sparse tensor to '
+                        'the message passing module, e.g., `adj_t.t()`.'))
+                the_size[0] = None # edge_index.sparse_size(1)
+                the_size[1] = None # edge_index.sparse_size(0)
+                return the_size
+
+            raise ValueError(
+                ('`MessagePassing.propagate` only supports `torch.LongTensor` of '
+                'shape `[2, num_messages]` or `torch_sparse.SparseTensor` for '
+                'argument `edge_index`.'))
