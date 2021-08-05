@@ -171,7 +171,7 @@ class GATConv(MessagePassing):
         else:
             return out
 
-    def message(self, x_j: Tensor, x_i: Tensor, alpha_j:Tensor, alpha_i: Tensor,
+    def message(self, x_j: Tensor, alpha_j:Tensor, alpha_i: Tensor,
                 index: Tensor, ptr: OptTensor,
                 size_i: Optional[int], edge_weight: Tensor) -> Tensor:
         alpha = alpha_j if alpha_i is None else alpha_j + alpha_i
