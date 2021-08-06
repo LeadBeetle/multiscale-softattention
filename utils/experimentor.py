@@ -15,6 +15,7 @@ from models.Transformer import Transformer
 from torch_geometric.utils.hetero import group_hetero_graph
 from torch_geometric.utils import to_undirected
 import json
+import datetime
 from utils.constants import * 
 
 class Experimentor:
@@ -224,7 +225,10 @@ class Experimentor:
         data["Z_test_acc_mean"] = str(test_acc.mean().item())
         data["Z_test_acc_std"] = str(test_acc.std().item())
 
-        with open('results/test.json', 'w') as f:
+
+        suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
+        filename = "_".join(["results/res", suffix, ".json"])
+        with open(filename, 'w') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
 
         
