@@ -19,7 +19,7 @@ config = {
     #'should_visualize': False,
     'batch_size': 1024,
     'test_batch_size': 1024,
-    'num_workers': 0,
+    'num_workers': 2,
     'force_cpu': False,
     'test_frequency': 10,
     'console_log_freq': 1,
