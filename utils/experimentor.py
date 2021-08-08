@@ -172,7 +172,9 @@ class Experimentor:
     def run(self):
         test_freq = self.config['test_frequency'] or 10
 
-        test_accs = train_accs = val_accs = []
+        test_accs = []
+        train_accs = []
+        val_accs = []
         for run in range(1, 1 + self.config["num_of_runs"]):
             print('')
             print(f'Run {run:02d}:')
@@ -181,7 +183,7 @@ class Experimentor:
             self.model.reset_parameters()
             self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.config["lr"])
 
-            best_val_acc = final_test_acc = final_train_acc = final_val_acc = 0
+            best_val_acc, final_test_acc, final_train_acc, final_val_acc = 0, 0, 0, 0
             waited_iterations = 0
             for epoch in range(1, 1 + self.config["num_of_epochs"]):
                 loss, acc = self.train(epoch)
