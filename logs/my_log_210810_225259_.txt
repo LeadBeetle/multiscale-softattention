@@ -22,3 +22,6 @@
 
 torch.cuda is available: True
 Used Dataset: ogbn-products
+
+Run 01:
+
