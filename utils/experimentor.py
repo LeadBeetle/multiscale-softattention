@@ -191,6 +191,7 @@ class Experimentor:
         for run in range(1, 1 + self.config["num_of_runs"]):
             logging.info('')
             logging.info(f'Run {run:02d}:')
+            print(f'Run {run:02d}:')
             logging.info('')
 
             self.model.reset_parameters()
@@ -203,10 +204,13 @@ class Experimentor:
                 do_logging = epoch % self.config["console_log_freq"] == 0 or epoch == 1
                 if do_logging:
                     logging.info(f'Epoch {epoch:02d}| Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
+                    print(f'Epoch {epoch:02d}| Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
 
                 if epoch % test_freq == 0:
                     train_acc, val_acc, test_acc = self.test()
                     logging.info(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
+                        f'Test: {test_acc:.4f}')
+                    print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
                         f'Test: {test_acc:.4f}')
                     waited_iterations += test_freq
                     if val_acc > best_val_acc:
