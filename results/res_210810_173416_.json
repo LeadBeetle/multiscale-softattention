@@ -4,8 +4,8 @@
     "num_of_epochs": 10000,
     "num_of_runs": 3,
     "patience_period": 110,
-    "batch_size": 20000,
-    "test_batch_size": 20000,
+    "batch_size": 1024,
+    "test_batch_size": 1024,
     "num_workers": 2,
     "force_cpu": false,
     "test_frequency": 5,
@@ -21,10 +21,10 @@
     "nbor_degree": 1,
     "adj_mode": "OneStep",
     "sparse": false,
-    "a_train_acc_mean": "0.7797765731811523",
-    "a_train_acc_std": "0.00898726750165224",
-    "a_val_acc_mean": "0.6483215093612671",
-    "Z_val_acc_std": "0.0006789675680920482",
-    "Z_test_acc_mean": "0.5801699757575989",
-    "Z_test_acc_std": "0.0010625537252053618"
+    "a_train_acc_mean": "0.7270538210868835",
+    "a_train_acc_std": "0.015862582251429558",
+    "a_val_acc_mean": "0.6342494487762451",
+    "Z_val_acc_std": "0.0025378079153597355",
+    "Z_test_acc_mean": "0.5751702785491943",
+    "Z_test_acc_std": "0.0030829862225800753"
 }
