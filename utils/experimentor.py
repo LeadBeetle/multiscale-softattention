@@ -16,17 +16,30 @@ from torch_geometric.utils.hetero import group_hetero_graph
 from torch_geometric.utils import to_undirected
 import json
 import datetime
+import pprint
+import logging
+
 from utils.constants import * 
+
+suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
+filename = "_".join(["logs/my_log", suffix, ".txt"])
+        
+logging.basicConfig(level=logging.DEBUG, filename=filename, filemode="a+",
+                                format="%(message)s")
 
 class Experimentor:
     
-    def __init__(self, config):
-        print("torch.cuda is available:", torch.cuda.is_available())
+    def __init__(self, config, logging):
+        pp = pprint.PrettyPrinter(indent=4)
+        logging.info(pp.pformat(config))
+
+        logging.info("\ntorch.cuda is available: " + str(torch.cuda.is_available()))
         self.config = config
         self.dataset_name = config["dataset_name"]
-        print("Used Dataset:", self.dataset_name)
+        logging.info(f"Used Dataset: {self.dataset_name}" )
         self.initData()
      
+
     def initData(self):
         root = osp.abspath( 'data')
         
@@ -176,9 +189,9 @@ class Experimentor:
         train_accs = []
         val_accs = []
         for run in range(1, 1 + self.config["num_of_runs"]):
-            print('')
-            print(f'Run {run:02d}:')
-            print('')
+            logging.info('')
+            logging.info(f'Run {run:02d}:')
+            logging.info('')
 
             self.model.reset_parameters()
             self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.config["lr"])
@@ -189,11 +202,11 @@ class Experimentor:
                 loss, acc = self.train(epoch)
                 do_logging = epoch % self.config["console_log_freq"] == 0 or epoch == 1
                 if do_logging:
-                    print(f'Epoch {epoch:02d}| Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
+                    logging.info(f'Epoch {epoch:02d}| Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
 
                 if epoch % test_freq == 0:
                     train_acc, val_acc, test_acc = self.test()
-                    print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
+                    logging.info(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
                         f'Test: {test_acc:.4f}')
                     waited_iterations += test_freq
                     if val_acc > best_val_acc:
@@ -213,22 +226,21 @@ class Experimentor:
         train_acc = torch.tensor(train_accs)
         val_acc = torch.tensor(val_accs)
 
-        print('============================')
-        print(f'Final Train: {train_acc.mean():.4f} ± {train_acc.std():.4f}')
-        print(f'Final Val: {val_acc.mean():.4f} ± {val_acc.std():.4f}')
-        print(f'Final Test: {test_acc.mean():.4f} ± {test_acc.std():.4f}')
+        logging.info('============================')
+        logging.info(f'Final Train: {train_acc.mean():.4f} ± {train_acc.std():.4f}')
+        logging.info(f'Final Val: {val_acc.mean():.4f} ± {val_acc.std():.4f}')
+        logging.info(f'Final Test: {test_acc.mean():.4f} ± {test_acc.std():.4f}')
 
         data = self.config
              
-        data["a_train_acc_mean"] = str(train_acc.mean().item())
-        data["a_train_acc_std"] = str(train_acc.std().item())
-        data["a_val_acc_mean"] = str(val_acc.mean().item())
-        data["Z_val_acc_std"] = str(val_acc.std().item())
-        data["Z_test_acc_mean"] = str(test_acc.mean().item())
-        data["Z_test_acc_std"] = str(test_acc.std().item())
+        data["train_acc_mean"] = str(train_acc.mean().item())
+        data["val_acc_mean"] = str(val_acc.mean().item())
+        data["test_acc_mean"] = str(test_acc.mean().item())
+        data["train_acc_std"] = str(train_acc.std().item())
+        data["val_acc_std"] = str(val_acc.std().item())
+        data["test_acc_std"] = str(test_acc.std().item())
 
 
-        suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
         filename = "_".join(["results/res", suffix, ".json"])
         with open(filename, 'w') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
