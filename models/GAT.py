@@ -6,12 +6,12 @@ from models.convs.GatConv import GATConv
 
 class GAT(Net):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 heads, dataset, dropout, device, use_layer_norm=False, nbor_degree=1, adj_mode=None, sparse=True):
+                 heads, dropout, device, use_layer_norm=False, nbor_degree=1, adj_mode=None, sparse=True):
         super(GAT, self).__init__(in_channels, hidden_channels, out_channels, num_layers,
-                 heads, dataset, dropout, device, use_layer_norm, nbor_degree, adj_mode, sparse)
+                 heads, dropout, device, use_layer_norm, nbor_degree, adj_mode, sparse)
         
         self.convs = torch.nn.ModuleList()
-        self.convs.append(GATConv(dataset.num_features, hidden_channels,
+        self.convs.append(GATConv(in_channels, hidden_channels,
                                   heads, dropout=dropout))
         
         self._layers_normalization = []
@@ -33,4 +33,7 @@ class GAT(Net):
                     torch.nn.LayerNorm(out_channels)
                 )
         self.layer_normalizations = torch.nn.ModuleList(self._layers_normalization)
+
+
+        print(self.convs)
         

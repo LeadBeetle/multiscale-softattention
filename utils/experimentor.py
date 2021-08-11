@@ -51,6 +51,8 @@ class Experimentor:
         
         self.device = torch.device('cuda' if torch.cuda.is_available() and not self.config['force_cpu'] else 'cpu')
         self.criterion = F.nll_loss
+        self.num_classes = self.dataset.num_classes
+        self.num_features = self.dataset.num_features
         
         self.setLoaders()
         self.setModel()
@@ -108,22 +110,25 @@ class Experimentor:
         
     def setProteinsData(self):   
         _, col = self.data.edge_index
-        self.x = scatter(self.data.edge_attr, col, 0, dim_size=self.data.num_nodes, reduce='add').to(self.device())
+        self.x = scatter(self.data.edge_attr, col, 0, dim_size=self.data.num_nodes, reduce='add').to(self.device)
         self.y = self.data.y.squeeze().to(self.device)
-        self.criterion = torch.nn.BCEWithLogitsLoss()   
+        print(self.y)
+        self.criterion = torch.nn.BCEWithLogitsLoss() 
+        self.num_classes = 112 # Num_Classes
+        self.num_features = 8
     
     def setModel(self):
         if self.config["model_type"] == ModelType.GATV1:
-            self.model = GAT(self.dataset.num_features, self.config["hidden_size"], self.dataset.num_classes, num_layers=self.config["num_of_layers"],
-                heads=self.config["num_heads"], dataset = self.dataset, dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
+            self.model = GAT(self.num_features, self.config["hidden_size"], self.num_classes, num_layers=self.config["num_of_layers"],
+                heads=self.config["num_heads"], dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
                 nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"])
         elif self.config["model_type"] == ModelType.GATV2:
-            self.model = GATV2(self.dataset.num_features, self.config["hidden_size"], self.dataset.num_classes, num_layers=self.config["num_of_layers"],
-                heads=self.config["num_heads"], dataset = self.dataset, dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
+            self.model = GATV2(self.num_features, self.config["hidden_size"], self.num_classes, num_layers=self.config["num_of_layers"],
+                heads=self.config["num_heads"], dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
                 nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"])  
         elif self.config["model_type"] == ModelType.TRANS:
-            self.model = Transformer(self.dataset.num_features, self.config["hidden_size"], self.dataset.num_classes, num_layers=self.config["num_of_layers"],
-                heads=self.config["num_heads"], dataset = self.dataset, dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
+            self.model = Transformer(self.num_features, self.config["hidden_size"], self.num_classes, num_layers=self.config["num_of_layers"],
+                heads=self.config["num_heads"], dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
                 nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"])    
         
         self.model = self.model.to(self.device)
@@ -141,7 +146,8 @@ class Experimentor:
             adjs = [adj.to(self.device) for adj in adjs]
             self.optimizer.zero_grad()
             out = self.model(self.x[n_id], adjs)
-            loss = self.criterion(out, self.y[n_id[:batch_size]])
+            print(out.size(), self.y[n_id[:batch_size]].size())
+            loss = self.criterion(out, self.y[n_id[:batch_size]].to(torch.float32))
             loss.backward()
             self.optimizer.step()
 
