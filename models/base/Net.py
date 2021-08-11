@@ -8,13 +8,14 @@ from utils.utils import one_step, one_step_sparse
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 heads, dropout, device, use_layer_norm=False, nbor_degree=1, adj_mode=None, sparse=True):
+                 heads, dropout, device, use_layer_norm=False, use_batch_norm=False, nbor_degree=1, adj_mode=None, sparse=True):
         super(Net, self).__init__()
 
         self.device = device
         self.num_layers = num_layers
         self._dropout = dropout
-        self._use_layer_norm=use_layer_norm
+        self._use_layer_norm = use_layer_norm
+        self._use_batch_norm = use_batch_norm
         self.nbor_degree = nbor_degree
         self.adj_mode = adj_mode
         self.sparse = sparse
@@ -49,7 +50,10 @@ class Net(torch.nn.Module):
             
             x = self.convs[i]((x, x_target), edge_index, edge_weight)
             if self._use_layer_norm:
-                x = self._layers_normalization[i](x)
+                x = self.layer_normalizations[i](x)
+            if self._use_batch_norm:
+                x = self.batch_normalizations[i](x)
+
             x = x + self.skips[i](x_target)
             if i != self.num_layers - 1:
                 x = F.elu(x)
@@ -76,7 +80,10 @@ class Net(torch.nn.Module):
                 edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
                 x = self.convs[i]((x, x_target), edge_index, edge_weight)
                 if self._use_layer_norm:
-                    x = self._layers_normalization[i](x)
+                    x = self.layer_normalizations[i](x)
+                if self._use_batch_norm:
+                    x = self.batch_normalizations[i](x)
+
                 x = x + self.skips[i](x_target)
 
                 if i != self.num_layers - 1:

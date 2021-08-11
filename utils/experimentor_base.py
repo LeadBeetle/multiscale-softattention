@@ -29,7 +29,7 @@ logging.basicConfig(level=logging.DEBUG, filename=filename, filemode="a+",
 
 class Experimentor:
     
-    def __init__(self, config, logging):
+    def __init__(self, config):
         pp = pprint.PrettyPrinter(indent=4)
         logging.info(pp.pformat(config))
 
@@ -59,14 +59,8 @@ class Experimentor:
           
     
     def setLoaders(self):
-        if self.dataset_name == Dataset.OGBN_PROTEINS:
-            ##Currently not supported since multi-task dataset
-            self.setProteinsData()
-        elif self.dataset_name == Dataset.OGBN_MAG:
-            self.setMagData()
-        else:
-            self.x = self.data.x.to(self.device)
-            self.y = self.data.y.squeeze().to(self.device)
+        self.x = self.data.x.to(self.device)
+        self.y = self.data.y.squeeze().to(self.device)
         
         self.train_loader = NeighborSampler(self.data.edge_index, node_idx=self.train_idx,
                                     sizes=[10] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
@@ -74,62 +68,20 @@ class Experimentor:
         self.subgraph_loader = NeighborSampler(self.data.edge_index, node_idx=None, sizes=[-1],
                                         batch_size=self.config["test_batch_size"], shuffle=False,
                                         num_workers=self.config["num_workers"])  
-        
-    def setMagData(self):
-        edge_index_dict = self.data.edge_index_dict
-        r, c = edge_index_dict[('author', 'affiliated_with', 'institution')]
-        edge_index_dict[('institution', 'to', 'author')] = torch.stack([c, r])
-
-        r, c = edge_index_dict[('author', 'writes', 'paper')]
-        edge_index_dict[('paper', 'to', 'author')] = torch.stack([c, r])
-
-        r, c = edge_index_dict[('paper', 'has_topic', 'field_of_study')]
-        edge_index_dict[('field_of_study', 'to', 'paper')] = torch.stack([c, r])
-
-        edge_index = to_undirected(edge_index_dict[('paper', 'cites', 'paper')])
-        edge_index_dict[('paper', 'cites', 'paper')] = edge_index
-        out = group_hetero_graph(self.data.edge_index_dict, self.data.num_nodes_dict)
-        self.data.edge_index, edge_type, node_type, local_node_idx, local2global, key2int = out
-        
-        paper_idx = local2global['paper']
-        self.train_idx = paper_idx[self.split_idx['train']['paper']]
-        self.data.x = {}
-        for key, x in self.data.x_dict.items():
-            self.data.x[key2int[key]] = x
-        
-        self.data.x = {k: v for k, v in self.data.x.items()} 
-        self.data.x = self.data.x[3]
-         
-        self.data.y = node_type.new_full((node_type.size(0), 1), -1)
-        self.data.y[local2global['paper']] = self.data.y_dict['paper']
-        
-        
-        self.x = self.data.x.to(self.device)
-        self.y = self.data.y.squeeze().to(self.device)
-        
-        
-    def setProteinsData(self):   
-        _, col = self.data.edge_index
-        self.x = scatter(self.data.edge_attr, col, 0, dim_size=self.data.num_nodes, reduce='add').to(self.device)
-        self.y = self.data.y.squeeze().to(self.device)
-        print(self.y)
-        self.criterion = torch.nn.BCEWithLogitsLoss() 
-        self.num_classes = 112 # Num_Classes
-        self.num_features = 8
     
     def setModel(self):
         if self.config["model_type"] == ModelType.GATV1:
             self.model = GAT(self.num_features, self.config["hidden_size"], self.num_classes, num_layers=self.config["num_of_layers"],
                 heads=self.config["num_heads"], dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
-                nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"])
+                use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"])
         elif self.config["model_type"] == ModelType.GATV2:
             self.model = GATV2(self.num_features, self.config["hidden_size"], self.num_classes, num_layers=self.config["num_of_layers"],
                 heads=self.config["num_heads"], dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
-                nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"])  
+                use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"])  
         elif self.config["model_type"] == ModelType.TRANS:
             self.model = Transformer(self.num_features, self.config["hidden_size"], self.num_classes, num_layers=self.config["num_of_layers"],
                 heads=self.config["num_heads"], dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
-                nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"])    
+                use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"])    
         
         self.model = self.model.to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.config["lr"])
@@ -146,13 +98,12 @@ class Experimentor:
             adjs = [adj.to(self.device) for adj in adjs]
             self.optimizer.zero_grad()
             out = self.model(self.x[n_id], adjs)
-            print(out.size(), self.y[n_id[:batch_size]].size())
-            loss = self.criterion(out, self.y[n_id[:batch_size]].to(torch.float32))
+            loss = self.criterion(out, self.y[n_id[:batch_size]])
             loss.backward()
             self.optimizer.step()
-
+            
             total_loss += float(loss)
-            total_correct += int(out.argmax(dim=-1).eq(self.y[n_id[:batch_size]]).sum())
+            total_correct += int(out.eq(self.y[n_id[:batch_size]]).sum())
             if do_logging:
                 pbar.update(batch_size)
 
@@ -209,8 +160,8 @@ class Experimentor:
                 loss, acc = self.train(epoch)
                 do_logging = epoch % self.config["console_log_freq"] == 0 or epoch == 1
                 if do_logging:
-                    logging.info(f'Epoch {epoch:02d}| Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
-                    print(f'Epoch {epoch:02d}| Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
+                    logging.info(f'Epoch {epoch:02d}| Loss: {loss:.4f} Acc:{acc:.4f}')
+                    print(f'Epoch {epoch:02d}| Loss: {loss:.4f} Acc:{acc:.4f}')
 
                 if epoch % test_freq == 0:
                     train_acc, val_acc, test_acc = self.test()
