@@ -8,7 +8,7 @@ from utils.utils import one_step, one_step_sparse
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 heads, dataset, dropout, device, use_layer_norm=False, nbor_degree=1, adj_mode=None, sparse=True):
+                 heads, dropout, device, use_layer_norm=False, nbor_degree=1, adj_mode=None, sparse=True):
         super(Net, self).__init__()
 
         self.device = device
@@ -22,7 +22,7 @@ class Net(torch.nn.Module):
         self.one_step_gen = one_step_sparse if sparse else one_step
         
         self.skips = torch.nn.ModuleList()
-        self.skips.append(Lin(dataset.num_features, hidden_channels * heads))
+        self.skips.append(Lin(in_channels, hidden_channels * heads))
         for _ in range(num_layers - 2):
             self.skips.append(
                 Lin(hidden_channels * heads, hidden_channels * heads))

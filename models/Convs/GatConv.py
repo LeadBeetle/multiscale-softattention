@@ -182,6 +182,7 @@ class GATConv(MessagePassing):
         edge_weight = edge_weight.view(-1, 1) if edge_weight != None else 1
         return  x_j * (edge_weight*alpha).unsqueeze(-1)
 
+
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,
                                              self.in_channels,
