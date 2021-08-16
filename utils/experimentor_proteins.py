@@ -36,7 +36,7 @@ class Experimentor_Proteins(Experimentor):
         _, col = self.data.edge_index
         self.x = scatter(self.data.edge_attr, col, 0, dim_size=self.data.num_nodes, reduce='add').to(self.device)
         self.y = self.data.y.squeeze().to(self.device)
-        self.criterion = F.multilabel_soft_margin_loss
+        self.criterion = torch.nn.BCEWithLogitsLoss()
         self.num_classes = 112 # Num_Classes
         self.num_features = 8
 

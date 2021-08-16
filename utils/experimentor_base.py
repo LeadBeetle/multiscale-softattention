@@ -103,7 +103,7 @@ class Experimentor:
             self.optimizer.step()
             
             total_loss += float(loss)
-            total_correct += int(out.eq(self.y[n_id[:batch_size]]).sum())
+            total_correct += int(out.argmax(dim=-1).eq(self.y[n_id[:batch_size]]).sum())
             if do_logging:
                 pbar.update(batch_size)
 
