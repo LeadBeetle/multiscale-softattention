@@ -23,6 +23,4 @@ dependencies:
     - scikit-learn
     - tensorboard
     - networkx
-    - python-igraph
-    - pycairo
     - ogb

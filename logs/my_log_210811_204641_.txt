@@ -1,5 +1,5 @@
 {   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
-    'batch_size': 10000,
+    'batch_size': 1024,
     'console_log_freq': 1,
     'dataset_name': <Dataset.OGBN_PROTEINS: 'ogbn-proteins'>,
     'do_train_tqdm_logging': False,
@@ -10,24 +10,32 @@
     'model_type': <ModelType.GATV1: 'GAT-V1'>,
     'nbor_degree': 1,
     'num_heads': 1,
-    'num_of_epochs': 10000,
+    'num_of_epochs': 1000,
     'num_of_layers': 6,
     'num_of_runs': 3,
     'num_workers': 2,
     'patience_period': 50,
     'sparse': False,
-    'test_batch_size': 10000,
+    'test_batch_size': 1024,
     'test_frequency': 5,
-    'use_batch_norm': False,
-    'use_layer_norm': True}
+    'use_batch_norm': True,
+    'use_layer_norm': False}
 
 torch.cuda is available: True
 Used Dataset: ogbn-proteins
 
 Run 01:
 
-Epoch 01| Loss: 0.6469
-Epoch 02| Loss: 0.5855
-Epoch 03| Loss: 0.5760
-Epoch 04| Loss: 0.5708
-Epoch 05| Loss: 0.5663
+Epoch 01| Loss: 1.6017
+Epoch 02| Loss: 0.6129
+Epoch 03| Loss: 0.6040
+Epoch 04| Loss: 0.5946
+Epoch 05| Loss: 0.5873
+Train: 0.4814, Val: 0.4935, Test: 0.4948
+Epoch 06| Loss: 0.5859
+Epoch 07| Loss: 0.5856
+Epoch 08| Loss: 0.5847
+Epoch 09| Loss: 0.5851
+Epoch 10| Loss: 0.5840
+Train: 0.4816, Val: 0.4949, Test: 0.4956
+Epoch 11| Loss: 0.5842
