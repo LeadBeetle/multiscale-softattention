@@ -11,6 +11,7 @@ from torch_geometric.utils import to_undirected
 import json
 import datetime
 import logging
+import time
 
 from utils.constants import * 
 
@@ -31,7 +32,7 @@ class Experimentor_Proteins(Experimentor):
         self.eval_loader = NeighborSampler(self.data.edge_index, node_idx=self.val_idx, sizes=[-1],
                                     batch_size=self.config["test_batch_size"], shuffle=False,
                                     num_workers=self.config["num_workers"])  
-        self.subgraph_loader = NeighborSampler(self.data.edge_index, node_idx=None, sizes=[-1],
+        self.test_loader = NeighborSampler(self.data.edge_index, node_idx=None, sizes=[-1],
                                         batch_size=self.config["test_batch_size"], shuffle=False,
                                         num_workers=self.config["num_workers"])  
             
@@ -45,12 +46,13 @@ class Experimentor_Proteins(Experimentor):
 
              
     def train(self, epoch):
+        start = time.time()
         self.model.train()
         do_logging = epoch == 1 or self.config["do_train_tqdm_logging"]
         if do_logging:
             pbar = tqdm(total=self.train_idx.size(0))
             pbar.set_description(f'Epoch {epoch:02d}')
-        total_loss = total_correct = 0
+        total_loss = 0
         for batch_size, n_id, adjs in self.train_loader:
             # `adjs` holds a list of `(edge_index, e_id, size)` tuples.
             adjs = [adj.to(self.device) for adj in adjs]
@@ -70,32 +72,19 @@ class Experimentor_Proteins(Experimentor):
 
         loss = total_loss / len(self.train_loader)
 
-        return loss, None
-
-    @torch.no_grad()
-    def eval(self):
-        self.model.eval()
-
-        out = self.model.inference(self.x, loader = self.eval_loader)
-
-        y_true = self.y.cpu().unsqueeze(-1)
-        y_pred = out.argmax(dim=-1, keepdim=True)
-
-        val_roc = self.evaluator.eval({
-            'y_true': y_true[self.split_idx['valid']],
-            'y_pred': y_pred[self.split_idx['valid']],
-        })['rocauc']
-
-        return val_roc
+        time_elapsed = time.time() - start
+        return loss, None, time_elapsed
 
     @torch.no_grad()
     def test(self):
+        start = time.time()
         self.model.eval()
 
-        out = self.model.inference(self.x, loader = self.subgraph_loader)
+        out = self.model.inference(self.x, loader = self.test_loader)
 
         y_true = self.y.cpu()
         y_pred = out
+        
         train_roc = self.evaluator.eval({
             'y_true': y_true[self.split_idx['train']],
             'y_pred': y_pred[self.split_idx['train']],
@@ -109,7 +98,8 @@ class Experimentor_Proteins(Experimentor):
             'y_pred': y_pred[self.split_idx['test']],
         })['rocauc']
 
-        return train_roc, val_roc, test_roc
+        time_elapsed = time.time() - start
+        return train_roc, val_roc, test_roc, time_elapsed
     
     def run(self):
         test_freq = self.config['test_frequency'] or 10
@@ -129,26 +119,29 @@ class Experimentor_Proteins(Experimentor):
             best_val_roc, final_test_roc, final_train_roc, final_val_roc = 0, 0, 0, 0
             waited_iterations = 0
             for epoch in range(1, 1 + self.config["num_of_epochs"]):
-                loss, _ = self.train(epoch)
+                loss, _, train_time = self.train(epoch)
                 do_logging = epoch % self.config["console_log_freq"] == 0 or epoch == 1
                 if do_logging:
-                    logging.info(f'Epoch {epoch:02d}| Loss: {loss:.4f}')
-                    print(f'Epoch {epoch:02d}| Loss: {loss:.4f}')
+                    logging.info(f'Epoch {epoch:02d}| Loss: {loss:.4f}| Train Time: {train_time:.4f}s')
+                    print(f'Epoch {epoch:02d}| Loss: {loss:.4f}| Train Time: {train_time:.4f}s')
 
                 if epoch % test_freq == 0:
-                    train_roc, val_roc, test_roc = self.eval()
-                    logging.info(f'Validation Accuracy: {val_roc:.4f}')
-                    print(f'Validation Accuracy: {val_roc:.4f}')
+                    train_roc, val_roc, test_roc, eval_time = self.test()
+                    logging.info(f'Train: {train_roc:.4f}| Val: {val_roc:.4f}| '
+                        f'Test: {test_roc:.4f}| Eval Time: {eval_time:.4f}s')
+                    print(f'Train: {train_roc:.4f}| Val: {val_roc:.4f}| '
+                        f'Test: {test_roc:.4f}| Eval Time: {eval_time:.4f}s')
                     waited_iterations += test_freq
                     if val_roc > best_val_roc:
                         best_val_roc = val_roc
+                        final_test_roc = test_roc
+                        final_train_roc = train_roc
                         final_val_roc = val_roc
                         waited_iterations = 0
                     if waited_iterations >= self.config["patience_period"]:
                         break
 
-            final_train_roc, final_val_roc, final_test_roc = self.test()   
-            print(f'\nResult of {run:02d}. run| Train: {final_train_roc:.4f} Val: {final_val_roc:.4f} Test: {final_test_roc:.4f}\n')            
+            print(f'\nResult of {run:2d}. run| Train: {final_train_roc:.4f}| Val: {final_val_roc:.4f}| Test: {final_test_roc:.4f}\n')
             test_rocs.append(final_test_roc)
             train_rocs.append(final_train_roc)
             val_rocs.append(final_val_roc)

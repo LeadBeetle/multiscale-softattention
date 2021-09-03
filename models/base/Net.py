@@ -20,6 +20,7 @@ class Net(torch.nn.Module):
         self.adj_mode = adj_mode
         self.sparse = sparse
         
+        
         self.one_step_gen = one_step_sparse if sparse else one_step
         
         self.skips = torch.nn.ModuleList()
@@ -64,7 +65,6 @@ class Net(torch.nn.Module):
     def inference(self, x_all, loader):
         pbar = tqdm(total=x_all.size(0) * self.num_layers)
         pbar.set_description('Evaluating')
-
         # Compute representations of nodes layer by layer, using *all*
         # available edges. This leads to faster computation in contrast to
         # immediately computing the final representations of each batch.
@@ -91,7 +91,6 @@ class Net(torch.nn.Module):
                 xs.append(x.cpu())
 
                 pbar.update(batch_size)
-
             x_all = torch.cat(xs, dim=0)
 
         pbar.close()
