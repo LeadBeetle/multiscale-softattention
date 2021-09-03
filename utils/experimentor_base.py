@@ -6,18 +6,16 @@ from tqdm import tqdm
 from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
 from torch_geometric.data import NeighborSampler
 import torch.nn.functional as F
-from torch_scatter import scatter
-import numpy as np
+
 
 from models.GAT import GAT
 from models.GATv2 import GATV2
 from models.Transformer import Transformer
-from torch_geometric.utils.hetero import group_hetero_graph
-from torch_geometric.utils import to_undirected
 import json
 import datetime
 import pprint
 import logging
+import time
 
 from utils.constants import * 
 
@@ -48,6 +46,7 @@ class Experimentor:
         self.evaluator = Evaluator(name=datasetMapping[self.dataset_name])
         self.data = self.dataset[0]
         self.train_idx = self.split_idx['train']
+        self.val_idx = self.split_idx['valid']
         
         self.device = torch.device('cuda' if torch.cuda.is_available() and not self.config['force_cpu'] else 'cpu')
         self.criterion = F.nll_loss
@@ -65,7 +64,7 @@ class Experimentor:
         self.train_loader = NeighborSampler(self.data.edge_index, node_idx=self.train_idx,
                                     sizes=[10] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
                                     shuffle=True, num_workers=self.config["num_workers"])
-        self.subgraph_loader = NeighborSampler(self.data.edge_index, node_idx=None, sizes=[-1],
+        self.test_loader = NeighborSampler(self.data.edge_index, node_idx=None, sizes=[-1],
                                         batch_size=self.config["test_batch_size"], shuffle=False,
                                         num_workers=self.config["num_workers"])  
     
@@ -87,12 +86,13 @@ class Experimentor:
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.config["lr"])
                
     def train(self, epoch):
+        start = time.time()
         self.model.train()
         do_logging = epoch == 1 or self.config["do_train_tqdm_logging"]
         if do_logging:
             pbar = tqdm(total=self.train_idx.size(0))
             pbar.set_description(f'Epoch {epoch:02d}')
-        total_loss = total_correct = 0
+        total_loss, total_correct = 0, 0
         for batch_size, n_id, adjs in self.train_loader:
             # `adjs` holds a list of `(edge_index, e_id, size)` tuples.
             adjs = [adj.to(self.device) for adj in adjs]
@@ -113,13 +113,16 @@ class Experimentor:
         loss = total_loss / len(self.train_loader)
         approx_acc = total_correct / self.train_idx.size(0)
 
-        return loss, approx_acc
+        time_elapsed = time.time() - start
+
+        return loss, approx_acc, time_elapsed
+
 
     @torch.no_grad()
     def test(self):
+        start = time.time()
         self.model.eval()
-
-        out = self.model.inference(self.x, loader = self.subgraph_loader)
+        out = self.model.inference(self.x, loader = self.test_loader)
 
         y_true = self.y.cpu().unsqueeze(-1)
         y_pred = out.argmax(dim=-1, keepdim=True)
@@ -137,7 +140,8 @@ class Experimentor:
             'y_pred': y_pred[self.split_idx['test']],
         })['acc']
 
-        return train_acc, val_acc, test_acc
+        time_elapsed = time.time() - start
+        return train_acc, val_acc, test_acc, time_elapsed
     
     def run(self):
         test_freq = self.config['test_frequency'] or 10
@@ -157,18 +161,19 @@ class Experimentor:
             best_val_acc, final_test_acc, final_train_acc, final_val_acc = 0, 0, 0, 0
             waited_iterations = 0
             for epoch in range(1, 1 + self.config["num_of_epochs"]):
-                loss, acc = self.train(epoch)
+                loss, acc, train_time = self.train(epoch)
                 do_logging = epoch % self.config["console_log_freq"] == 0 or epoch == 1
                 if do_logging:
-                    logging.info(f'Epoch {epoch:02d}| Loss: {loss:.4f} Acc:{acc:.4f}')
-                    print(f'Epoch {epoch:02d}| Loss: {loss:.4f} Acc:{acc:.4f}')
+                    logging.info(f'Epoch {epoch:02d}| Loss: {loss:.4f}| Acc: {acc:.4f}| Train Time: {train_time:.4f}s')
+                    print(f'Epoch {epoch:02d}| Loss: {loss:.4f}| Acc: {acc:.4f}| Train Time: {train_time:.4f}s')
 
                 if epoch % test_freq == 0:
-                    train_acc, val_acc, test_acc = self.test()
-                    logging.info(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
-                        f'Test: {test_acc:.4f}')
-                    print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
-                        f'Test: {test_acc:.4f}')
+                    train_acc, val_acc, test_acc, eval_time = self.test()
+                    logging.info(f'Train: {train_acc:.4f}| Val: {val_acc:.4f}| '
+                        f'Test: {test_acc:.4f}| Eval Time: {eval_time:.4f}s')
+                    print(f'Train: {train_acc:.4f}| Val: {val_acc:.4f}| '
+                        f'Test: {test_acc:.4f}| Eval Time: {eval_time:.4f}s')
+                    
                     waited_iterations += test_freq
                     if val_acc > best_val_acc:
                         best_val_acc = val_acc
@@ -178,7 +183,8 @@ class Experimentor:
                         waited_iterations = 0
                     if waited_iterations >= self.config["patience_period"]:
                         break
-                        
+                          
+            print(f'\nResult of {run:2d}. run| Train: {final_train_acc:.4f}| Val: {final_val_acc:.4f}| Test: {final_test_acc:.4f}\n')
             test_accs.append(final_test_acc)
             train_accs.append(final_train_acc)
             val_accs.append(final_val_acc)
@@ -187,7 +193,7 @@ class Experimentor:
         train_acc = torch.tensor(train_accs)
         val_acc = torch.tensor(val_accs)
 
-        logging.info('============================')
+        logging.info('\n============================')
         logging.info(f'Final Train: {train_acc.mean():.4f} ± {train_acc.std():.4f}')
         logging.info(f'Final Val: {val_acc.mean():.4f} ± {val_acc.std():.4f}')
         logging.info(f'Final Test: {test_acc.mean():.4f} ± {test_acc.std():.4f}')
