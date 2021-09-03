@@ -23,3 +23,13 @@
 
 torch.cuda is available: True
 Used Dataset: ogbn-proteins
+
+Run 01:
+
+Epoch 01| Loss: 16.3380| Train Time: 24.8854s
+Train: 0.6666| Val: 0.6530| Test: 0.6070| Eval Time: 35.6357s
+
+============================
+Final Train: 0.6666 ± nan
+Final Val: 0.6530 ± nan
+Final Test: 0.6070 ± nan
