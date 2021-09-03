@@ -70,6 +70,22 @@ class Experimentor_Proteins(Experimentor):
         return loss, None
 
     @torch.no_grad()
+    def eval(self):
+        self.model.eval()
+
+        out = self.model.inference(self.x, loader = self.eval_loader)
+
+        y_true = self.y.cpu().unsqueeze(-1)
+        y_pred = out.argmax(dim=-1, keepdim=True)
+
+        val_roc = self.evaluator.eval({
+            'y_true': y_true[self.split_idx['valid']],
+            'y_pred': y_pred[self.split_idx['valid']],
+        })['rocauc']
+
+        return val_roc
+
+    @torch.no_grad()
     def test(self):
         self.model.eval()
 
@@ -117,21 +133,19 @@ class Experimentor_Proteins(Experimentor):
                     print(f'Epoch {epoch:02d}| Loss: {loss:.4f}')
 
                 if epoch % test_freq == 0:
-                    train_roc, val_roc, test_roc = self.test()
-                    logging.info(f'Train: {train_roc:.4f}, Val: {val_roc:.4f}, '
-                        f'Test: {test_roc:.4f}')
-                    print(f'Train: {train_roc:.4f}, Val: {val_roc:.4f}, '
-                        f'Test: {test_roc:.4f}')
+                    train_roc, val_roc, test_roc = self.eval()
+                    logging.info(f'Validation Accuracy: {val_roc:.4f}')
+                    print(f'Validation Accuracy: {val_roc:.4f}')
                     waited_iterations += test_freq
                     if val_roc > best_val_roc:
                         best_val_roc = val_roc
-                        final_test_roc = test_roc
-                        final_train_roc = train_roc
                         final_val_roc = val_roc
                         waited_iterations = 0
                     if waited_iterations >= self.config["patience_period"]:
                         break
-                        
+
+            final_train_roc, final_val_roc, final_test_roc = self.test()   
+            print(f'\nResult of {run:02d}. run| Train: {final_train_roc:.4f} Val: {final_val_roc:.4f} Test: {final_test_roc:.4f}\n')            
             test_rocs.append(final_test_roc)
             train_rocs.append(final_train_roc)
             val_rocs.append(final_val_roc)
@@ -140,7 +154,7 @@ class Experimentor_Proteins(Experimentor):
         train_roc = torch.tensor(train_rocs)
         val_roc = torch.tensor(val_rocs)
 
-        logging.info('============================')
+        logging.info('\n============================')
         logging.info(f'Final Train: {train_roc.mean():.4f} ± {train_roc.std():.4f}')
         logging.info(f'Final Val: {val_roc.mean():.4f} ± {val_roc.std():.4f}')
         logging.info(f'Final Test: {test_roc.mean():.4f} ± {test_roc.std():.4f}')

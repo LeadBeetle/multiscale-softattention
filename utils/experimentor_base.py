@@ -48,6 +48,7 @@ class Experimentor:
         self.evaluator = Evaluator(name=datasetMapping[self.dataset_name])
         self.data = self.dataset[0]
         self.train_idx = self.split_idx['train']
+        self.val_idx = self.split_idx['valid']
         
         self.device = torch.device('cuda' if torch.cuda.is_available() and not self.config['force_cpu'] else 'cpu')
         self.criterion = F.nll_loss
@@ -65,7 +66,10 @@ class Experimentor:
         self.train_loader = NeighborSampler(self.data.edge_index, node_idx=self.train_idx,
                                     sizes=[10] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
                                     shuffle=True, num_workers=self.config["num_workers"])
-        self.subgraph_loader = NeighborSampler(self.data.edge_index, node_idx=None, sizes=[-1],
+        self.eval_loader = NeighborSampler(self.data.edge_index, node_idx=self.val_idx, sizes=[-1],
+                                    batch_size=self.config["test_batch_size"], shuffle=False,
+                                    num_workers=self.config["num_workers"])  
+        self.eval_loader = NeighborSampler(self.data.edge_index, node_idx=None, sizes=[-1],
                                         batch_size=self.config["test_batch_size"], shuffle=False,
                                         num_workers=self.config["num_workers"])  
     
@@ -115,11 +119,28 @@ class Experimentor:
 
         return loss, approx_acc
 
+
+    @torch.no_grad()
+    def eval(self):
+        self.model.eval()
+
+        out = self.model.inference(self.x, loader = self.eval_loader)
+
+        y_true = self.y.cpu().unsqueeze(-1)
+        y_pred = out.argmax(dim=-1, keepdim=True)
+
+        val_acc = self.evaluator.eval({
+            'y_true': y_true[self.split_idx['valid']],
+            'y_pred': y_pred[self.split_idx['valid']],
+        })['acc']
+
+        return val_acc
+
     @torch.no_grad()
     def test(self):
         self.model.eval()
 
-        out = self.model.inference(self.x, loader = self.subgraph_loader)
+        out = self.model.inference(self.x, loader = self.eval_loader)
 
         y_true = self.y.cpu().unsqueeze(-1)
         y_pred = out.argmax(dim=-1, keepdim=True)
@@ -164,21 +185,19 @@ class Experimentor:
                     print(f'Epoch {epoch:02d}| Loss: {loss:.4f} Acc:{acc:.4f}')
 
                 if epoch % test_freq == 0:
-                    train_acc, val_acc, test_acc = self.test()
-                    logging.info(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
-                        f'Test: {test_acc:.4f}')
-                    print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
-                        f'Test: {test_acc:.4f}')
+                    val_acc = self.eval()
+                    logging.info(f'Validation Accuracy: {val_acc:.4f}')
+                    print(f'Validation Accuracy: {val_acc:.4f}')
                     waited_iterations += test_freq
                     if val_acc > best_val_acc:
                         best_val_acc = val_acc
-                        final_test_acc = test_acc
-                        final_train_acc = train_acc
                         final_val_acc = val_acc
                         waited_iterations = 0
                     if waited_iterations >= self.config["patience_period"]:
                         break
                         
+            final_train_acc, final_val_acc, final_test_acc = self.test()   
+            print(f'\nResult of {run:02d}. run| Train: {final_train_acc:.4f} Val: {final_val_acc:.4f} Test: {final_test_acc:.4f}\n')
             test_accs.append(final_test_acc)
             train_accs.append(final_train_acc)
             val_accs.append(final_val_acc)
@@ -187,7 +206,7 @@ class Experimentor:
         train_acc = torch.tensor(train_accs)
         val_acc = torch.tensor(val_accs)
 
-        logging.info('============================')
+        logging.info('\n============================')
         logging.info(f'Final Train: {train_acc.mean():.4f} ± {train_acc.std():.4f}')
         logging.info(f'Final Val: {val_acc.mean():.4f} ± {val_acc.std():.4f}')
         logging.info(f'Final Test: {test_acc.mean():.4f} ± {test_acc.std():.4f}')
