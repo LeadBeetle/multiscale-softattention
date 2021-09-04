@@ -1,0 +1,175 @@
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.OGBN_PRODUCTS: 'ogbn-products'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.5,
+    'force_cpu': False,
+    'hidden_size': 128,
+    'lr': 0.001,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 1,
+    'num_heads': 1,
+    'num_of_epochs': 500,
+    'num_of_layers': 3,
+    'num_of_runs': 1,
+    'num_workers': 2,
+    'patience_period': 30,
+    'sparse': False,
+    'test_batch_size': 256,
+    'test_frequency': 10,
+    'use_batch_norm': False,
+    'use_layer_norm': False}
+
+torch.cuda is available: True
+Used Dataset: ogbn-products
+
+Run 01:
+
+Epoch 01| Loss: 1.0859 Acc: 0.7346
+Epoch 02| Loss: 0.6067 Acc: 0.8418
+Epoch 03| Loss: 0.5468 Acc: 0.8563
+Epoch 04| Loss: 0.5180 Acc: 0.8627
+Epoch 05| Loss: 0.4973 Acc: 0.8664
+Epoch 06| Loss: 0.4796 Acc: 0.8703
+Epoch 07| Loss: 0.4686 Acc: 0.8733
+Epoch 08| Loss: 0.4590 Acc: 0.8756
+Epoch 09| Loss: 0.4539 Acc: 0.8767
+Epoch 10| Loss: 0.4413 Acc: 0.8798
+Train: 0.9088, Val: 0.9012, Test: 0.7562
+Epoch 11| Loss: 0.4365 Acc: 0.8813
+Epoch 12| Loss: 0.4285 Acc: 0.8835
+Epoch 13| Loss: 0.4278 Acc: 0.8838
+Epoch 14| Loss: 0.4210 Acc: 0.8855
+Epoch 15| Loss: 0.4183 Acc: 0.8853
+Epoch 16| Loss: 0.4148 Acc: 0.8860
+Epoch 17| Loss: 0.4091 Acc: 0.8877
+Epoch 18| Loss: 0.4074 Acc: 0.8881
+Epoch 19| Loss: 0.4035 Acc: 0.8893
+Epoch 20| Loss: 0.4024 Acc: 0.8904
+Train: 0.9168, Val: 0.9102, Test: 0.7713
+Epoch 21| Loss: 0.4024 Acc: 0.8894
+Epoch 22| Loss: 0.3981 Acc: 0.8897
+Epoch 23| Loss: 0.3997 Acc: 0.8905
+Epoch 24| Loss: 0.3968 Acc: 0.8909
+Epoch 25| Loss: 0.3965 Acc: 0.8911
+Epoch 26| Loss: 0.3953 Acc: 0.8910
+Epoch 27| Loss: 0.3922 Acc: 0.8914
+Epoch 28| Loss: 0.3913 Acc: 0.8921
+Epoch 29| Loss: 0.3885 Acc: 0.8929
+Epoch 30| Loss: 0.3938 Acc: 0.8920
+Train: 0.9203, Val: 0.9130, Test: 0.7732
+Epoch 31| Loss: 0.3917 Acc: 0.8919
+Epoch 32| Loss: 0.3891 Acc: 0.8929
+Epoch 33| Loss: 0.3870 Acc: 0.8937
+Epoch 34| Loss: 0.3914 Acc: 0.8924
+Epoch 35| Loss: 0.3850 Acc: 0.8939
+Epoch 36| Loss: 0.3905 Acc: 0.8925
+Epoch 37| Loss: 0.3805 Acc: 0.8947
+Epoch 38| Loss: 0.3828 Acc: 0.8941
+Epoch 39| Loss: 0.3832 Acc: 0.8942
+Epoch 40| Loss: 0.3827 Acc: 0.8948
+Train: 0.9238, Val: 0.9146, Test: 0.7808
+Epoch 41| Loss: 0.3811 Acc: 0.8948
+Epoch 42| Loss: 0.3810 Acc: 0.8949
+Epoch 43| Loss: 0.3833 Acc: 0.8944
+Epoch 44| Loss: 0.3793 Acc: 0.8950
+Epoch 45| Loss: 0.3796 Acc: 0.8950
+Epoch 46| Loss: 0.3801 Acc: 0.8953
+Epoch 47| Loss: 0.3777 Acc: 0.8950
+Epoch 48| Loss: 0.3779 Acc: 0.8958
+Epoch 49| Loss: 0.3813 Acc: 0.8949
+Epoch 50| Loss: 0.3823 Acc: 0.8939
+Train: 0.9206, Val: 0.9145, Test: 0.7844
+Epoch 51| Loss: 0.3800 Acc: 0.8955
+Epoch 52| Loss: 0.3773 Acc: 0.8959
+Epoch 53| Loss: 0.3760 Acc: 0.8963
+Epoch 54| Loss: 0.3759 Acc: 0.8967
+Epoch 55| Loss: 0.3758 Acc: 0.8960
+Epoch 56| Loss: 0.3785 Acc: 0.8963
+Epoch 57| Loss: 0.3750 Acc: 0.8958
+Epoch 58| Loss: 0.3746 Acc: 0.8965
+Epoch 59| Loss: 0.3772 Acc: 0.8961
+Epoch 60| Loss: 0.3777 Acc: 0.8952
+Train: 0.9238, Val: 0.9153, Test: 0.7822
+Epoch 61| Loss: 0.3731 Acc: 0.8970
+Epoch 62| Loss: 0.3734 Acc: 0.8961
+Epoch 63| Loss: 0.3724 Acc: 0.8970
+Epoch 64| Loss: 0.3713 Acc: 0.8974
+Epoch 65| Loss: 0.3743 Acc: 0.8968
+Epoch 66| Loss: 0.3726 Acc: 0.8962
+Epoch 67| Loss: 0.3749 Acc: 0.8966
+Epoch 68| Loss: 0.3718 Acc: 0.8971
+Epoch 69| Loss: 0.3729 Acc: 0.8974
+Epoch 70| Loss: 0.3705 Acc: 0.8978
+Train: 0.9263, Val: 0.9169, Test: 0.7939
+Epoch 71| Loss: 0.3722 Acc: 0.8968
+Epoch 72| Loss: 0.3721 Acc: 0.8976
+Epoch 73| Loss: 0.3730 Acc: 0.8977
+Epoch 74| Loss: 0.3702 Acc: 0.8975
+Epoch 75| Loss: 0.3707 Acc: 0.8975
+Epoch 76| Loss: 0.3722 Acc: 0.8969
+Epoch 77| Loss: 0.3738 Acc: 0.8971
+Epoch 78| Loss: 0.3710 Acc: 0.8980
+Epoch 79| Loss: 0.3737 Acc: 0.8966
+Epoch 80| Loss: 0.3723 Acc: 0.8974
+Train: 0.9256, Val: 0.9168, Test: 0.7910
+Epoch 81| Loss: 0.3722 Acc: 0.8965
+Epoch 82| Loss: 0.3734 Acc: 0.8969
+Epoch 83| Loss: 0.3710 Acc: 0.8977
+Epoch 84| Loss: 0.3664 Acc: 0.8990
+Epoch 85| Loss: 0.3674 Acc: 0.8982
+Epoch 86| Loss: 0.3689 Acc: 0.8983
+Epoch 87| Loss: 0.3709 Acc: 0.8972
+Epoch 88| Loss: 0.3692 Acc: 0.8981
+Epoch 89| Loss: 0.3731 Acc: 0.8971
+Epoch 90| Loss: 0.3691 Acc: 0.8975
+Train: 0.9262, Val: 0.9171, Test: 0.7854
+Epoch 91| Loss: 0.3652 Acc: 0.8985
+Epoch 92| Loss: 0.3676 Acc: 0.8980
+Epoch 93| Loss: 0.3683 Acc: 0.8978
+Epoch 94| Loss: 0.3682 Acc: 0.8982
+Epoch 95| Loss: 0.3706 Acc: 0.8981
+Epoch 96| Loss: 0.3784 Acc: 0.8957
+Epoch 97| Loss: 0.3843 Acc: 0.8952
+Epoch 98| Loss: 0.3771 Acc: 0.8963
+Epoch 99| Loss: 0.3688 Acc: 0.8979
+Epoch 100| Loss: 0.3677 Acc: 0.8987
+Train: 0.9276, Val: 0.9184, Test: 0.7868
+Epoch 101| Loss: 0.3762 Acc: 0.8965
+Epoch 102| Loss: 0.3701 Acc: 0.8970
+Epoch 103| Loss: 0.3661 Acc: 0.8985
+Epoch 104| Loss: 0.3660 Acc: 0.8991
+Epoch 105| Loss: 0.3670 Acc: 0.8993
+Epoch 106| Loss: 0.3651 Acc: 0.8984
+Epoch 107| Loss: 0.3685 Acc: 0.8975
+Epoch 108| Loss: 0.3672 Acc: 0.8987
+Epoch 109| Loss: 0.3697 Acc: 0.8974
+Epoch 110| Loss: 0.3703 Acc: 0.8980
+Train: 0.9269, Val: 0.9163, Test: 0.7902
+Epoch 111| Loss: 0.3671 Acc: 0.8978
+Epoch 112| Loss: 0.3688 Acc: 0.8983
+Epoch 113| Loss: 0.3717 Acc: 0.8976
+Epoch 114| Loss: 0.3664 Acc: 0.8983
+Epoch 115| Loss: 0.3641 Acc: 0.8985
+Epoch 116| Loss: 0.3657 Acc: 0.8987
+Epoch 117| Loss: 0.3685 Acc: 0.8983
+Epoch 118| Loss: 0.3690 Acc: 0.8985
+Epoch 119| Loss: 0.3659 Acc: 0.8985
+Epoch 120| Loss: 0.3644 Acc: 0.8984
+Train: 0.9268, Val: 0.9176, Test: 0.7767
+Epoch 121| Loss: 0.3700 Acc: 0.8978
+Epoch 122| Loss: 0.3636 Acc: 0.8993
+Epoch 123| Loss: 0.3644 Acc: 0.8993
+Epoch 124| Loss: 0.3653 Acc: 0.8991
+Epoch 125| Loss: 0.3699 Acc: 0.8982
+Epoch 126| Loss: 0.3710 Acc: 0.8974
+Epoch 127| Loss: 0.3654 Acc: 0.8989
+Epoch 128| Loss: 0.3651 Acc: 0.8986
+Epoch 129| Loss: 0.3626 Acc: 0.8995
+Epoch 130| Loss: 0.3678 Acc: 0.8982
+Train: 0.9282, Val: 0.9184, Test: 0.7927
+============================
+Final Train: 0.9276 ± nan
+Final Val: 0.9184 ± nan
+Final Test: 0.7868 ± nan
