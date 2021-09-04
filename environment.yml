@@ -5,14 +5,14 @@ channels:
   - rusty1s
   - defaults
 dependencies:
-  - python=3.8.11
+  - python=3.8.10
   - pip==21.1.2
   - ipykernel
   - cudatoolkit=11.1
   - torchaudio
   - torchvision
   - pytorch
-  - pytorch-geometric=1.7.2
+  - pytorch-geometric
   
   - pip:
     - matplotlib
