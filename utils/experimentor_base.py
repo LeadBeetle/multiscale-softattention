@@ -7,7 +7,7 @@ from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
 from torch_geometric.data import NeighborSampler
 import torch.nn.functional as F
 
-
+from PyTorchGat.models.definitions.GAT import GAT as GAT_GORDI
 from models.GAT import GAT
 from models.GATv2 import GATV2
 from models.Transformer import Transformer
@@ -81,7 +81,9 @@ class Experimentor:
             self.model = Transformer(self.num_features, self.config["hidden_size"], self.num_classes, num_layers=self.config["num_of_layers"],
                 heads=self.config["num_heads"], dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
                 use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"])    
-        
+        elif self.config["model_type"] == ModelType.GATV1_GORDI:
+            self.model = GAT_GORDI(num_of_layers=self.config["num_of_layers"], num_heads_per_layer=self.config["num_heads"], num_features_per_layer=self.num_features,
+            dropout=self.config["dropout"])
         self.model = self.model.to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.config["lr"])
                
