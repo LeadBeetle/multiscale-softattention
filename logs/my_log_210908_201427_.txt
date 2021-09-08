@@ -1,0 +1,57 @@
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 20000,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.OGBN_ARXIV: 'ogbn-arxiv'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.25,
+    'force_cpu': False,
+    'hidden_size': 256,
+    'lr': 0.01,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 1,
+    'num_heads': 1,
+    'num_of_epochs': 500,
+    'num_of_layers': 3,
+    'num_of_runs': 1,
+    'num_workers': 1,
+    'patience_period': 100,
+    'sparse': False,
+    'test_batch_size': 20000,
+    'test_frequency': 10,
+    'use_batch_norm': False,
+    'use_layer_norm': True}
+
+torch.cuda is available: True
+Used Dataset: ogbn-arxiv
+
+Run 01:
+
+Epoch 01| Loss: 2.8428| Acc: 0.2900| Train Time: 13.3922s
+Epoch 02| Loss: 2.0805| Acc: 0.4315| Train Time: 4.5944s
+Epoch 03| Loss: 1.9287| Acc: 0.4618| Train Time: 4.6035s
+Epoch 04| Loss: 1.8487| Acc: 0.4779| Train Time: 4.1901s
+Epoch 05| Loss: 1.7902| Acc: 0.4915| Train Time: 4.1562s
+Epoch 06| Loss: 1.7504| Acc: 0.4979| Train Time: 4.1670s
+Epoch 07| Loss: 1.7164| Acc: 0.5071| Train Time: 4.2281s
+Epoch 08| Loss: 1.6786| Acc: 0.5130| Train Time: 4.1747s
+Epoch 09| Loss: 1.6474| Acc: 0.5205| Train Time: 4.1699s
+Epoch 10| Loss: 1.6212| Acc: 0.5262| Train Time: 4.0421s
+Train: 0.5544| Val: 0.5489| Test: 0.5224| Eval Time: 11.0204s
+Epoch 11| Loss: 1.6015| Acc: 0.5313| Train Time: 4.3328s
+Epoch 12| Loss: 1.5835| Acc: 0.5367| Train Time: 4.2825s
+Epoch 13| Loss: 1.5714| Acc: 0.5382| Train Time: 4.2514s
+Epoch 14| Loss: 1.5601| Acc: 0.5399| Train Time: 4.3248s
+Epoch 15| Loss: 1.5454| Acc: 0.5435| Train Time: 4.7902s
+Epoch 16| Loss: 1.5349| Acc: 0.5446| Train Time: 4.6758s
+Epoch 17| Loss: 1.5274| Acc: 0.5486| Train Time: 4.4684s
+Epoch 18| Loss: 1.5167| Acc: 0.5522| Train Time: 4.1179s
+Epoch 19| Loss: 1.5104| Acc: 0.5523| Train Time: 3.9836s
+Epoch 20| Loss: 1.5081| Acc: 0.5519| Train Time: 4.1102s
+Train: 0.5816| Val: 0.5646| Test: 0.5418| Eval Time: 7.8780s
+Epoch 21| Loss: 1.4974| Acc: 0.5561| Train Time: 4.0740s
+Epoch 22| Loss: 1.4887| Acc: 0.5551| Train Time: 3.9990s
+Epoch 23| Loss: 1.4850| Acc: 0.5579| Train Time: 4.0593s
+Epoch 24| Loss: 1.4779| Acc: 0.5576| Train Time: 4.1151s
+Epoch 25| Loss: 1.4728| Acc: 0.5601| Train Time: 4.7727s
+Epoch 26| Loss: 1.4660| Acc: 0.5620| Train Time: 4.6301s
+Epoch 27| Loss: 1.4635| Acc: 0.5617| Train Time: 4.5158s

@@ -63,7 +63,7 @@ class Experimentor:
         
         self.train_loader = NeighborSampler(self.data.edge_index, node_idx=self.train_idx,
                                     sizes=[10] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
-                                    shuffle=True, num_workers=self.config["num_workers"])
+                                    shuffle=False, num_workers=self.config["num_workers"])
         self.test_loader = NeighborSampler(self.data.edge_index, node_idx=None, sizes=[-1],
                                         batch_size=self.config["test_batch_size"], shuffle=False,
                                         num_workers=self.config["num_workers"])  

@@ -1,0 +1,36 @@
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 20000,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.OGBN_ARXIV: 'ogbn-arxiv'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.25,
+    'force_cpu': False,
+    'hidden_size': 256,
+    'lr': 0.01,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 1,
+    'num_heads': 1,
+    'num_of_epochs': 500,
+    'num_of_layers': 3,
+    'num_of_runs': 1,
+    'num_workers': 1,
+    'patience_period': 100,
+    'sparse': False,
+    'test_batch_size': 20000,
+    'test_frequency': 10,
+    'use_batch_norm': False,
+    'use_layer_norm': False}
+
+torch.cuda is available: True
+Used Dataset: ogbn-arxiv
+
+Run 01:
+
+Epoch 01| Loss: 6.7542| Acc: 0.0799| Train Time: 13.9404s
+Epoch 02| Loss: 5.1175| Acc: 0.1158| Train Time: 4.3466s
+Epoch 03| Loss: 3.4353| Acc: 0.1936| Train Time: 4.3038s
+Epoch 04| Loss: 2.8066| Acc: 0.2895| Train Time: 4.0124s
+Epoch 05| Loss: 2.5280| Acc: 0.3444| Train Time: 4.1389s
+Epoch 06| Loss: 2.3716| Acc: 0.3687| Train Time: 4.0698s
+Epoch 07| Loss: 2.2215| Acc: 0.4032| Train Time: 4.0568s
+Epoch 08| Loss: 2.1161| Acc: 0.4260| Train Time: 4.0096s

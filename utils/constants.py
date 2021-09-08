@@ -8,8 +8,7 @@ class AdjacencyMode(str, enum.Enum):
 class ModelType(str, enum.Enum):
       GATV1 = "GAT-V1",
       GATV2 = "GAT-V2", 
-      TRANS = "TRANS",
-      GATV1_GORDI = "GAT-V1-Gordi"
+      TRANS = "TRANS"
       
 class Dataset(str, enum.Enum):
     OGBN_ARXIV = 'ogbn-arxiv',

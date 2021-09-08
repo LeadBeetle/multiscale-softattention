@@ -151,8 +151,9 @@ class GATv2Conv(MessagePassing):
             elif isinstance(edge_index, SparseTensor):
                 edge_index = set_diag(edge_index)
 
+        x = self.lift(x_l, x_r, edge_index)
         # propagate_type: (x: PairTensor)
-        out = self.propagate(edge_index, x=(x_l, x_r), size=size, edge_weight=edge_weight)
+        out = self.propagate(edge_index, x=x, size=size, edge_weight=edge_weight)
 
         alpha = self._alpha
         self._alpha = None
@@ -174,17 +175,28 @@ class GATv2Conv(MessagePassing):
         else:
             return out
 
-    def message(self, x_j: Tensor, x_i: Tensor,
+    def message(self, x: Tensor, 
                 index: Tensor, ptr: OptTensor,
                 size_i: Optional[int], edge_weight: Tensor) -> Tensor:
-        x = x_i + x_j
         x = F.leaky_relu(x, self.negative_slope)
         alpha = (x * self.att).sum(dim=-1)
         alpha = softmax(alpha, index, ptr, size_i)
         self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
         edge_weight = edge_weight.view(-1, 1) if edge_weight != None else 1
-        return  x_j * (edge_weight*alpha).unsqueeze(-1)
+        return  x * (edge_weight*alpha).unsqueeze(-1)
+
+    def lift(self, x_l, x_r, edge_index):
+        """
+        Lifts i.e. duplicates certain vectors depending on the edge index.
+        One of the tensor dims goes from N -> E (that's where the "lift" comes from).
+        """
+        src_nodes_index = edge_index[0]
+        trg_nodes_index = edge_index[1]
+        
+        x_l_lifted = x_l.index_select(0, src_nodes_index)
+        x_r_lifted = x_r.index_select(0, trg_nodes_index)
+        return x_l_lifted + x_r_lifted, 
 
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,

@@ -1,6 +1,7 @@
 import torch
 from torch_geometric.utils import to_dense_adj
-from torch_sparse import SparseTensor
+from torch_sparse import SparseTensor, set_diag
+from torch_geometric.utils import remove_self_loops, add_self_loops
 
 def one_step(edge_index, x, num_nodes, device):
     edge_weight = None
@@ -21,6 +22,8 @@ def one_step(edge_index, x, num_nodes, device):
 
 def one_step_sparse(edge_index, x, num_nodes, device):
     edge_weight = torch.ones(edge_index.size(1)).to(device)
+    edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
+    edge_index, edge_weight = add_self_loops(edge_index, edge_weight=edge_weight, num_nodes=torch.max(edge_index[1])+1)
     size = torch.Size([num_nodes, num_nodes])
     adj = torch.sparse_coo_tensor(edge_index, edge_weight, size = size)
     if x>1: 
@@ -29,5 +32,5 @@ def one_step_sparse(edge_index, x, num_nodes, device):
             adj_powers.append(torch.sparse.mm(adj_powers[k-2], adj_powers[0]))
             adj_k = adj_powers[k-1] - adj_powers[0]
             adj_k = torch.sparse_coo_tensor(adj_k._indices(), 1/k * (adj_k._values()>0)*1, size = size)
-            adj = adj + adj_k   
+            adj = adj + adj_k 
     return SparseTensor.from_torch_sparse_coo_tensor(adj), None
