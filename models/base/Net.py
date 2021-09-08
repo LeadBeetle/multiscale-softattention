@@ -48,13 +48,13 @@ class Net(torch.nn.Module):
             
             x_target = x[:size[1]]  # Target nodes are always placed first.
             edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
-            
             x = self.convs[i]((x, x_target), edge_index, edge_weight)
             if self._use_layer_norm:
                 x = self.layer_normalizations[i](x)
             if self._use_batch_norm:
                 x = self.batch_normalizations[i](x)
 
+            #print(x.shape, self.skips[i](x_target).shape)
             x = x + self.skips[i](x_target)
             if i != self.num_layers - 1:
                 x = F.elu(x)

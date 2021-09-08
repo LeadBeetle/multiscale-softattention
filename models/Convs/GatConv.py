@@ -6,9 +6,12 @@ import torch
 from torch import Tensor
 import torch.nn.functional as F
 from torch.nn import Parameter, Linear
-from torch_sparse import SparseTensor, set_diag, matmul
+from inspect import Parameter as InspectParameter
+
+from torch_sparse import SparseTensor
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import remove_self_loops, add_self_loops, softmax, to_dense_adj
+from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
+from torch_scatter import scatter, segment_csr
 from typing import List
 
 from torch_geometric.nn.inits import glorot, zeros
@@ -135,30 +138,28 @@ class GATConv(MessagePassing):
         
         assert x_l is not None
         assert alpha_l is not None
+        
         if self.add_self_loops:
-
-            if isinstance(edge_index, Tensor) :
-                num_nodes = x_l.size(0)
-                if x_r is not None:
-                    num_nodes = min(num_nodes, x_r.size(0))
-                if size is not None:
-                    num_nodes = min(size[0], size[1])
+            num_nodes = x_l.size(0)
+            if x_r is not None:
+                num_nodes = min(num_nodes, x_r.size(0))
+            if size is not None:
+                num_nodes = min(size[0], size[1])
+            if isinstance(edge_index, Tensor):
                 edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
                 edge_index, edge_weight = add_self_loops(edge_index, edge_weight=edge_weight, num_nodes=num_nodes)
-            elif isinstance(edge_index, SparseTensor):
-                edge_index = set_diag(edge_index)
-
-        out = self.propagate(edge_index=edge_index, x=(x_l, x_r),
-                             alpha=(alpha_l, alpha_r), size=size, edge_weight=edge_weight)
+            
+        x, alpha = self.lift(x_l, x_r, alpha_l, alpha_r, edge_index)
+        size = (x_l.size(0), x_r.size(0))
+        out = self.propagate(edge_index=edge_index, x=x,
+                             alpha=alpha, edge_weight=edge_weight, size = size)
 
         alpha = self._alpha
         self._alpha = None
-
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)
         else:
             out = out.mean(dim=1)
-
         if self.bias is not None:
             out += self.bias
 
@@ -171,17 +172,121 @@ class GATConv(MessagePassing):
         else:
             return out
 
-    def message(self, x_j: Tensor, alpha_j:Tensor, alpha_i: Tensor,
-                index: Tensor, ptr: OptTensor,
-                size_i: Optional[int], edge_weight: Tensor) -> Tensor:
-        alpha = alpha_j if alpha_i is None else alpha_j + alpha_i
+    def message(self, x: Tensor, alpha,
+                index: Tensor, edge_weight: Tensor) -> Tensor:
         alpha = F.leaky_relu(alpha, self.negative_slope)
-        alpha = softmax(alpha, index, ptr, size_i)
+        alpha = softmax(alpha, index)
         self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
         edge_weight = edge_weight.view(-1, 1) if edge_weight != None else 1
-        return  x_j * (edge_weight*alpha).unsqueeze(-1)
+        
+        return x * (edge_weight*alpha).unsqueeze(-1)
 
+    def aggregate(self, inputs: Tensor, index: Tensor,
+                  ptr: Optional[Tensor] = None,
+                  dim_size: Optional[int] = None) -> Tensor:
+        r"""Aggregates messages from neighbors as
+        :math:`\square_{j \in \mathcal{N}(i)}`.
+        Takes in the output of message computation as first argument and any
+        argument which was initially passed to :meth:`propagate`.
+        By default, this function will delegate its call to scatter functions
+        that support "add", "mean" and "max" operations as specified in
+        :meth:`__init__` by the :obj:`aggr` argument.
+        """
+        return scatter(inputs, index, dim=0, dim_size=dim_size,
+                           reduce=self.aggr)
+
+    def __collect__(self, args, edge_index, size, kwargs):
+        i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
+
+        out = {}
+        for arg in args:
+            if arg[-2:] not in ['_i', '_j']:
+                out[arg] = kwargs.get(arg, InspectParameter.empty)
+            else:
+                dim = 0 if arg[-2:] == '_j' else 1
+                data = kwargs.get(arg[:-2], InspectParameter.empty)
+
+                if isinstance(data, (tuple, list)):
+                    assert len(data) == 2
+                    if isinstance(data[1 - dim], Tensor):
+                        self.__set_size__(size, 1 - dim, data[1 - dim])
+                    data = data[dim]
+
+                if isinstance(data, Tensor):
+                    self.__set_size__(size, dim, data)
+                    data = self.__lift__(data, edge_index,
+                                         j if arg[-2:] == '_j' else i)
+
+                out[arg] = data
+
+        if isinstance(edge_index, Tensor):
+            out['adj_t'] = None
+            out['edge_index'] = edge_index
+            out['edge_index_i'] = edge_index[i]
+            out['edge_index_j'] = edge_index[j]
+            out['ptr'] = None
+        elif isinstance(edge_index, SparseTensor):
+            out['adj_t'] = edge_index
+            out['edge_index'] = None
+            out['edge_index_i'] = edge_index.storage.row()
+            out['edge_index_j'] = edge_index.storage.col()
+            out['ptr'] = None
+            out['edge_weight'] = edge_index.storage.value()
+            out['edge_attr'] = edge_index.storage.value()
+            out['edge_type'] = edge_index.storage.value()
+
+        out['index'] = out['edge_index_j']
+        out['size'] = size
+        out['size_i'] = size[1] or size[0]
+        out['size_j'] = size[0] or size[1]
+        out['dim_size'] = out['size_i']
+
+        return out
+
+    def __check_input__(self, edge_index, size):
+        the_size: List[Optional[int]] = [None, None]
+
+        if size is not None:
+            the_size[0] = size[0]
+            the_size[1] = size[1]
+        return the_size
+
+    def expand_left(self, src: torch.Tensor, dim: int, dims: int) -> torch.Tensor:
+        for _ in range(dims + dim if dim < 0 else dim):
+            src = src.unsqueeze(0)
+        return src
+
+    def _lift(self, src, edge_index, dim):
+        if dim == 0:
+            row = edge_index.storage.row()
+            return src.index_select(0, row)
+        elif dim == 1:
+            col = edge_index.storage.col()
+            return src.index_select(0, col)
+
+        raise ValueError
+
+
+    def lift(self, x_l, x_r, alpha_l, alpha_r, edge_index):
+        """
+        Lifts i.e. duplicates certain vectors depending on the edge index.
+        One of the tensor dims goes from N -> E (that's where the "lift" comes from).
+        """
+        if isinstance(edge_index, SparseTensor):
+            x_r_lifted = self._lift(x_r, edge_index, 1)
+
+            alpha_l_lifted = self._lift(alpha_l, edge_index, 0)
+            alpha_r_lifted = self._lift(alpha_r, edge_index, 1)
+        else: 
+            src_nodes_index = edge_index[0]
+            trg_nodes_index = edge_index[1]
+
+            x_r_lifted = x_r.index_select(0, trg_nodes_index)
+            alpha_l_lifted = alpha_l.index_select(0, src_nodes_index)
+            alpha_r_lifted = alpha_r.index_select(0, trg_nodes_index)
+        
+        return x_r_lifted, alpha_l_lifted + alpha_r_lifted
 
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,

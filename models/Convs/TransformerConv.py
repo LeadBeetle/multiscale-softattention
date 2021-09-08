@@ -140,11 +140,9 @@ class TransformerConv(MessagePassing):
                 edge_attr: OptTensor = None):
         """"""
 
-        if isinstance(x, Tensor):
-            x: PairTensor = (x, x)
-
+        x_l_lifted, x_r_lifted = self.lift(x, x, edge_index)
         # propagate_type: (x: PairTensor, edge_attr: OptTensor)
-        out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=None, edge_weight=edge_weight)
+        out = self.propagate(edge_index, x_l_lifted, x_r_lifted, edge_attr=edge_attr, size=None, edge_weight=edge_weight)
 
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)
@@ -162,12 +160,12 @@ class TransformerConv(MessagePassing):
 
         return out
 
-    def message(self, x_i: Tensor, x_j: Tensor, edge_attr: OptTensor,
+    def message(self, x_l: Tensor, x_r: Tensor, edge_attr: OptTensor,
                 index: Tensor, ptr: OptTensor,
                 size_i: Optional[int], edge_weight: Tensor) -> Tensor:
 
-        query = self.lin_query(x_i).view(-1, self.heads, self.out_channels)
-        key = self.lin_key(x_j).view(-1, self.heads, self.out_channels)
+        query = self.lin_query(x_l).view(-1, self.heads, self.out_channels)
+        key = self.lin_key(x_r).view(-1, self.heads, self.out_channels)
 
         if self.lin_edge is not None:
             assert edge_attr is not None
@@ -179,12 +177,24 @@ class TransformerConv(MessagePassing):
         alpha = softmax(alpha, index, ptr, size_i)
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
-        out = self.lin_value(x_j).view(-1, self.heads, self.out_channels)
+        out = self.lin_value(x_r).view(-1, self.heads, self.out_channels)
         if edge_attr is not None:
             out += edge_attr
 
         out *= alpha.view(-1, self.heads, 1)
         return out
+
+    def lift(self, x_l, x_r, edge_index):
+        """
+        Lifts i.e. duplicates certain vectors depending on the edge index.
+        One of the tensor dims goes from N -> E (that's where the "lift" comes from).
+        """
+        src_nodes_index = edge_index[0]
+        trg_nodes_index = edge_index[1]
+        
+        x_l_lifted = x_l.index_select(0, src_nodes_index)
+        x_r_lifted = x_r.index_select(0, trg_nodes_index)
+        return x_l_lifted, x_r_lifted
 
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,

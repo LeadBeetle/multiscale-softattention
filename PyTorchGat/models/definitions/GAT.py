@@ -7,20 +7,21 @@ from PyTorchGat.utils.constants import LayerType
 
 class GAT(torch.nn.Module):
 
-    def __init__(self, num_of_layers, num_heads_per_layer, num_features_per_layer, add_skip_connection=True, bias=True,
-                 dropout=0.6, layer_type=LayerType.IMP3, log_attention_weights=False):
+    def __init__(self, num_of_layers, hidden_size, num_heads, num_classes, num_features, add_skip_connection=True, bias=True,
+                 dropout=0.6, log_attention_weights=False):
         super().__init__()
-        assert num_of_layers == len(num_heads_per_layer) == len(num_features_per_layer) - 1, f'Enter valid arch params.'
-
+        
         GATLayer = GATLayerImp  # fetch one of 3 available implementations
-        num_heads_per_layer = [1] + num_heads_per_layer  # trick - so that I can nicely create GAT layers below
 
-        gat_layers = []  # collect GAT layers
+        self.gat_layers = []  # collect GAT layers
         for i in range(num_of_layers):
+            num_in_features = num_features * num_heads if i == 0 else num_features * num_heads
+            num_out_features = num_classes if i == num_of_layers else hidden_size
+        
             layer = GATLayer(
-                num_in_features=num_features_per_layer[i] * num_heads_per_layer[i],  # consequence of concatenation
-                num_out_features=num_features_per_layer[i+1],
-                num_of_heads=num_heads_per_layer[i+1],
+                num_in_features=num_in_features,  # consequence of concatenation
+                num_out_features=num_out_features,
+                num_of_heads=num_heads,
                 concat=True if i < num_of_layers - 1 else False,  # last GAT layer does mean avg, the others do concat
                 activation=nn.ELU() if i < num_of_layers - 1 else None,  # last layer just outputs raw scores
                 dropout_prob=dropout,
@@ -28,17 +29,23 @@ class GAT(torch.nn.Module):
                 bias=bias,
                 log_attention_weights=log_attention_weights
             )
-            gat_layers.append(layer)
+            self.gat_layers.append(layer)
 
         self.gat_net = nn.Sequential(
-            *gat_layers,
-        )
+             *self.gat_layers,
+         )
 
     # data is just a (in_nodes_features, topology) tuple, I had to do it like this because of the nn.Sequential:
     # https://discuss.pytorch.org/t/forward-takes-2-positional-arguments-but-3-were-given-for-nn-sqeuential-with-linear-layers/65698
     def forward(self, data):
         return self.gat_net(data)
 
+    def reset_parameters(self):
+        for conv in self.gat_layers:
+            conv.reset_parameters()
+        self.gat_net = nn.Sequential(
+             *self.gat_layers,
+         )
 
 class GATLayer(torch.nn.Module):
     """
@@ -48,7 +55,7 @@ class GATLayer(torch.nn.Module):
 
     head_dim = 1
 
-    def __init__(self, num_in_features, num_out_features, num_of_heads, layer_type, concat=True, activation=nn.ELU(),
+    def __init__(self, num_in_features, num_out_features, num_of_heads, concat=True, activation=nn.ELU(),
                  dropout_prob=0.6, add_skip_connection=True, bias=True, log_attention_weights=False):
 
         super().__init__()
@@ -103,9 +110,9 @@ class GATLayer(torch.nn.Module):
         self.log_attention_weights = log_attention_weights  # whether we should log the attention weights
         self.attention_weights = None  # for later visualization purposes, I cache the weights here
 
-        self.init_params()
+        self.reset_parameters()
 
-    def init_params(self):
+    def reset_parameters(self):
         """
         The reason we're using Glorot (aka Xavier uniform) initialization is because it's a default TF initialization:
             https://stackoverflow.com/questions/37350131/what-is-the-default-variable-initializer-in-tensorflow
@@ -169,7 +176,7 @@ class GATLayerImp(GATLayer):
                  dropout_prob=0.6, add_skip_connection=True, bias=True, log_attention_weights=False):
 
         # Delegate initialization to the base class
-        super().__init__(num_in_features, num_out_features, num_of_heads, LayerType.IMP3, concat, activation, dropout_prob,
+        super().__init__(num_in_features, num_out_features, num_of_heads, concat, activation, dropout_prob,
                       add_skip_connection, bias, log_attention_weights)
 
     def forward(self, data):
@@ -177,7 +184,7 @@ class GATLayerImp(GATLayer):
         # Step 1: Linear Projection + regularization
         #
 
-        in_nodes_features, edge_index = data  # unpack data
+        in_nodes_features, edge_index = data 
         num_of_nodes = in_nodes_features.shape[self.nodes_dim]
         assert edge_index.shape[0] == 2, f'Expected edge index with shape=(2,E) got {edge_index.shape}'
 
