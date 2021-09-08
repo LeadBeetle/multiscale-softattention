@@ -81,9 +81,6 @@ class Experimentor:
             self.model = Transformer(self.num_features, self.config["hidden_size"], self.num_classes, num_layers=self.config["num_of_layers"],
                 heads=self.config["num_heads"], dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
                 use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"])    
-        elif self.config["model_type"] == ModelType.GATV1_GORDI:
-            self.model = GAT_GORDI(num_of_layers=self.config["num_of_layers"], num_heads_per_layer=self.config["num_heads"], num_features_per_layer=self.num_features,
-            dropout=self.config["dropout"])
         self.model = self.model.to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.config["lr"])
                
@@ -96,8 +93,8 @@ class Experimentor:
             pbar.set_description(f'Epoch {epoch:02d}')
         total_loss, total_correct = 0, 0
         for batch_size, n_id, adjs in self.train_loader:
-            # `adjs` holds a list of `(edge_index, e_id, size)` tuples.
             adjs = [adj.to(self.device) for adj in adjs]
+
             self.optimizer.zero_grad()
             out = self.model(self.x[n_id], adjs)
             loss = self.criterion(out, self.y[n_id[:batch_size]])
