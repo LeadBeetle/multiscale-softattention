@@ -4,7 +4,7 @@
     'dataset_name': <Dataset.OGBN_ARXIV: 'ogbn-arxiv'>,
     'do_train_tqdm_logging': False,
     'dropout': 0.25,
-    'force_cpu': False,
+    'force_cpu': True,
     'hidden_size': 256,
     'lr': 0.01,
     'model_type': <ModelType.GATV1: 'GAT-V1'>,

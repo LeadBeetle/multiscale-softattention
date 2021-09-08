@@ -6,6 +6,8 @@ import torch
 from torch import Tensor
 import torch.nn.functional as F
 from torch.nn import Parameter, Linear
+from inspect import Parameter as InspectParameter
+
 from torch_sparse import SparseTensor
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
@@ -154,7 +156,6 @@ class GATConv(MessagePassing):
 
         alpha = self._alpha
         self._alpha = None
-        print("\nout", out.shape)
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)
         else:
@@ -192,15 +193,56 @@ class GATConv(MessagePassing):
         that support "add", "mean" and "max" operations as specified in
         :meth:`__init__` by the :obj:`aggr` argument.
         """
-        sc = scatter(inputs, index, dim=0, dim_size=dim_size,
+        return scatter(inputs, index, dim=0, dim_size=dim_size,
                            reduce=self.aggr)
 
-        print("sc", sc.shape)
-        return sc
+    def __collect__(self, args, edge_index, size, kwargs):
+        i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
 
-    # def __collect__(self, args, edge_index, size, kwargs):
-    #     out = super().__collect__(args, edge_index, size, kwargs)
-    #     out['index'] = out['edge_index_j']
+        out = {}
+        for arg in args:
+            if arg[-2:] not in ['_i', '_j']:
+                out[arg] = kwargs.get(arg, InspectParameter.empty)
+            else:
+                dim = 0 if arg[-2:] == '_j' else 1
+                data = kwargs.get(arg[:-2], InspectParameter.empty)
+
+                if isinstance(data, (tuple, list)):
+                    assert len(data) == 2
+                    if isinstance(data[1 - dim], Tensor):
+                        self.__set_size__(size, 1 - dim, data[1 - dim])
+                    data = data[dim]
+
+                if isinstance(data, Tensor):
+                    self.__set_size__(size, dim, data)
+                    data = self.__lift__(data, edge_index,
+                                         j if arg[-2:] == '_j' else i)
+
+                out[arg] = data
+
+        if isinstance(edge_index, Tensor):
+            out['adj_t'] = None
+            out['edge_index'] = edge_index
+            out['edge_index_i'] = edge_index[i]
+            out['edge_index_j'] = edge_index[j]
+            out['ptr'] = None
+        elif isinstance(edge_index, SparseTensor):
+            out['adj_t'] = edge_index
+            out['edge_index'] = None
+            out['edge_index_i'] = edge_index.storage.row()
+            out['edge_index_j'] = edge_index.storage.col()
+            out['ptr'] = edge_index.storage.rowptr()
+            out['edge_weight'] = edge_index.storage.value()
+            out['edge_attr'] = edge_index.storage.value()
+            out['edge_type'] = edge_index.storage.value()
+
+        out['index'] = out['edge_index_j']
+        out['size'] = size
+        out['size_i'] = size[1] or size[0]
+        out['size_j'] = size[0] or size[1]
+        out['dim_size'] = out['size_i']
+
+        return out
 
     def __check_input__(self, edge_index, size):
         the_size: List[Optional[int]] = [None, None]

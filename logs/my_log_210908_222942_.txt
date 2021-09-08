@@ -23,6 +23,3 @@
 
 torch.cuda is available: True
 Used Dataset: ogbn-arxiv
-
-Run 01:
-
