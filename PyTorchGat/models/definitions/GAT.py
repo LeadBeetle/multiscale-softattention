@@ -238,7 +238,7 @@ class GATLayerImp(GATLayer):
         #
 
         out_nodes_features = self.skip_concat_bias(attentions_per_edge, in_nodes_features, out_nodes_features)
-        return out_nodes_features
+        return (out_nodes_features, edge_index)
 
     #
     # Helper functions (without comments there is very little code so don't be scared!)

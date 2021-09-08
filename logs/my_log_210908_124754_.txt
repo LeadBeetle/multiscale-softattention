@@ -4,10 +4,10 @@
     'dataset_name': <Dataset.OGBN_ARXIV: 'ogbn-arxiv'>,
     'do_train_tqdm_logging': False,
     'dropout': 0.25,
-    'force_cpu': True,
+    'force_cpu': False,
     'hidden_size': 256,
     'lr': 0.01,
-    'model_type': <ModelType.GATV1_GORDI: 'GAT-V1-Gordi'>,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
     'nbor_degree': 1,
     'num_heads': 1,
     'num_of_epochs': 500,
@@ -26,3 +26,5 @@ Used Dataset: ogbn-arxiv
 
 Run 01:
 
+Epoch 01| Loss: 6.5665| Acc: 0.0842| Train Time: 12.9771s
+Epoch 02| Loss: 4.7584| Acc: 0.1114| Train Time: 8.3204s

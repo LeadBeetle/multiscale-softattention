@@ -135,8 +135,8 @@ class GATConv(MessagePassing):
         
         assert x_l is not None
         assert alpha_l is not None
+        
         if self.add_self_loops:
-
             if isinstance(edge_index, Tensor) :
                 num_nodes = x_l.size(0)
                 if x_r is not None:
@@ -148,8 +148,9 @@ class GATConv(MessagePassing):
             elif isinstance(edge_index, SparseTensor):
                 edge_index = set_diag(edge_index)
 
-        out = self.propagate(edge_index=edge_index, x=(x_l, x_r),
-                             alpha=(alpha_l, alpha_r), size=size, edge_weight=edge_weight)
+        x, alpha = self.lift(x_l, x_r, alpha_l, alpha_r, edge_index)
+        out = self.propagate(edge_index=edge_index, x=x,
+                             alpha=alpha, size=size, edge_weight=edge_weight)
 
         alpha = self._alpha
         self._alpha = None
@@ -171,17 +172,29 @@ class GATConv(MessagePassing):
         else:
             return out
 
-    def message(self, x_j: Tensor, alpha_j:Tensor, alpha_i: Tensor,
+    def message(self, x: Tensor, alpha,
                 index: Tensor, ptr: OptTensor,
                 size_i: Optional[int], edge_weight: Tensor) -> Tensor:
-        alpha = alpha_j if alpha_i is None else alpha_j + alpha_i
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, index, ptr, size_i)
         self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
         edge_weight = edge_weight.view(-1, 1) if edge_weight != None else 1
-        return  x_j * (edge_weight*alpha).unsqueeze(-1)
+        return  x * (edge_weight*alpha).unsqueeze(-1)
 
+    def lift(self, x_l, x_r, alpha_l, alpha_r, edge_index):
+        """
+        Lifts i.e. duplicates certain vectors depending on the edge index.
+        One of the tensor dims goes from N -> E (that's where the "lift" comes from).
+        """
+        src_nodes_index = edge_index[0]
+        trg_nodes_index = edge_index[1]
+        
+        x_l_lifted = x_l.index_select(0, src_nodes_index)
+        x_r_lifted = x_r.index_select(0, trg_nodes_index)
+        alpha_l_lifted = alpha_l.index_select(0, src_nodes_index)
+        alpha_r_lifted = alpha_r.index_select(0, trg_nodes_index)
+        return x_l_lifted, alpha_l_lifted + alpha_r_lifted
 
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,
