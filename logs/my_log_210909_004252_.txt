@@ -8,14 +8,14 @@
     'hidden_size': 128,
     'lr': 0.001,
     'model_type': <ModelType.GATV1: 'GAT-V1'>,
-    'nbor_degree': 2,
+    'nbor_degree': 1,
     'num_heads': 1,
     'num_of_epochs': 500,
     'num_of_layers': 3,
     'num_of_runs': 1,
-    'num_workers': 3,
+    'num_workers': 2,
     'patience_period': 100,
-    'sparse': True,
+    'sparse': False,
     'test_batch_size': 256,
     'test_frequency': 2,
     'use_batch_norm': False,
@@ -26,5 +26,6 @@ Used Dataset: ogbn-products
 
 Run 01:
 
-Epoch 01| Loss: 2.1095| Acc: 0.4779| Train Time: 140.2931s
-Epoch 02| Loss: 1.5315| Acc: 0.5696| Train Time: 116.2708s
+Epoch 01| Loss: 1.8956| Acc: 0.5011| Train Time: 120.3972s
+Epoch 02| Loss: 1.4660| Acc: 0.5832| Train Time: 102.8147s
+Train: 0.6561| Val: 0.6454| Test: 0.5140| Eval Time: 273.2621s

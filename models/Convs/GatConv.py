@@ -275,7 +275,8 @@ class GATConv(MessagePassing):
         One of the tensor dims goes from N -> E (that's where the "lift" comes from).
         """
         if isinstance(edge_index, SparseTensor):
-            x_r_lifted = self._lift(x_r, edge_index, 1)
+            x_l_lifted = self._lift(x_l, edge_index, 0)
+            #x_r_lifted = self._lift(x_r, edge_index, 1)
 
             alpha_l_lifted = self._lift(alpha_l, edge_index, 0)
             alpha_r_lifted = self._lift(alpha_r, edge_index, 1)
@@ -283,11 +284,12 @@ class GATConv(MessagePassing):
             src_nodes_index = edge_index[0]
             trg_nodes_index = edge_index[1]
 
-            x_r_lifted = x_r.index_select(0, trg_nodes_index)
+            x_l_lifted = x_l.index_select(0, src_nodes_index)
+            #x_r_lifted = x_r.index_select(0, trg_nodes_index)
             alpha_l_lifted = alpha_l.index_select(0, src_nodes_index)
             alpha_r_lifted = alpha_r.index_select(0, trg_nodes_index)
         
-        return x_r_lifted, alpha_l_lifted + alpha_r_lifted
+        return x_l_lifted, alpha_l_lifted + alpha_r_lifted
 
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,
