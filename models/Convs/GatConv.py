@@ -226,6 +226,7 @@ class GATConv(MessagePassing):
             out['edge_index_i'] = edge_index[i]
             out['edge_index_j'] = edge_index[j]
             out['ptr'] = None
+            out['index'] = out['edge_index_i']
         elif isinstance(edge_index, SparseTensor):
             out['adj_t'] = edge_index
             out['edge_index'] = None
@@ -235,8 +236,8 @@ class GATConv(MessagePassing):
             out['edge_weight'] = edge_index.storage.value()
             out['edge_attr'] = edge_index.storage.value()
             out['edge_type'] = edge_index.storage.value()
+            out['index'] = out['edge_index_j']
 
-        out['index'] = out['edge_index_j']
         out['size'] = size
         out['size_i'] = size[1] or size[0]
         out['size_j'] = size[0] or size[1]
