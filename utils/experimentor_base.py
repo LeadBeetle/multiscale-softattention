@@ -148,6 +148,7 @@ class Experimentor:
         test_accs = []
         train_accs = []
         val_accs = []
+        
         for run in range(1, 1 + self.config["num_of_runs"]):
             logging.info('')
             logging.info(f'Run {run:02d}:')
