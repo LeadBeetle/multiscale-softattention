@@ -15,7 +15,7 @@
     'num_of_runs': 1,
     'num_workers': 2,
     'patience_period': 100,
-    'sparse': False,
+    'sparse': True,
     'test_batch_size': 256,
     'test_frequency': 2,
     'use_batch_norm': False,
@@ -26,4 +26,12 @@ Used Dataset: ogbn-products
 
 Run 01:
 
-Epoch 01| Loss: 1.9202| Acc: 0.4966| Train Time: 120.4957s
+Epoch 01| Loss: 1.0972| Acc: 0.7367| Train Time: 143.9643s
+Epoch 02| Loss: 0.6015| Acc: 0.8434| Train Time: 120.8148s
+Train: 0.8820| Val: 0.8760| Test: 0.7085| Eval Time: 302.1617s
+Epoch 03| Loss: 0.5418| Acc: 0.8575| Train Time: 120.8536s
+Epoch 04| Loss: 0.5143| Acc: 0.8636| Train Time: 119.4430s
+Train: 0.8931| Val: 0.8845| Test: 0.7367| Eval Time: 300.9320s
+Epoch 05| Loss: 0.4931| Acc: 0.8676| Train Time: 121.3018s
+Epoch 06| Loss: 0.4798| Acc: 0.8707| Train Time: 123.4256s
+Train: 0.9003| Val: 0.8945| Test: 0.7462| Eval Time: 294.5446s
