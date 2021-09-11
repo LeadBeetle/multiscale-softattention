@@ -1,13 +1,11 @@
 import os.path as osp
 
 import torch
-from torch.functional import Tensor 
 from tqdm import tqdm
 from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
 from torch_geometric.data import NeighborSampler
 import torch.nn.functional as F
 
-from PyTorchGat.models.definitions.GAT import GAT as GAT_GORDI
 from models.GAT import GAT
 from models.GATv2 import GATV2
 from models.Transformer import Transformer
@@ -30,27 +28,32 @@ logging.basicConfig(level=logging.DEBUG, filename=filename, filemode="a+",
 class Experimentor:
     
     def __init__(self, config):
+        
         pp = pprint.PrettyPrinter(indent=4)
         logging.info(pp.pformat(config))
 
         logging.info("\ntorch.cuda is available: " + str(torch.cuda.is_available()))
+        
         self.config = config
         self.dataset_name = config["dataset_name"]
+        self.device = torch.device('cuda' if torch.cuda.is_available() and not self.config['force_cpu'] else 'cpu')
+        
         logging.info(f"Used Dataset: {self.dataset_name}" )
+        
         self.initData()
      
 
     def initData(self):
         root = osp.abspath( 'data')
+        self.evaluator = Evaluator(name=datasetMapping[self.dataset_name])
         
         self.dataset = PygNodePropPredDataset(datasetMapping[self.dataset_name], root)
         self.split_idx = self.dataset.get_idx_split()
-        self.evaluator = Evaluator(name=datasetMapping[self.dataset_name])
+        
         self.data = self.dataset[0]
         self.train_idx = self.split_idx['train']
         self.val_idx = self.split_idx['valid']
         
-        self.device = torch.device('cuda' if torch.cuda.is_available() and not self.config['force_cpu'] else 'cpu')
         self.criterion = F.nll_loss
         self.num_classes = self.dataset.num_classes
         self.num_features = self.dataset.num_features
@@ -119,6 +122,7 @@ class Experimentor:
         return loss, approx_acc, time_elapsed
 
 
+    
     @torch.no_grad()
     def test(self):
         start = time.time()
