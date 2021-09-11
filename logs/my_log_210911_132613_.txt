@@ -1,11 +1,11 @@
 {   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
     'batch_size': 256,
     'console_log_freq': 1,
-    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'dataset_name': <Dataset.PPI: 'PPI'>,
     'do_train_tqdm_logging': False,
     'dropout': 0.6,
     'force_cpu': False,
-    'hidden_size': 64,
+    'hidden_size': 128,
     'lr': 0.005,
     'model_type': <ModelType.GATV1: 'GAT-V1'>,
     'nbor_degree': 1,
@@ -22,12 +22,4 @@
     'use_layer_norm': False}
 
 torch.cuda is available: True
-Used Dataset: Cora
-
-Run 01:
-
-Epoch 01| Loss: 1.9677| Acc: 0.0081| Train Time: 2.5611s
-Epoch 02| Loss: 1.3952| Acc: 0.0480| Train Time: 2.7217s
-Epoch 03| Loss: 0.8233| Acc: 0.0513| Train Time: 2.7056s
-Epoch 04| Loss: 0.4330| Acc: 0.0517| Train Time: 2.1345s
-Epoch 05| Loss: 0.1990| Acc: 0.0517| Train Time: 2.9137s
+Used Dataset: PPI

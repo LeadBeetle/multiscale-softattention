@@ -2,7 +2,6 @@ import os.path as osp
 from utils.experimentor_base import Experimentor
 
 import torch
-from torch_geometric.data import NeighborSampler
 import torch.nn.functional as F
 import datetime
 import logging

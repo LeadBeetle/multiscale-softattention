@@ -2,13 +2,11 @@ import os.path as osp
 from utils.experimentor_base import Experimentor
 
 import torch
-from torch_geometric.data import NeighborSampler
 import torch.nn.functional as F
 import datetime
 import logging
 from torch_geometric.datasets import Planetoid
 import time
-import numpy as np
 
 from utils.constants import * 
 
