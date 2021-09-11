@@ -6,7 +6,7 @@ from utils.constants import *
 def getExperimentor(dataset_name): 
     isProteins = dataset_name == Dataset.OGBN_PROTEINS
     isPlanetoid = dataset_name in [Dataset.CORA, Dataset.PUBMED, Dataset.CITESEER]
-    
+
     exp = None
     if isProteins:
         exp = Experimentor_Proteins
@@ -14,6 +14,5 @@ def getExperimentor(dataset_name):
         exp = Experimentor_Planetoid
     else: 
         exp = Experimentor
-       
     assert(exp is not None)
     return exp

@@ -2,13 +2,12 @@ import os.path as osp
 from utils.experimentor_base import Experimentor
 
 import torch
-from torch_geometric.data import NeighborSampler
 import torch.nn.functional as F
 import datetime
 import logging
 from torch_geometric.datasets import Planetoid
+from torch_geometric.data import NeighborSampler
 import time
-import numpy as np
 
 from utils.constants import * 
 
@@ -29,7 +28,7 @@ class Experimentor_Planetoid(Experimentor):
         self.val_idx = self.data.val_mask
         self.test_idx = self.data.test_mask
         
-        self.train_size = int(torch.sum(self.train_idx.int()))
+        self.train_size = self.train_idx.size(0) #int(torch.sum(self.train_idx.int()))
 
         self.criterion = F.nll_loss
         self.num_classes = self.dataset.num_classes
@@ -37,19 +36,17 @@ class Experimentor_Planetoid(Experimentor):
         
         self.setLoaders()
         self.setModel()
-          
-    
+
     def setLoaders(self):
         self.x = self.data.x.to(self.device)
         self.y = self.data.y.squeeze().to(self.device)
         
-        self.train_loader = NeighborSampler(self.data.edge_index, node_idx=self.train_idx,
+        self.train_loader = NeighborSampler(self.data.edge_index, node_idx=None,
                                     sizes=[-1] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
                                     shuffle=True, num_workers=self.config["num_workers"])
         self.test_loader = NeighborSampler(self.data.edge_index, node_idx=None, sizes=[-1],
                                         batch_size=self.config["test_batch_size"], shuffle=False,
                                         num_workers=self.config["num_workers"])  
-
     @torch.no_grad()
     def test(self):
         start = time.time()
