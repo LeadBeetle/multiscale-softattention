@@ -17,8 +17,7 @@ class Dataset(str, enum.Enum):
     OGBN_MAG = 'ogbn-mag',
     CORA = 'Cora',
     CITESEER = 'CiteSeer',
-    PUBMED = 'PubMed',
-    PPI = 'PPI'
+    PUBMED = 'PubMed'
     
 datasetMapping = {
     Dataset.OGBN_ARXIV: "ogbn-arxiv",
@@ -27,8 +26,7 @@ datasetMapping = {
     Dataset.OGBN_MAG: "ogbn-mag",
     Dataset.CORA: "Cora",
     Dataset.CITESEER: "CiteSeer",
-    Dataset.PUBMED: "PubMed",
-    Dataset.PPI: "PPI"
+    Dataset.PUBMED: "PubMed"
 
 }
     
