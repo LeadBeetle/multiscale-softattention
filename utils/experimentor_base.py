@@ -53,6 +53,8 @@ class Experimentor:
         self.data = self.dataset[0]
         self.train_idx = self.split_idx['train']
         self.val_idx = self.split_idx['valid']
+
+        self.train_size = self.train_idx.size(0)
         
         self.criterion = F.nll_loss
         self.num_classes = self.dataset.num_classes
@@ -107,6 +109,7 @@ class Experimentor:
             self.optimizer.step()
             
             total_loss += float(loss)
+
             total_correct += int(out.argmax(dim=-1).eq(self.y[n_id[:batch_size]]).sum())
             if do_logging:
                 pbar.update(batch_size)
@@ -115,10 +118,9 @@ class Experimentor:
             pbar.close()
 
         loss = total_loss / len(self.train_loader)
-        approx_acc = total_correct / self.train_idx.size(0)
-
+        approx_acc = total_correct / self.train_size
+        
         time_elapsed = time.time() - start
-
         return loss, approx_acc, time_elapsed
 
 

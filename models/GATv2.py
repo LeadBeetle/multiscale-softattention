@@ -17,7 +17,7 @@ class GATV2(Net):
         if self._use_layer_norm:
             self._layers_normalization.append(torch.nn.LayerNorm(hidden_channels))
         
-        for _ in range(num_layers - 2):
+        for _ in range(num_layers-2):
             self.convs.append(
                 GATv2Conv(heads * hidden_channels, hidden_channels, heads, dropout=dropout))
             if self._use_layer_norm:

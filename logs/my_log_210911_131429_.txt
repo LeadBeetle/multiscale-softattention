@@ -1,0 +1,39 @@
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'force_cpu': False,
+    'hidden_size': 128,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 1,
+    'num_heads': 8,
+    'num_of_epochs': 500,
+    'num_of_layers': 2,
+    'num_of_runs': 1,
+    'num_workers': 2,
+    'patience_period': 100,
+    'sparse': False,
+    'test_batch_size': 256,
+    'test_frequency': 5,
+    'use_batch_norm': False,
+    'use_layer_norm': False}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01:
+
+Epoch 01| Loss: 1.9386| Acc: 0.1929| Train Time: 2.5776s
+Epoch 02| Loss: 1.1122| Acc: 0.9643| Train Time: 2.5663s
+Epoch 03| Loss: 0.4686| Acc: 0.9929| Train Time: 2.4909s
+Epoch 04| Loss: 0.1677| Acc: 1.0000| Train Time: 1.8698s
+Epoch 05| Loss: 0.0413| Acc: 1.0000| Train Time: 1.9116s
+Train: 1.0000| Val: 0.7760| Test: 0.8050| Eval Time: 7.6697s
+Epoch 06| Loss: 0.0150| Acc: 1.0000| Train Time: 1.9926s
+Epoch 07| Loss: 0.0052| Acc: 1.0000| Train Time: 1.9941s
+Epoch 08| Loss: 0.0021| Acc: 1.0000| Train Time: 2.0296s
+Epoch 09| Loss: 0.0007| Acc: 1.0000| Train Time: 2.0383s
+Epoch 10| Loss: 0.0005| Acc: 1.0000| Train Time: 2.1215s
