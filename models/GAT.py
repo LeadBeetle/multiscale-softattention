@@ -20,7 +20,7 @@ class GAT(Net):
             self._layers_normalization.append(torch.nn.LayerNorm(hidden_channels))
         if self._use_batch_norm:
             self._batch_normalization.append(torch.nn.BatchNorm1d(hidden_channels))
-        for _ in range(num_layers - 2):
+        for _ in range(num_layers-2):
             self.convs.append(
                 GATConv(heads * hidden_channels, hidden_channels, heads, dropout=dropout))
             if self._use_layer_norm:
