@@ -15,8 +15,10 @@ import json
 import datetime
 import pprint
 import logging
+import sys
 import time
 
+import traceback
 from utils.constants import * 
 
 suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
@@ -215,7 +217,22 @@ class Experimentor:
     def run_wrapper(self):
         try:
             self.run()
-        except Exception as ex:
-            logging.error(type(ex).__name__)
-            logging.error(ex)
+        except Exception as e:
+            logging.info("Printing only the traceback above the current stack frame")
+            logging.info("".join(traceback.format_exception(sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2])))
+            logging.info("\nPrinting the full traceback as if we had not caught it here...")
+            logging.info(self.format_exception(e))
+
+    def format_exception(self, e):
+        exception_list = traceback.format_stack()
+        exception_list = exception_list[:-2]
+        exception_list.extend(traceback.format_tb(sys.exc_info()[2]))
+        exception_list.extend(traceback.format_exception_only(sys.exc_info()[0], sys.exc_info()[1]))
+
+        exception_str = "Traceback (most recent call last):\n"
+        exception_str += "".join(exception_list)
+        # Removing the last \n
+        exception_str = exception_str[:-1]
+
+        return exception_str
         

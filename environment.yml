@@ -1,8 +1,8 @@
 name: PS
 channels:
   - pytorch
-  - conda-forge
   - rusty1s
+  - conda-forge
   - defaults
 dependencies:
   - python=3.8.10
