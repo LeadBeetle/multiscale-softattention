@@ -3,19 +3,11 @@ from utils.experimentor_base import Experimentor
 
 import torch
 import torch.nn.functional as F
-import datetime
-import logging
 from torch_geometric.datasets import Planetoid
 from torch_geometric.data import NeighborSampler
 import time
 
 from utils.constants import * 
-
-suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
-filename = "_".join(["logs/my_log", suffix, ".txt"])
-        
-logging.basicConfig(level=logging.DEBUG, filename=filename, filemode="a+",
-                                format="%(message)s")
 
 class Experimentor_Planetoid(Experimentor):
     def initData(self):

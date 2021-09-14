@@ -1,25 +1,14 @@
-import os.path as osp
 from utils.experimentor_base import Experimentor
 
 import torch
 from tqdm import tqdm
 from torch_geometric.data import NeighborSampler
-import torch.nn.functional as F
 from torch_scatter import scatter
-from torch_geometric.utils.hetero import group_hetero_graph
-from torch_geometric.utils import to_undirected
 import json
-import datetime
 import logging
 import time
 
 from utils.constants import * 
-
-suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
-filename = "_".join(["logs/my_log", suffix, ".txt"])
-        
-logging.basicConfig(level=logging.DEBUG, filename=filename, filemode="a+",
-                                format="%(message)s")
 
 class Experimentor_Proteins(Experimentor):
 
@@ -162,7 +151,7 @@ class Experimentor_Proteins(Experimentor):
         data["test_roc_std"] = str(test_roc.std().item())
 
 
-        filename = "_".join(["results/res", suffix, ".json"])
+        filename = "_".join(["results/res", self.suffix, ".json"])
         with open(filename, 'w') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
 

@@ -1,0 +1,52 @@
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'force_cpu': False,
+    'hidden_size': 128,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 1,
+    'num_heads': 1,
+    'num_of_epochs': 500,
+    'num_of_layers': 2,
+    'num_of_runs': 3,
+    'num_workers': 2,
+    'patience_period': 100,
+    'sparse': False,
+    'test_batch_size': 256,
+    'test_frequency': 5,
+    'use_batch_norm': False,
+    'use_layer_norm': False}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01:
+
+Epoch 01| Loss: 1.1425| Acc: 0.6352| Train Time: 15.9717s
+Epoch 02| Loss: 0.5322| Acc: 0.8427| Train Time: 2.0896s
+Epoch 03| Loss: 0.3621| Acc: 0.8936| Train Time: 2.2967s
+Epoch 04| Loss: 0.2856| Acc: 0.9188| Train Time: 2.2771s
+Epoch 05| Loss: 0.2230| Acc: 0.9357| Train Time: 2.1316s
+Train: 0.9929| Val: 0.9900| Test: 0.9670| Eval Time: 8.2422s
+Epoch 06| Loss: 0.1888| Acc: 0.9442| Train Time: 2.3066s
+Epoch 07| Loss: 0.1502| Acc: 0.9561| Train Time: 2.1224s
+Epoch 08| Loss: 0.1245| Acc: 0.9653| Train Time: 2.4238s
+Epoch 09| Loss: 0.1189| Acc: 0.9631| Train Time: 2.5255s
+Epoch 10| Loss: 0.1079| Acc: 0.9697| Train Time: 2.4440s
+Train: 1.0000| Val: 1.0000| Test: 0.9950| Eval Time: 4.9018s
+Epoch 11| Loss: 0.0883| Acc: 0.9760| Train Time: 2.3493s
+Epoch 12| Loss: 0.0850| Acc: 0.9738| Train Time: 2.3001s
+Epoch 13| Loss: 0.0685| Acc: 0.9808| Train Time: 2.2252s
+Epoch 14| Loss: 0.0534| Acc: 0.9889| Train Time: 2.5136s
+Epoch 15| Loss: 0.0679| Acc: 0.9790| Train Time: 2.6171s
+Train: 1.0000| Val: 1.0000| Test: 0.9990| Eval Time: 4.8174s
+Epoch 16| Loss: 0.0489| Acc: 0.9889| Train Time: 2.5471s
+Epoch 17| Loss: 0.0522| Acc: 0.9841| Train Time: 2.6571s
+Epoch 18| Loss: 0.0467| Acc: 0.9845| Train Time: 2.6185s
+Epoch 19| Loss: 0.0413| Acc: 0.9893| Train Time: 2.5685s
+Epoch 20| Loss: 0.0500| Acc: 0.9812| Train Time: 2.5117s
+Train: 1.0000| Val: 1.0000| Test: 1.0000| Eval Time: 5.0710s

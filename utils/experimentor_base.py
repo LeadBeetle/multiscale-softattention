@@ -19,17 +19,18 @@ import time
 import traceback
 from utils.constants import * 
 
-suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
-filename = "_".join(["logs/my_log", suffix, ".txt"])
-        
-logging.basicConfig(level=logging.DEBUG, filename=filename, filemode="a+",
-                                format="%(message)s")
+
 
 class Experimentor:
     
     def __init__(self, config):
         
         pp = pprint.PrettyPrinter(indent=4)
+        self.suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
+        filename = "_".join(["logs/my_log", self.suffix, ".txt"])
+                
+        logging.basicConfig(level=logging.DEBUG, filename=filename, filemode="a+",
+                                        format="%(message)s")
         logging.info(pp.pformat(config))
 
         logging.info("\ntorch.cuda is available: " + str(torch.cuda.is_available()))
@@ -216,7 +217,7 @@ class Experimentor:
         data["test_acc_std"] = str(test_acc.std().item())
 
 
-        filename = "_".join(["results/res", suffix, ".json"])
+        filename = "_".join(["results/res", self.suffix, ".json"])
         with open(filename, 'w') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
 
