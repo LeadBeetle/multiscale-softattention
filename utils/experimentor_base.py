@@ -98,7 +98,7 @@ class Experimentor:
         self.model.train()
         do_logging = epoch == 1 or self.config["do_train_tqdm_logging"]
         if do_logging:
-            pbar = tqdm(total=self.train_idx.size(0))
+            pbar = tqdm(total=self.train_size)
             pbar.set_description(f'Epoch {epoch:02d}')
         total_loss, total_correct = 0, 0
         for batch_size, n_id, adjs in self.train_loader:

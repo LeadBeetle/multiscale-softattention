@@ -54,7 +54,6 @@ class Net(torch.nn.Module):
             if self._use_batch_norm:
                 x = self.batch_normalizations[i](x)
 
-            #print(x.shape, self.skips[i](x_target).shape)
             x = x + self.skips[i](x_target)
             if i != self.num_layers - 1:
                 x = F.elu(x)

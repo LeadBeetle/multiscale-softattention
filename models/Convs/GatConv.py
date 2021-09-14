@@ -11,7 +11,7 @@ from inspect import Parameter as InspectParameter
 from torch_sparse import SparseTensor
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
-from torch_scatter import scatter, segment_csr
+from torch_scatter import scatter
 from typing import List
 
 from torch_geometric.nn.inits import glorot, zeros
@@ -149,7 +149,7 @@ class GATConv(MessagePassing):
                 edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
                 edge_index, edge_weight = add_self_loops(edge_index, edge_weight=edge_weight, num_nodes=num_nodes)
             
-        x, alpha = self.lift(x_l, x_r, alpha_l, alpha_r, edge_index)
+        x, alpha = self.lift(x_l, alpha_l, alpha_r, edge_index)
         size = (x_l.size(0), x_r.size(0))
         out = self.propagate(edge_index=edge_index, x=x,
                              alpha=alpha, edge_weight=edge_weight, size = size)
@@ -185,14 +185,7 @@ class GATConv(MessagePassing):
     def aggregate(self, inputs: Tensor, index: Tensor,
                   ptr: Optional[Tensor] = None,
                   dim_size: Optional[int] = None) -> Tensor:
-        r"""Aggregates messages from neighbors as
-        :math:`\square_{j \in \mathcal{N}(i)}`.
-        Takes in the output of message computation as first argument and any
-        argument which was initially passed to :meth:`propagate`.
-        By default, this function will delegate its call to scatter functions
-        that support "add", "mean" and "max" operations as specified in
-        :meth:`__init__` by the :obj:`aggr` argument.
-        """
+
         return scatter(inputs, index, dim=0, dim_size=dim_size,
                            reduce=self.aggr)
 
@@ -253,42 +246,27 @@ class GATConv(MessagePassing):
             the_size[1] = size[1]
         return the_size
 
-    def expand_left(self, src: torch.Tensor, dim: int, dims: int) -> torch.Tensor:
-        for _ in range(dims + dim if dim < 0 else dim):
-            src = src.unsqueeze(0)
-        return src
-
-    def _lift(self, src, edge_index, dim):
-        if dim == 0:
-            row = edge_index.storage.row()
-            return src.index_select(0, row)
-        elif dim == 1:
-            col = edge_index.storage.col()
-            return src.index_select(0, col)
-
-        raise ValueError
-
-
-    def lift(self, x_l, x_r, alpha_l, alpha_r, edge_index):
+    def lift(self, x_l, alpha_l, alpha_r, edge_index):
         """
         Lifts i.e. duplicates certain vectors depending on the edge index.
         One of the tensor dims goes from N -> E (that's where the "lift" comes from).
         """
         if isinstance(edge_index, SparseTensor):
-            x_l_lifted = self._lift(x_l, edge_index, 0)
-            #x_r_lifted = self._lift(x_r, edge_index, 1)
+            row = edge_index.storage.row()
+            col = edge_index.storage.col()
+            x_l_lifted = x_l.index_select(0, row)
 
-            alpha_l_lifted = self._lift(alpha_l, edge_index, 0)
-            alpha_r_lifted = self._lift(alpha_r, edge_index, 1)
+            alpha_l_lifted = alpha_l.index_select(0, row)
+            alpha_r_lifted = alpha_r.index_select(0, col)
         else: 
             src_nodes_index = edge_index[0]
             trg_nodes_index = edge_index[1]
 
             x_l_lifted = x_l.index_select(0, src_nodes_index)
-            #x_r_lifted = x_r.index_select(0, trg_nodes_index)
             alpha_l_lifted = alpha_l.index_select(0, src_nodes_index)
             alpha_r_lifted = alpha_r.index_select(0, trg_nodes_index)
         
+        #x_r_lifted not needed here
         return x_l_lifted, alpha_l_lifted + alpha_r_lifted
 
     def __repr__(self):
