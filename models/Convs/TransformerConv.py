@@ -183,8 +183,8 @@ class TransformerConv(MessagePassing):
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
         out = self.lin_value(x_r).view(-1, self.heads, self.out_channels)
+        
         # if edge_attr is not None:
-        #     print("out", out.shape, "edge_attr", edge_attr.shape)
         #     out += edge_attr
 
         out *= alpha.view(-1, self.heads, 1)

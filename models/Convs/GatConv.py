@@ -149,7 +149,7 @@ class GATConv(MessagePassing):
                 edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
                 edge_index, edge_weight = add_self_loops(edge_index, edge_weight=edge_weight, num_nodes=num_nodes)
             
-        x, alpha = self.lift(x_l, x_r, alpha_l, alpha_r, edge_index)
+        x, alpha = self.lift(x_l, alpha_l, alpha_r, edge_index)
         size = (x_l.size(0), x_r.size(0))
         out = self.propagate(edge_index=edge_index, x=x,
                              alpha=alpha, edge_weight=edge_weight, size = size)
@@ -246,7 +246,7 @@ class GATConv(MessagePassing):
             the_size[1] = size[1]
         return the_size
 
-    def lift(self, x_l, x_r, alpha_l, alpha_r, edge_index):
+    def lift(self, x_l, alpha_l, alpha_r, edge_index):
         """
         Lifts i.e. duplicates certain vectors depending on the edge index.
         One of the tensor dims goes from N -> E (that's where the "lift" comes from).
