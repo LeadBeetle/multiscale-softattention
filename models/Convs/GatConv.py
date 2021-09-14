@@ -11,7 +11,7 @@ from inspect import Parameter as InspectParameter
 from torch_sparse import SparseTensor
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
-from torch_scatter import scatter, segment_csr
+from torch_scatter import scatter
 from typing import List
 
 from torch_geometric.nn.inits import glorot, zeros
@@ -185,7 +185,7 @@ class GATConv(MessagePassing):
     def aggregate(self, inputs: Tensor, index: Tensor,
                   ptr: Optional[Tensor] = None,
                   dim_size: Optional[int] = None) -> Tensor:
-                  
+
         return scatter(inputs, index, dim=0, dim_size=dim_size,
                            reduce=self.aggr)
 

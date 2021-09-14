@@ -8,6 +8,11 @@ import torch.nn.functional as F
 from torch.nn import Linear
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import softmax
+from typing import List
+from torch_scatter import scatter
+from inspect import Parameter as InspectParameter
+from torch_sparse import SparseTensor
+
 
 
 class TransformerConv(MessagePassing):
@@ -162,7 +167,7 @@ class TransformerConv(MessagePassing):
 
     def message(self, x_l: Tensor, x_r: Tensor, edge_attr: OptTensor,
                 index: Tensor, ptr: OptTensor,
-                size_i: Optional[int], edge_weight: Tensor) -> Tensor:
+                size_i: Optional[int]) -> Tensor:
 
         query = self.lin_query(x_l).view(-1, self.heads, self.out_channels)
         key = self.lin_key(x_r).view(-1, self.heads, self.out_channels)
@@ -184,16 +189,88 @@ class TransformerConv(MessagePassing):
         out *= alpha.view(-1, self.heads, 1)
         return out
 
+    def aggregate(self, inputs: Tensor, index: Tensor,
+                  ptr: Optional[Tensor] = None,
+                  dim_size: Optional[int] = None) -> Tensor:
+
+        return scatter(inputs, index, dim=0, dim_size=dim_size,
+                           reduce=self.aggr)
+
+    def __collect__(self, args, edge_index, size, kwargs):
+        i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
+
+        out = {}
+        for arg in args:
+            if arg[-2:] not in ['_i', '_j']:
+                out[arg] = kwargs.get(arg, InspectParameter.empty)
+            else:
+                dim = 0 if arg[-2:] == '_j' else 1
+                data = kwargs.get(arg[:-2], InspectParameter.empty)
+
+                if isinstance(data, (tuple, list)):
+                    assert len(data) == 2
+                    if isinstance(data[1 - dim], Tensor):
+                        self.__set_size__(size, 1 - dim, data[1 - dim])
+                    data = data[dim]
+
+                if isinstance(data, Tensor):
+                    self.__set_size__(size, dim, data)
+                    data = self.__lift__(data, edge_index,
+                                         j if arg[-2:] == '_j' else i)
+
+                out[arg] = data
+
+        if isinstance(edge_index, Tensor):
+            out['adj_t'] = None
+            out['edge_index'] = edge_index
+            out['edge_index_i'] = edge_index[i]
+            out['edge_index_j'] = edge_index[j]
+            out['ptr'] = None
+            out['index'] = out['edge_index_i']
+        elif isinstance(edge_index, SparseTensor):
+            out['adj_t'] = edge_index
+            out['edge_index'] = None
+            out['edge_index_i'] = edge_index.storage.row()
+            out['edge_index_j'] = edge_index.storage.col()
+            out['ptr'] = None
+            out['edge_weight'] = edge_index.storage.value()
+            out['edge_attr'] = edge_index.storage.value()
+            out['edge_type'] = edge_index.storage.value()
+            out['index'] = out['edge_index_j']
+
+        out['size'] = size
+        out['size_i'] = size[1] or size[0]
+        out['size_j'] = size[0] or size[1]
+        out['dim_size'] = out['size_i']
+
+        return out
+
+    def __check_input__(self, edge_index, size):
+        the_size: List[Optional[int]] = [None, None]
+
+        if size is not None:
+            the_size[0] = size[0]
+            the_size[1] = size[1]
+        return the_size
+
     def lift(self, x_l, x_r, edge_index):
         """
         Lifts i.e. duplicates certain vectors depending on the edge index.
         One of the tensor dims goes from N -> E (that's where the "lift" comes from).
         """
-        src_nodes_index = edge_index[0]
-        trg_nodes_index = edge_index[1]
+        if isinstance(edge_index, SparseTensor):
+            row = edge_index.storage.row()
+            col = edge_index.storage.col()
+            x_l_lifted = x_l.index_select(0, row)
+            x_r_lifted = x_r.index_select(0, col)
+        else: 
+            src_nodes_index = edge_index[0]
+            trg_nodes_index = edge_index[1]
+
+            x_l_lifted = x_l.index_select(0, src_nodes_index)
+            x_r_lifted = x_r.index_select(0, trg_nodes_index)
         
-        x_l_lifted = x_l.index_select(0, src_nodes_index)
-        x_r_lifted = x_r.index_select(0, trg_nodes_index)
+        #x_r_lifted not needed here
         return x_l_lifted, x_r_lifted
 
     def __repr__(self):
