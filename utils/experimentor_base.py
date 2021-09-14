@@ -24,6 +24,7 @@ from utils.constants import *
 class Experimentor:
     
     def __init__(self, config):
+        self.config = config
         
         pp = pprint.PrettyPrinter(indent=4)
         self.suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
@@ -35,7 +36,7 @@ class Experimentor:
 
         logging.info("\ntorch.cuda is available: " + str(torch.cuda.is_available()))
         
-        self.config = config
+        
         self.dataset_name = config["dataset_name"]
         self.device = torch.device('cuda' if torch.cuda.is_available() and not self.config['force_cpu'] else 'cpu')
         
