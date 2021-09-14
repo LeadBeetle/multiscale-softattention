@@ -7,7 +7,7 @@
     'force_cpu': True,
     'hidden_size': 128,
     'lr': 0.001,
-    'model_type': <ModelType.GATV2: 'GAT-V2'>,
+    'model_type': <ModelType.TRANS: 'TRANS'>,
     'nbor_degree': 1,
     'num_heads': 1,
     'num_of_epochs': 500,
@@ -26,4 +26,3 @@ Used Dataset: Cora
 
 Run 01:
 
-Epoch 01| Loss: 1.7785| Acc: 0.3165| Train Time: 4.8546s

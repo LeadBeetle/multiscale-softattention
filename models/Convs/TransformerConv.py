@@ -145,9 +145,9 @@ class TransformerConv(MessagePassing):
                 edge_attr: OptTensor = None):
         """"""
 
-        x_l_lifted, x_r_lifted = self.lift(x, x, edge_index)
-        # propagate_type: (x: PairTensor, edge_attr: OptTensor)
-        out = self.propagate(edge_index, x_l_lifted, x_r_lifted, edge_attr=edge_attr, size=None, edge_weight=edge_weight)
+        x_l_lifted, x_r_lifted = self.lift(x[0], x[1], edge_index)
+        size = (x[0].size(0), x[1].size(0))
+        out = self.propagate(edge_index, x_l=x_l_lifted, x_r = x_r_lifted, edge_attr=edge_attr, size = size)
 
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)
@@ -183,8 +183,9 @@ class TransformerConv(MessagePassing):
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
         out = self.lin_value(x_r).view(-1, self.heads, self.out_channels)
-        if edge_attr is not None:
-            out += edge_attr
+        # if edge_attr is not None:
+        #     print("out", out.shape, "edge_attr", edge_attr.shape)
+        #     out += edge_attr
 
         out *= alpha.view(-1, self.heads, 1)
         return out
