@@ -10,6 +10,7 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
 from inspect import Parameter as InspectParameter
 from typing import List
+from torch_scatter import scatter
 
 from torch_geometric.nn.inits import glorot, zeros
 
@@ -149,8 +150,7 @@ class GATv2Conv(MessagePassing):
                     num_nodes = min(size[0], size[1])
                 edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
                 edge_index, edge_weight = add_self_loops(edge_index, edge_weight=edge_weight, num_nodes=num_nodes)
-            elif isinstance(edge_index, SparseTensor):
-                edge_index = set_diag(edge_index)
+            
 
         x = self.lift(x_l, x_r, edge_index)
         # propagate_type: (x: PairTensor)

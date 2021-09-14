@@ -1,13 +1,13 @@
 {   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
     'batch_size': 256,
     'console_log_freq': 1,
-    'dataset_name': <Dataset.OGBN_PRODUCTS: 'ogbn-products'>,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
     'do_train_tqdm_logging': False,
-    'dropout': 0.25,
-    'force_cpu': False,
+    'dropout': 0.5,
+    'force_cpu': True,
     'hidden_size': 128,
-    'lr': 0.01,
-    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'lr': 0.001,
+    'model_type': <ModelType.GATV2: 'GAT-V2'>,
     'nbor_degree': 1,
     'num_heads': 1,
     'num_of_epochs': 500,
@@ -22,4 +22,7 @@
     'use_layer_norm': False}
 
 torch.cuda is available: True
-Used Dataset: ogbn-products
+Used Dataset: Cora
+
+Run 01:
+
