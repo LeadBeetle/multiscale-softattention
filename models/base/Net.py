@@ -8,7 +8,7 @@ from utils.utils import one_step, one_step_sparse
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 heads, dropout, device, use_layer_norm=False, use_batch_norm=False, nbor_degree=1, adj_mode=None, sparse=True):
+                 heads, dropout, device, use_layer_norm=False, use_batch_norm=False, nbor_degree=1, adj_mode=None, sparse=True, init_dropout=False):
         super(Net, self).__init__()
 
         self.device = device
@@ -19,7 +19,7 @@ class Net(torch.nn.Module):
         self.nbor_degree = nbor_degree
         self.adj_mode = adj_mode
         self.sparse = sparse
-        
+        self.init_dropout = init_dropout
         
         self.one_step_gen = one_step_sparse if sparse else one_step
         
@@ -45,7 +45,8 @@ class Net(torch.nn.Module):
         # Target nodes are also included in the source nodes so that one can
         # easily apply skip-connections or add self-loops.
         for i, (edge_index, _, size) in enumerate(adjs):
-            
+            if i== 0 and self.init_dropout:
+                x = F.dropout(x, p=self._dropout, training=self.training)
             x_target = x[:size[1]]  # Target nodes are always placed first.
             edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
             x = self.convs[i]((x, x_target), edge_index, edge_weight)
