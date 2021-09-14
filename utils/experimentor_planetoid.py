@@ -34,11 +34,12 @@ class Experimentor_Planetoid(Experimentor):
         self.y = self.data.y.squeeze().to(self.device)
         
         self.train_loader = NeighborSampler(self.data.edge_index, node_idx=None,
-                                    sizes=[-1] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
+                                    sizes=[10] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
                                     shuffle=True, num_workers=self.config["num_workers"])
         self.test_loader = NeighborSampler(self.data.edge_index, node_idx=None, sizes=[-1],
                                         batch_size=self.config["test_batch_size"], shuffle=False,
                                         num_workers=self.config["num_workers"])  
+
     @torch.no_grad()
     def test(self):
         start = time.time()
@@ -55,7 +56,7 @@ class Experimentor_Planetoid(Experimentor):
         time_elapsed = time.time() - start
         return train_acc, val_acc, test_acc, time_elapsed
 
-
+    @torch.no_grad()
     def eval_acc(self, y_true, y_pred):
         acc_list = []
         for i in range(y_true.shape[1]):
