@@ -15,10 +15,12 @@ import pprint
 import logging
 import sys
 import time
+import numpy 
+import random
 
 import traceback
 from utils.constants import * 
-
+from utils.utils import one_step_sparse
 
 
 class Experimentor:
@@ -53,6 +55,7 @@ class Experimentor:
         self.split_idx = self.dataset.get_idx_split()
         
         self.data = self.dataset[0]
+        self.num_nodes = self.data.num_nodes
         self.train_idx = self.split_idx['train']
         self.val_idx = self.split_idx['valid']
 
@@ -62,20 +65,28 @@ class Experimentor:
         self.num_classes = self.dataset.num_classes
         self.num_features = self.dataset.num_features
         
-        self.setLoaders()
+        self.setLoaders(ngb_size = 10)
         self.setModel()
           
-    
-    def setLoaders(self):
+    def seed_worker(worker_id):
+            worker_seed = 43
+            numpy.random.seed(worker_seed)
+            random.seed(worker_seed)
+
+    def setLoaders(self, ngb_size = -1):
         self.x = self.data.x.to(self.device)
         self.y = self.data.y.squeeze().to(self.device)
+        edge_index = self.data.edge_index
         
-        self.train_loader = NeighborSampler(self.data.edge_index, node_idx=self.train_idx,
-                                    sizes=[10] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
-                                    shuffle=True, num_workers=self.config["num_workers"])
-        self.test_loader = NeighborSampler(self.data.edge_index, node_idx=None, sizes=[-1],
+        g = torch.Generator()
+        g.manual_seed(43)
+        
+        self.train_loader = NeighborSampler(edge_index, node_idx=self.train_idx,
+                                    sizes=[ngb_size] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
+                                    shuffle=True, num_workers=self.config["num_workers"], worker_init_fn = self.seed_worker)
+        self.test_loader = NeighborSampler(edge_index, node_idx=None, sizes=[-1],
                                         batch_size=self.config["test_batch_size"], shuffle=False,
-                                        num_workers=self.config["num_workers"])  
+                                        num_workers=self.config["num_workers"], worker_init_fn = self.seed_worker)  
     
     def setModel(self):
         if self.config["model_type"] == ModelType.GATV1:

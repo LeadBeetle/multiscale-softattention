@@ -4,7 +4,7 @@ from torch.nn import Linear as Lin
 import torch.nn.functional as F
 from tqdm import tqdm
 from utils.utils import one_step, one_step_sparse
-
+from torch import Tensor
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
@@ -46,6 +46,7 @@ class Net(torch.nn.Module):
         for i, (edge_index, _, size) in enumerate(adjs):
             x_target = x[:size[1]]  # Target nodes are always placed first.
             edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
+            
             x = self.convs[i]((x, x_target), edge_index, edge_weight)
             if self._use_layer_norm:
                 x = self.layer_normalizations[i](x)
@@ -73,7 +74,6 @@ class Net(torch.nn.Module):
                 total_edges += edge_index.size(1)
                 x = x_all[n_id].to(self.device)
                 x_target = x[:size[1]]
-                
                 edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
                 x = self.convs[i]((x, x_target), edge_index, edge_weight)
                 if self._use_layer_norm:
