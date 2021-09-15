@@ -15,6 +15,8 @@ import pprint
 import logging
 import sys
 import time
+import numpy 
+import random
 
 import traceback
 from utils.constants import * 
@@ -66,17 +68,25 @@ class Experimentor:
         self.setLoaders(ngb_size = 10)
         self.setModel()
           
-    
+    def seed_worker(worker_id):
+            worker_seed = 43
+            numpy.random.seed(worker_seed)
+            random.seed(worker_seed)
+
     def setLoaders(self, ngb_size = -1):
         self.x = self.data.x.to(self.device)
         self.y = self.data.y.squeeze().to(self.device)
         edge_index = self.data.edge_index
+        
+        g = torch.Generator()
+        g.manual_seed(43)
+        
         self.train_loader = NeighborSampler(edge_index, node_idx=self.train_idx,
                                     sizes=[ngb_size] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
-                                    shuffle=True, num_workers=self.config["num_workers"])
+                                    shuffle=True, num_workers=self.config["num_workers"], worker_init_fn = self.seed_worker)
         self.test_loader = NeighborSampler(edge_index, node_idx=None, sizes=[-1],
                                         batch_size=self.config["test_batch_size"], shuffle=False,
-                                        num_workers=self.config["num_workers"])  
+                                        num_workers=self.config["num_workers"], worker_init_fn = self.seed_worker)  
     
     def setModel(self):
         if self.config["model_type"] == ModelType.GATV1:
