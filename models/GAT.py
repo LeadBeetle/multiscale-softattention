@@ -1,5 +1,6 @@
 from models.base.Net import Net
 import torch
+torch.manual_seed(43)
 
 from models.convs.GatConv import GATConv
 

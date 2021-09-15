@@ -3,6 +3,7 @@ from torch_geometric.typing import (OptPairTensor, Adj, Size, NoneType,
                                     OptTensor)
 
 import torch
+torch.manual_seed(43)
 from torch import Tensor
 import torch.nn.functional as F
 from torch.nn import Parameter, Linear
