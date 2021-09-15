@@ -6,9 +6,9 @@ from models.convs.GatConv import GATConv
 
 class GAT(Net):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 heads, dropout, device, use_layer_norm=False, use_batch_norm=False, nbor_degree=1, adj_mode=None, sparse=True, init_dropout=False):
+                 heads, dropout, device, use_layer_norm=False, use_batch_norm=False, nbor_degree=1, adj_mode=None, sparse=True):
         super(GAT, self).__init__(in_channels, hidden_channels, out_channels, num_layers,
-                 heads, dropout, device, use_layer_norm, use_batch_norm, nbor_degree, adj_mode, sparse, init_dropout)
+                 heads, dropout, device, use_layer_norm, use_batch_norm, nbor_degree, adj_mode, sparse)
         
         self.convs = torch.nn.ModuleList()
         self.convs.append(GATConv(in_channels, hidden_channels,
