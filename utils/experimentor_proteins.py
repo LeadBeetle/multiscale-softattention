@@ -1,6 +1,7 @@
 from utils.experimentor_base import Experimentor
 
 import torch
+torch.manual_seed(43)
 from tqdm import tqdm
 from torch_geometric.loader import NeighborSampler
 from torch_scatter import scatter
@@ -27,7 +28,7 @@ class Experimentor_Proteins(Experimentor):
         self.x = scatter(self.data.edge_attr, col, 0, dim_size=self.data.num_nodes, reduce='add').to(self.device)
         self.y = self.data.y.squeeze().to(self.device)
         self.criterion = torch.nn.BCEWithLogitsLoss()
-        self.num_classes = 112 # Num_Classes
+        self.num_classes = 112 
         self.num_features = 8
 
              

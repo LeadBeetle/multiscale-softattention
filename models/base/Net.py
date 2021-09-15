@@ -1,5 +1,5 @@
 import torch
-
+torch.manual_seed(43)
 from torch.nn import Linear as Lin
 import torch.nn.functional as F
 from tqdm import tqdm

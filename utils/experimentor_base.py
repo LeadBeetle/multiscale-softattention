@@ -1,6 +1,7 @@
 import os.path as osp
 
 import torch
+torch.manual_seed(43)
 from tqdm import tqdm
 from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
 from torch_geometric.loader import NeighborSampler
@@ -80,7 +81,7 @@ class Experimentor:
         
         g = torch.Generator()
         g.manual_seed(43)
-        
+
         self.train_loader = NeighborSampler(edge_index, node_idx=self.train_idx,
                                     sizes=[ngb_size] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
                                     shuffle=True, num_workers=self.config["num_workers"], worker_init_fn = self.seed_worker)

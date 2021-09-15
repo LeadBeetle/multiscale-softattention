@@ -4,5 +4,6 @@ import networkx as nx
 import igraph as ig
 
 import torch
+torch.manual_seed(43)
 
 

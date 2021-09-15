@@ -2,6 +2,7 @@ import os.path as osp
 from utils.experimentor_base import Experimentor
 
 import torch
+torch.manual_seed(43)
 import torch.nn.functional as F
 from torch_geometric.datasets import Planetoid
 from torch_geometric.loader import NeighborSampler
