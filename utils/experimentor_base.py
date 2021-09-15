@@ -81,18 +81,15 @@ class Experimentor:
         if self.config["model_type"] == ModelType.GATV1:
             self.model = GAT(self.num_features, self.config["hidden_size"], self.num_classes, num_layers=self.config["num_of_layers"],
                 heads=self.config["num_heads"], dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
-                use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"],
-                init_dropout=self.config["init_dropout"])
+                use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"])
         elif self.config["model_type"] == ModelType.GATV2:
             self.model = GATV2(self.num_features, self.config["hidden_size"], self.num_classes, num_layers=self.config["num_of_layers"],
                 heads=self.config["num_heads"], dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
-                use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"],
-                init_dropout=self.config["init_dropout"])  
+                use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"])  
         elif self.config["model_type"] == ModelType.TRANS:
             self.model = Transformer(self.num_features, self.config["hidden_size"], self.num_classes, num_layers=self.config["num_of_layers"],
                 heads=self.config["num_heads"], dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
-                use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"],
-                init_dropout=self.config["init_dropout"])    
+                use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"])    
         self.model = self.model.to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.config["lr"])
                
