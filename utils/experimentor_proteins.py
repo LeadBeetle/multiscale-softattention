@@ -2,7 +2,7 @@ from utils.experimentor_base import Experimentor
 
 import torch
 from tqdm import tqdm
-from torch_geometric.data import NeighborSampler
+from torch_geometric.loader import NeighborSampler
 from torch_scatter import scatter
 import json
 import logging
