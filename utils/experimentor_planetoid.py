@@ -4,7 +4,7 @@ from utils.experimentor_base import Experimentor
 import torch
 import torch.nn.functional as F
 from torch_geometric.datasets import Planetoid
-from torch_geometric.data import NeighborSampler
+from torch_geometric.loader import NeighborSampler
 import time
 from ogb.nodeproppred import Evaluator
 

@@ -3,7 +3,7 @@ import os.path as osp
 import torch
 from tqdm import tqdm
 from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
-from torch_geometric.data import NeighborSampler
+from torch_geometric.loader import NeighborSampler
 import torch.nn.functional as F
 
 from models.GAT import GAT

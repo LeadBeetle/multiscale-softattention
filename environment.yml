@@ -1,4 +1,4 @@
-name: PS
+name: PSN
 channels:
   - pytorch
   - rusty1s
