@@ -2,6 +2,8 @@ from utils.experimentor_base import *
 from utils.experimentor_proteins import * 
 from utils.experimentor_planetoid import * 
 from utils.constants import *
+from utils.configs import * 
+from mergedeep import merge
 
 def getExperimentor(dataset_name): 
     isProteins = dataset_name == Dataset.OGBN_PROTEINS
@@ -17,20 +19,30 @@ def getExperimentor(dataset_name):
     assert(exp is not None)
     return exp
 
+def setConfig(dataset, config):
+    specificConfig = None
+    if dataset == Dataset.PUBMED:
+        specificConfig = merge(base_config, pub_config)
+    elif dataset in [Dataset.CORA, Dataset.CITESEER]: 
+        specificConfig = merge(base_config, coracite_config)
+    elif dataset == Dataset.OGBN_ARXIV:
+        specificConfig = merge(base_config, arxiv_config)
+    elif dataset == Dataset.OGBN_PRODUCTS:
+        specificConfig = merge(base_config, products_config)
+    elif dataset == Dataset.OGBN_PROTEINS:
+        specificConfig = merge(base_config, proteins_config)
 
-def runExperiments(config, models, datasets, degrees):
-    for model in [ModelType.GATV1, ModelType.GATV2, ModelType.TRANS]:
+    return merge(config, specificConfig)
+
+def runExperiments(models, datasets, degrees):
+    config = {}
+    for model in models:
         config["model_type"] = model
-        for dataset in [Dataset.CORA, Dataset.CITESEER, Dataset.PUBMED]:
+        for dataset in datasets:
             config["dataset_name"] = dataset
-            if dataset == Dataset.PUBMED:
-                config["lr"] = 0.01
-                config["num_heads"] = 8
-            else: 
-                config["lr"] = 0.005
-                config["num_heads"] = 1
+            config = setConfig(dataset, config)
                 
-            for degree in [1, 2, 3, 4]:
+            for degree in degrees:
                 config["nbor_degree"] = degree
                 for isSparse in [False, True]:
                     config["sparse"] = isSparse
