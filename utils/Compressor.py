@@ -8,7 +8,6 @@ from mergedeep import merge
 
 resultPath = osp.abspath("results")
 
-
 def visualize(): 
     pass
 
@@ -16,10 +15,7 @@ def visualize():
 def ft(string):
     string = str(string).lower()
     string = ''.join(e for e in string if e.isalnum())
-    return string
-
-
-    
+    return string    
 
 class Compressor(): 
     def __init__(self):
@@ -110,4 +106,4 @@ class Compressor():
                         self.epochs.append(epoch)
 
             f.close()
-
+            
