@@ -24,3 +24,4 @@ dependencies:
     - tensorboard
     - networkx
     - ogb
+    - mergedeep
