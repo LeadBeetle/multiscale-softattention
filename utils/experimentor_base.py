@@ -169,8 +169,8 @@ class Experimentor:
         test_accs = []
         train_accs = []
         val_accs = []
-        run_train_times = []
-        run_eval_times = []
+        train_times = []
+        eval_times = []
         epochs = []
 
         for run in range(1, 1 + self.config["num_of_runs"]):
@@ -213,8 +213,6 @@ class Experimentor:
                     if waited_iterations >= self.config["patience_period"]:
                         epochs.append(epoch)
                         break
-            run_train_times.append(torch.tensor(train_times).mean())
-            run_eval_times.append(torch.tensor(eval_times).mean())
 
                           
             print(f'\nResult of {run:2d}. run| Train: {final_train_acc:.4f}| Val: {final_val_acc:.4f}| Test: {final_test_acc:.4f}\n')
@@ -225,8 +223,8 @@ class Experimentor:
         test_acc        = torch.tensor(test_accs)
         train_acc       = torch.tensor(train_accs)
         val_acc         = torch.tensor(val_accs)
-        run_train_times = torch.tensor(run_train_times)
-        run_eval_times  = torch.tensor(run_eval_times)
+        train_times     = torch.tensor(train_times)
+        eval_times      = torch.tensor(eval_times)
         epochs          = torch.tensor(epochs)
 
         logging.info('\n============================')
@@ -242,8 +240,8 @@ class Experimentor:
         data["train_acc_std"]  = str(train_acc.std().item())
         data["val_acc_std"]    = str(val_acc.std().item())
         data["test_acc_std"]   = str(test_acc.std().item())
-        data["train_time_avg"] = str(run_train_times.mean().item())
-        data["eval_time_avg"]  = str(run_eval_times.mean().item())
+        data["train_time_avg"] = str(train_times.mean().item())
+        data["eval_time_avg"]  = str(eval_times.mean().item())
         data["num_epochs_avg"] = str(epochs.mean().item())
 
 
