@@ -186,24 +186,56 @@
         },
         "TRANS": {
             "dense": {
-                "train_accs ": [],
-                "test_accs": [],
-                "val_accs": [],
-                "train_stds": [],
-                "test_stds": [],
-                "val_stds": [],
-                "train_times": [],
-                "epochs": []
+                "train_accs ": [
+                    "1.0"
+                ],
+                "test_accs": [
+                    "0.7055000066757202"
+                ],
+                "val_accs": [
+                    "0.6944000720977783"
+                ],
+                "train_stds": [
+                    "0.0"
+                ],
+                "test_stds": [
+                    "0.009095183573663235"
+                ],
+                "val_stds": [
+                    "0.006310492288321257"
+                ],
+                "train_times": [
+                    "0.051986463367938995"
+                ],
+                "epochs": [
+                    "5.1015625"
+                ]
             },
             "sparse": {
-                "train_accs ": [],
-                "test_accs": [],
-                "val_accs": [],
-                "train_stds": [],
-                "test_stds": [],
-                "val_stds": [],
-                "train_times": [],
-                "epochs": []
+                "train_accs ": [
+                    "1.0"
+                ],
+                "test_accs": [
+                    "0.7063999772071838"
+                ],
+                "val_accs": [
+                    "0.6958000659942627"
+                ],
+                "train_stds": [
+                    "0.0"
+                ],
+                "test_stds": [
+                    "0.013517065905034542"
+                ],
+                "val_stds": [
+                    "0.006957009434700012"
+                ],
+                "train_times": [
+                    "0.058817680925130844"
+                ],
+                "epochs": [
+                    "7.1015625"
+                ]
             }
         }
     }

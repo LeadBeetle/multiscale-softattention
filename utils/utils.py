@@ -3,6 +3,7 @@ torch.manual_seed(43)
 from torch_geometric.utils import to_dense_adj
 from torch_sparse import SparseTensor, set_diag
 from torch_geometric.utils import remove_self_loops, add_self_loops
+from utils.constants import * 
 
 def one_step(edge_index, x, num_nodes, device):
     edge_weight = None
@@ -35,3 +36,26 @@ def one_step_sparse(edge_index, x, num_nodes, device):
             adj_k = torch.sparse_coo_tensor(adj_k._indices(), 1/k * (adj_k._values()>0)*1, size = size)
             adj = adj + adj_k 
     return SparseTensor.from_torch_sparse_coo_tensor(adj), None
+
+
+def getResultFileName(config): 
+    model  = config["model_type"]
+    degree = config["nbor_degree"]
+    sparse = config["sparse"]
+
+    modelPart = ""
+
+    if model == ModelType.GATV1:
+        modelPart = "GatV1"
+    elif model == ModelType.GATV2:
+        modelPart = "GatV2"
+    elif model == ModelType.TRANS:
+        modelPart = "Trans"
+    assert(modelPart != "")
+    
+    degreePart = "".join(["K", str(degree)])
+    assert(degreePart != "")
+
+    sparsePart = "s" if sparse == True else "ns"
+
+    return "_".join([modelPart, degreePart, sparsePart])

@@ -16,11 +16,12 @@ import pprint
 import logging
 import sys
 import time
-import numpy 
+import numpy as np
 import random
 
 import traceback
 from utils.constants import * 
+from utils.utils import * 
 
 
 class Experimentor:
@@ -30,6 +31,7 @@ class Experimentor:
         
         pp = pprint.PrettyPrinter(indent=4)
         self.suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
+        self.baseName = getResultFileName(self.config)
         filename = "_".join(["logs/my_log", self.suffix, ".txt"])
                 
         logging.basicConfig(level=logging.DEBUG, filename=filename, filemode="a+",
@@ -45,7 +47,6 @@ class Experimentor:
         logging.info(f"Used Dataset: {self.dataset_name}" )
         
         self.initData()
-     
 
     def initData(self):
         root = osp.abspath( 'data')
@@ -70,7 +71,7 @@ class Experimentor:
           
     def seed_worker(worker_id):
         worker_seed = 43
-        numpy.random.seed(worker_seed)
+        np.random.seed(worker_seed)
         random.seed(worker_seed)
 
     def setLoaders(self, ngb_size = -1):
@@ -247,7 +248,7 @@ class Experimentor:
         data["num_epochs_avg"] = str(epochs.mean().item())
 
 
-        filename = "_".join(["results/res", self.suffix, ".json"])
+        filename = osp.join("results", self.config["dataset_name"], self.baseName + ".json")
         with open(filename, 'w') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
 
