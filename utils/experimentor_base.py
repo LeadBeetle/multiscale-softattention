@@ -187,6 +187,7 @@ class Experimentor:
             
             best_val_acc, final_test_acc, final_train_acc, final_val_acc = 0, 0, 0, 0
             waited_iterations = 0
+            final_epoch = 0
             for epoch in range(1, 1 + self.config["num_of_epochs"]):
                 loss, acc, train_time = self.train(epoch)
                 train_times.append(train_time)
@@ -210,8 +211,9 @@ class Experimentor:
                         final_train_acc = train_acc
                         final_val_acc = val_acc
                         waited_iterations = 0
+                        final_epoch = epoch
                     if waited_iterations >= self.config["patience_period"]:
-                        epochs.append(epoch)
+                        epochs.append(final_epoch)
                         break
 
                           
@@ -225,7 +227,7 @@ class Experimentor:
         val_acc         = torch.tensor(val_accs)
         train_times     = torch.tensor(train_times)
         eval_times      = torch.tensor(eval_times)
-        epochs          = torch.tensor(epochs)
+        epochs          = torch.tensor(epochs, dtype=torch.float16)
 
         logging.info('\n============================')
         logging.info(f'Final Train: {train_acc.mean():.4f} ± {train_acc.std():.4f}')
