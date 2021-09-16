@@ -169,8 +169,8 @@ class Experimentor:
         test_accs = []
         train_accs = []
         val_accs = []
-        run_train_times = []
-        run_eval_times = []
+        train_times = []
+        eval_times = []
         epochs = []
 
         for run in range(1, 1 + self.config["num_of_runs"]):
@@ -187,6 +187,7 @@ class Experimentor:
             
             best_val_acc, final_test_acc, final_train_acc, final_val_acc = 0, 0, 0, 0
             waited_iterations = 0
+            final_epoch = 0
             for epoch in range(1, 1 + self.config["num_of_epochs"]):
                 loss, acc, train_time = self.train(epoch)
                 train_times.append(train_time)
@@ -210,11 +211,10 @@ class Experimentor:
                         final_train_acc = train_acc
                         final_val_acc = val_acc
                         waited_iterations = 0
+                        final_epoch = epoch
                     if waited_iterations >= self.config["patience_period"]:
-                        epochs.append(epoch)
+                        epochs.append(final_epoch)
                         break
-            run_train_times.append(torch.tensor(train_times).mean())
-            run_eval_times.append(torch.tensor(eval_times).mean())
 
                           
             print(f'\nResult of {run:2d}. run| Train: {final_train_acc:.4f}| Val: {final_val_acc:.4f}| Test: {final_test_acc:.4f}\n')
@@ -225,9 +225,9 @@ class Experimentor:
         test_acc        = torch.tensor(test_accs)
         train_acc       = torch.tensor(train_accs)
         val_acc         = torch.tensor(val_accs)
-        run_train_times = torch.tensor(run_train_times)
-        run_eval_times  = torch.tensor(run_eval_times)
-        epochs          = torch.tensor(epochs)
+        train_times     = torch.tensor(train_times)
+        eval_times      = torch.tensor(eval_times)
+        epochs          = torch.tensor(epochs, dtype=torch.float16)
 
         logging.info('\n============================')
         logging.info(f'Final Train: {train_acc.mean():.4f} ± {train_acc.std():.4f}')
@@ -242,8 +242,8 @@ class Experimentor:
         data["train_acc_std"]  = str(train_acc.std().item())
         data["val_acc_std"]    = str(val_acc.std().item())
         data["test_acc_std"]   = str(test_acc.std().item())
-        data["train_time_avg"] = str(run_train_times.mean().item())
-        data["eval_time_avg"]  = str(run_eval_times.mean().item())
+        data["train_time_avg"] = str(train_times.mean().item())
+        data["eval_time_avg"]  = str(eval_times.mean().item())
         data["num_epochs_avg"] = str(epochs.mean().item())
 
 
