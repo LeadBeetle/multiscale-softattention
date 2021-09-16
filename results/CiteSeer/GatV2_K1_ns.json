@@ -1,6 +1,6 @@
 {
     "dataset_name": "CiteSeer",
-    "model_type": "GAT-V1",
+    "model_type": "GAT-V2",
     "num_of_epochs": 500,
     "num_of_runs": 10,
     "patience_period": 50,
@@ -21,13 +21,10 @@
     "nbor_degree": 1,
     "adj_mode": "OneStep",
     "sparse": false,
-    "train_acc_mean": "0.9883333444595337",
-    "val_acc_mean": "0.6796000003814697",
-    "test_acc_mean": "0.6654999852180481",
-    "train_acc_std": "0.016292093321681023",
-    "val_acc_std": "0.010574603453278542",
-    "test_acc_std": "0.01731569692492485",
-    "train_time_avg": "0.015438001602888107",
-    "eval_time_avg": "0.1125166118144989",
-    "num_epochs_avg": "10.203125"
+    "train_acc_mean": "0.9975000619888306",
+    "val_acc_mean": "0.6543999910354614",
+    "test_acc_mean": "0.6402000188827515",
+    "train_acc_std": "0.004025378730148077",
+    "val_acc_std": "0.025065245106816292",
+    "test_acc_std": "0.017930738627910614"
 }

@@ -1,6 +1,6 @@
 {
     "dataset_name": "PubMed",
-    "model_type": "GAT-V1",
+    "model_type": "GAT-V2",
     "num_of_epochs": 500,
     "num_of_runs": 10,
     "patience_period": 50,
@@ -18,16 +18,13 @@
     "dropout": 0.6,
     "use_layer_norm": false,
     "use_batch_norm": false,
-    "nbor_degree": 4,
+    "nbor_degree": 2,
     "adj_mode": "OneStep",
-    "sparse": false,
-    "train_acc_mean": "1.0",
-    "val_acc_mean": "0.7655999660491943",
-    "test_acc_mean": "0.7628000378608704",
-    "train_acc_std": "0.0",
-    "val_acc_std": "0.004501839634031057",
-    "test_acc_std": "0.008093898184597492",
-    "train_time_avg": "0.14682884514331818",
-    "eval_time_avg": "3.3489863872528076",
-    "num_epochs_avg": "22.40625"
+    "sparse": true,
+    "train_acc_mean": "0.9983333349227905",
+    "val_acc_mean": "0.7569999694824219",
+    "test_acc_mean": "0.7572999596595764",
+    "train_acc_std": "0.005270457826554775",
+    "val_acc_std": "0.009104335680603981",
+    "test_acc_std": "0.01235628966242075"
 }
