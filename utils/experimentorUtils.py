@@ -16,3 +16,23 @@ def getExperimentor(dataset_name):
         exp = Experimentor
     assert(exp is not None)
     return exp
+
+
+def runExperiments(config, models, datasets, degrees):
+    for model in [ModelType.GATV1, ModelType.GATV2, ModelType.TRANS]:
+        config["model_type"] = model
+        for dataset in [Dataset.CORA, Dataset.CITESEER, Dataset.PUBMED]:
+            config["dataset_name"] = dataset
+            if dataset == Dataset.PUBMED:
+                config["lr"] = 0.01
+                config["num_heads"] = 8
+            else: 
+                config["lr"] = 0.005
+                config["num_heads"] = 1
+                
+            for degree in [1, 2, 3, 4]:
+                config["nbor_degree"] = degree
+                for isSparse in [False, True]:
+                    config["sparse"] = isSparse
+                    experimentor = getExperimentor(config["dataset_name"])(config)
+                    experimentor.run_wrapper()
