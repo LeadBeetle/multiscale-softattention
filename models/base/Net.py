@@ -4,7 +4,6 @@ from torch.nn import Linear as Lin
 import torch.nn.functional as F
 from tqdm import tqdm
 from utils.utils import one_step, one_step_sparse
-from torch import Tensor
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
