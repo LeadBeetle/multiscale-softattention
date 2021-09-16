@@ -21,7 +21,6 @@ import random
 
 import traceback
 from utils.constants import * 
-from utils.utils import one_step_sparse
 
 
 class Experimentor:
@@ -70,9 +69,9 @@ class Experimentor:
         self.setModel()
           
     def seed_worker(worker_id):
-            worker_seed = 43
-            numpy.random.seed(worker_seed)
-            random.seed(worker_seed)
+        worker_seed = 43
+        numpy.random.seed(worker_seed)
+        random.seed(worker_seed)
 
     def setLoaders(self, ngb_size = -1):
         self.x = self.data.x.to(self.device)
@@ -170,6 +169,8 @@ class Experimentor:
         test_accs = []
         train_accs = []
         val_accs = []
+        run_train_times = []
+        run_eval_times = []
         
         for run in range(1, 1 + self.config["num_of_runs"]):
             logging.info('')
@@ -177,13 +178,17 @@ class Experimentor:
             print(f'Run {run:02d}:')
             logging.info('')
 
+            train_times = []
+            eval_times = []
+
             self.model.reset_parameters()
             self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.config["lr"])
-
+            
             best_val_acc, final_test_acc, final_train_acc, final_val_acc = 0, 0, 0, 0
             waited_iterations = 0
             for epoch in range(1, 1 + self.config["num_of_epochs"]):
                 loss, acc, train_time = self.train(epoch)
+                train_times.append(train_time)
                 do_logging = epoch % self.config["console_log_freq"] == 0 or epoch == 1
                 if do_logging:
                     logging.info(f'Epoch {epoch:02d}| Loss: {loss:.4f}| Acc: {acc:.4f}| Train Time: {train_time:.4f}s')
@@ -191,6 +196,7 @@ class Experimentor:
 
                 if epoch % test_freq == 0:
                     train_acc, val_acc, test_acc, eval_time = self.test()
+                    eval_times.append(eval_time)
                     logging.info(f'Train: {train_acc:.4f}| Val: {val_acc:.4f}| '
                         f'Test: {test_acc:.4f}| Eval Time: {eval_time:.4f}s')
                     print(f'Train: {train_acc:.4f}| Val: {val_acc:.4f}| '
@@ -205,6 +211,9 @@ class Experimentor:
                         waited_iterations = 0
                     if waited_iterations >= self.config["patience_period"]:
                         break
+                run_train_times.append(torch.tensor(train_times).mean())
+                run_eval_times.append(torch.tensor(eval_times).mean())
+
                           
             print(f'\nResult of {run:2d}. run| Train: {final_train_acc:.4f}| Val: {final_val_acc:.4f}| Test: {final_test_acc:.4f}\n')
             test_accs.append(final_test_acc)
@@ -214,6 +223,9 @@ class Experimentor:
         test_acc = torch.tensor(test_accs)
         train_acc = torch.tensor(train_accs)
         val_acc = torch.tensor(val_accs)
+        run_train_times = torch.tensor(run_train_times)
+        run_eval_times = torch.tensor(run_eval_times)
+
 
         logging.info('\n============================')
         logging.info(f'Final Train: {train_acc.mean():.4f} ± {train_acc.std():.4f}')
@@ -228,6 +240,8 @@ class Experimentor:
         data["train_acc_std"] = str(train_acc.std().item())
         data["val_acc_std"] = str(val_acc.std().item())
         data["test_acc_std"] = str(test_acc.std().item())
+        data["train_time_avg"] = str(run_train_times.mean().item())
+        data["eval_time_avg"] = str(run_eval_times.mean().item())
 
 
         filename = "_".join(["results/res", self.suffix, ".json"])
