@@ -51,7 +51,7 @@ arxiv_config = {
 products_config = {
     'batch_size': 128,
     'test_batch_size': 64,
-    'lr': 0.0001,
+    'lr': 0.001,
     'num_of_layers': 3, 
     'num_heads': 1,
     'hidden_size': 128,
@@ -67,3 +67,15 @@ proteins_config = {
     'hidden_size': 64,
     'dropout': 0.25  
 }
+
+arxprod_trans_config = {
+    'hidden_size': 128,
+    'dropout': 0.625
+}
+
+proteins_trans_config = {
+    'lr': 0.001,
+    'dropout': 0.5,
+    'num_of_layers': 7
+}
+
