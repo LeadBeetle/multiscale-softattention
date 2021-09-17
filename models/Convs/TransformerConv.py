@@ -272,7 +272,6 @@ class TransformerConv(MessagePassing):
             x_l_lifted = x_l.index_select(0, src_nodes_index)
             x_r_lifted = x_r.index_select(0, trg_nodes_index)
         
-        #x_r_lifted not needed here
         return x_l_lifted, x_r_lifted
 
     def __repr__(self):

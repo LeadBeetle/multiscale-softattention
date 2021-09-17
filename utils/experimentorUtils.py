@@ -19,7 +19,7 @@ def getExperimentor(dataset_name):
     assert(exp is not None)
     return exp
 
-def setConfig(dataset, config):
+def setConfig(dataset, model, config):
     specificConfig = None
     if dataset == Dataset.PUBMED:
         specificConfig = merge(base_config, pub_config)
@@ -27,11 +27,16 @@ def setConfig(dataset, config):
         specificConfig = merge(base_config, coracite_config)
     elif dataset == Dataset.OGBN_ARXIV:
         specificConfig = merge(base_config, arxiv_config)
+        if model == ModelType.TRANS:
+            specificConfig = merge(specificConfig, arxprod_trans_config)
     elif dataset == Dataset.OGBN_PRODUCTS:
         specificConfig = merge(base_config, products_config)
+        if model == ModelType.TRANS:
+            specificConfig = merge(specificConfig, arxprod_trans_config)
     elif dataset == Dataset.OGBN_PROTEINS:
         specificConfig = merge(base_config, proteins_config)
-
+        if model == ModelType.TRANS:
+            specificConfig = merge(specificConfig, proteins_trans_config)
     return merge(config, specificConfig)
 
 def runExperiments(models, datasets, degrees):
@@ -40,7 +45,7 @@ def runExperiments(models, datasets, degrees):
         config["model_type"] = model
         for dataset in datasets:
             config["dataset_name"] = dataset
-            config = setConfig(dataset, config)
+            config = setConfig(dataset, model, config)
                 
             for degree in degrees:
                 config["nbor_degree"] = degree
