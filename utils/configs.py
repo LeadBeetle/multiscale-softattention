@@ -46,6 +46,7 @@ arxiv_config = {
     'dropout': 0.25,  
     "use_layer_norm": True,
     "use_batch_norm": False,
+    'test_frequency': 5,
 }
 
 products_config = {
@@ -55,7 +56,10 @@ products_config = {
     'num_of_layers': 3, 
     'num_heads': 1,
     'hidden_size': 128,
-    'dropout': 0.5  
+    'dropout': 0.5,
+    "use_layer_norm": False,
+    "use_batch_norm": False,
+    #'test_frequency': 10,
 }
 
 proteins_config = {
@@ -65,7 +69,10 @@ proteins_config = {
     'num_of_layers': 6, 
     'num_heads': 1,
     'hidden_size': 64,
-    'dropout': 0.25  
+    'dropout': 0.25,
+    "use_layer_norm": False,
+    "use_batch_norm": True,
+    #'test_frequency': 10, 
 }
 
 arxprod_trans_config = {
