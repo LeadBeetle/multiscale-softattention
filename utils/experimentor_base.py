@@ -176,8 +176,8 @@ class Experimentor:
 
         for run in range(1, 1 + self.config["num_of_runs"]):
             logging.info('')
-            logging.info(f'Run {run:02d}:')
-            print(f'Run {run:02d}:')
+            logging.info(f'Run {run:02d} for {self.baseName}:')
+            print(f'Run {run:02d} for {self.baseName}:')
             logging.info('')
 
             train_times = []
