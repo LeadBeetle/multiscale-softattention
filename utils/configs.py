@@ -2,7 +2,7 @@ from utils.constants import *
 
 base_config = {
     'num_of_epochs': 500,
-    'num_of_runs': 1,
+    'num_of_runs': 10,
     'patience_period': 50,
     'num_workers': 0,
     'force_cpu': False,
