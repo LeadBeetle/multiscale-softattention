@@ -96,7 +96,6 @@ class Compressor():
                 self.train_stds.append(results["train_acc_std"])
                 self.val_stds.append(results["val_acc_std"])
                 self.test_stds.append(results["test_acc_std"])
-                print("Degree:", results["nbor_degree"], results["dataset_name"], results["sparse"])
                 if "train_time_avg" in results.keys():
                     train_time_avg = results["train_time_avg"]
                     self.train_time_avgs.append(train_time_avg)
