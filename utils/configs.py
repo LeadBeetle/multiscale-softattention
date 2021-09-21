@@ -60,7 +60,7 @@ products_config = {
     'dropout': 0.5,
     "use_layer_norm": False,
     "use_batch_norm": False,
-    #'test_frequency': 10,
+    'test_frequency': 10,
     'num_of_runs': 1,
 }
 
@@ -74,7 +74,7 @@ proteins_config = {
     'dropout': 0.25,
     "use_layer_norm": False,
     "use_batch_norm": True,
-    #'test_frequency': 10, 
+    'test_frequency': 10, 
     'num_of_runs': 1,
 }
 
