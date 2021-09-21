@@ -86,7 +86,7 @@ class Experimentor:
             #edge_index = edge_index.set_diag()
         self.train_loader = NeighborSampler(edge_index, node_idx=self.train_idx,
                                     sizes=[ngb_size] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
-                                    shuffle=False, num_workers=self.config["num_workers"], worker_init_fn = self.seed_worker)
+                                    shuffle=True, num_workers=self.config["num_workers"], worker_init_fn = self.seed_worker)
         self.test_loader = NeighborSampler(edge_index, node_idx=None, sizes=[-1],
                                         batch_size=self.config["test_batch_size"], shuffle=False,
                                         num_workers=self.config["num_workers"], worker_init_fn = self.seed_worker)  
