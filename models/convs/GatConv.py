@@ -255,8 +255,9 @@ class GATConv(MessagePassing):
         if isinstance(edge_index, SparseTensor):
             row = edge_index.storage.row()
             col = edge_index.storage.col()
+            
             x_l_lifted = x_l.index_select(0, row)
-
+            
             alpha_l_lifted = alpha_l.index_select(0, row)
             alpha_r_lifted = alpha_r.index_select(0, col)
         else: 

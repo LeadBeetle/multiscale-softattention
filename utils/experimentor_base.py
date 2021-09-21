@@ -43,7 +43,6 @@ class Experimentor:
         
         self.dataset_name = config["dataset_name"]
         self.device = torch.device('cuda' if torch.cuda.is_available() and not self.config['force_cpu'] else 'cpu')
-        
         logging.info(f"Used Dataset: {self.dataset_name}" )
         
         self.initData()
@@ -81,10 +80,13 @@ class Experimentor:
         
         g = torch.Generator()
         g.manual_seed(43)
-
+        if self.config["sparse"]:
+            edge_weight = torch.ones(edge_index.size(1))
+            edge_index  = SparseTensor(row = edge_index[0], col = edge_index[1], value=edge_weight, sparse_sizes=(self.num_nodes, self.num_nodes))
+            #edge_index = edge_index.set_diag()
         self.train_loader = NeighborSampler(edge_index, node_idx=self.train_idx,
                                     sizes=[ngb_size] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
-                                    shuffle=True, num_workers=self.config["num_workers"], worker_init_fn = self.seed_worker)
+                                    shuffle=False, num_workers=self.config["num_workers"], worker_init_fn = self.seed_worker)
         self.test_loader = NeighborSampler(edge_index, node_idx=None, sizes=[-1],
                                         batch_size=self.config["test_batch_size"], shuffle=False,
                                         num_workers=self.config["num_workers"], worker_init_fn = self.seed_worker)  

@@ -22,7 +22,7 @@ class Experimentor_Planetoid(Experimentor):
         self.train_idx = self.data.train_mask
         self.val_idx = self.data.val_mask
         self.test_idx = self.data.test_mask
-        
+        self.num_nodes = self.data.num_nodes
         self.train_size = int(torch.sum(self.train_idx.int()))
 
         self.criterion = F.nll_loss
