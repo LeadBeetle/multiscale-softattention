@@ -12,7 +12,7 @@
     'num_heads': 1,
     'num_of_epochs': 500,
     'num_of_layers': 3,
-    'num_of_runs': 10,
+    'num_of_runs': 1,
     'num_workers': 0,
     'patience_period': 50,
     'sparse': True,

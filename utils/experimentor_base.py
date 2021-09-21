@@ -83,7 +83,7 @@ class Experimentor:
         if self.config["sparse"]:
             edge_weight = torch.ones(edge_index.size(1))
             edge_index  = SparseTensor(row = edge_index[0], col = edge_index[1], value=edge_weight, sparse_sizes=(self.num_nodes, self.num_nodes))
-            #edge_index = edge_index.set_diag()
+            edge_index = edge_index.set_diag()
         self.train_loader = NeighborSampler(edge_index, node_idx=self.train_idx,
                                     sizes=[ngb_size] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
                                     shuffle=True, num_workers=self.config["num_workers"], worker_init_fn = self.seed_worker)

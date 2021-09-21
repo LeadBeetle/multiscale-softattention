@@ -25,7 +25,6 @@ def one_step(edge_index, x, num_nodes, device):
 
 def one_step_sparse(edge_index: SparseTensor, x, num_nodes, device):
     size = torch.Size([num_nodes, num_nodes])
-    edge_index = edge_index.set_diag()
     edge_index = edge_index.sparse_resize((num_nodes, num_nodes))
     adj = SparseTensor.to_torch_sparse_coo_tensor(edge_index)
     if x>1: 

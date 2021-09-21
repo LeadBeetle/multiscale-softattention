@@ -1,38 +1,38 @@
 {   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
-    'batch_size': 256,
+    'batch_size': 128,
     'console_log_freq': 1,
-    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'dataset_name': <Dataset.OGBN_PRODUCTS: 'ogbn-products'>,
     'do_train_tqdm_logging': False,
-    'dropout': 0.6,
-    'force_cpu': True,
+    'dropout': 0.5,
+    'force_cpu': False,
     'hidden_size': 128,
-    'lr': 0.005,
+    'lr': 0.001,
     'model_type': <ModelType.GATV1: 'GAT-V1'>,
     'nbor_degree': 2,
     'num_heads': 1,
     'num_of_epochs': 500,
-    'num_of_layers': 2,
-    'num_of_runs': 10,
+    'num_of_layers': 3,
+    'num_of_runs': 1,
     'num_workers': 0,
     'patience_period': 50,
     'sparse': True,
-    'test_batch_size': 256,
+    'test_batch_size': 64,
     'test_frequency': 1,
     'use_batch_norm': False,
     'use_layer_norm': False}
 
 torch.cuda is available: True
-Used Dataset: Cora
+Used Dataset: ogbn-products
 
-Run 01 for GatV1_K2_s and Cora:
+Run 01 for GatV1_K2_s and ogbn-products:
 
 Printing only the traceback above the current stack frame
 Traceback (most recent call last):
-  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\utils\experimentor_base.py", line 258, in run_wrapper
+  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\utils\experimentor_base.py", line 259, in run_wrapper
     self.run()
-  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\utils\experimentor_base.py", line 194, in run
+  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\utils\experimentor_base.py", line 195, in run
     loss, acc, train_time = self.train(epoch)
-  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\utils\experimentor_base.py", line 121, in train
+  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\utils\experimentor_base.py", line 122, in train
     out = self.model(self.x[n_id], adjs)
   File "C:\Users\doria\anaconda3\envs\PSN\lib\site-packages\torch\nn\modules\module.py", line 1051, in _call_impl
     return forward_call(*input, **kwargs)
@@ -40,11 +40,32 @@ Traceback (most recent call last):
     x = self.convs[i]((x, x_target), edge_index, edge_weight)
   File "C:\Users\doria\anaconda3\envs\PSN\lib\site-packages\torch\nn\modules\module.py", line 1051, in _call_impl
     return forward_call(*input, **kwargs)
-  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\models\convs\GatConv.py", line 153, in forward
-    x, alpha = self.lift(x_l, alpha_l, alpha_r, edge_index)
-  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\models\convs\GatConv.py", line 261, in lift
-    alpha_r_lifted = alpha_r.index_select(0, col)
-IndexError: index out of range in self
+  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\models\convs\GatConv.py", line 155, in forward
+    out = self.propagate(edge_index=edge_index, x=x,
+  File "C:\Users\doria\anaconda3\envs\PSN\lib\site-packages\torch_geometric\nn\conv\message_passing.py", line 269, in propagate
+    out = self.message(**msg_kwargs)
+  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\models\convs\GatConv.py", line 179, in message
+    alpha = softmax(alpha, index)
+RuntimeError: The following operation failed in the TorchScript interpreter.
+Traceback of TorchScript (most recent call last):
+  File "C:\Users\doria\anaconda3\envs\PSN\lib\site-packages\torch_geometric\utils\softmax.py", line 40, in softmax
+        out_sum = gather_csr(segment_csr(out, ptr, reduce='sum'), ptr)
+    elif index is not None:
+        N = maybe_num_nodes(index, num_nodes)
+            ~~~~~~~~~~~~~~~ <--- HERE
+        src_max = scatter(src, index, dim, dim_size=N, reduce='max')
+        src_max = src_max.index_select(dim, index)
+  File "C:\Users\doria\anaconda3\envs\PSN\lib\site-packages\torch_geometric\utils\num_nodes.py", line 25, in maybe_num_nodes
+        return num_nodes
+    elif isinstance(edge_index, Tensor):
+        return int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
+               ~~~ <--- HERE
+    else:
+        return max(edge_index.size(0), edge_index.size(1))
+RuntimeError: CUDA error: device-side assert triggered
+CUDA kernel errors might be asynchronously reported at some other API call,so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1.
+
 
 
 Printing the full traceback as if we had not caught it here...
@@ -91,15 +112,15 @@ Traceback (most recent call last):
     if (await self.run_code(code, result,  async_=asy)):
   File "C:\Users\doria\anaconda3\envs\PSN\lib\site-packages\IPython\core\interactiveshell.py", line 3441, in run_code
     exec(code_obj, self.user_global_ns, self.user_ns)
-  File "C:\Users\doria\AppData\Local\Temp/ipykernel_2036/2098744666.py", line 6, in <module>
+  File "C:\Users\doria\AppData\Local\Temp/ipykernel_11948/3889757516.py", line 6, in <module>
     runExperiments(models, datasets, degrees, sparse)
   File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\utils\experimentorUtils.py", line 55, in runExperiments
     experimentor.run_wrapper()
-  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\utils\experimentor_base.py", line 258, in run_wrapper
+  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\utils\experimentor_base.py", line 259, in run_wrapper
     self.run()
-  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\utils\experimentor_base.py", line 194, in run
+  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\utils\experimentor_base.py", line 195, in run
     loss, acc, train_time = self.train(epoch)
-  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\utils\experimentor_base.py", line 121, in train
+  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\utils\experimentor_base.py", line 122, in train
     out = self.model(self.x[n_id], adjs)
   File "C:\Users\doria\anaconda3\envs\PSN\lib\site-packages\torch\nn\modules\module.py", line 1051, in _call_impl
     return forward_call(*input, **kwargs)
@@ -107,8 +128,29 @@ Traceback (most recent call last):
     x = self.convs[i]((x, x_target), edge_index, edge_weight)
   File "C:\Users\doria\anaconda3\envs\PSN\lib\site-packages\torch\nn\modules\module.py", line 1051, in _call_impl
     return forward_call(*input, **kwargs)
-  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\models\convs\GatConv.py", line 153, in forward
-    x, alpha = self.lift(x_l, alpha_l, alpha_r, edge_index)
-  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\models\convs\GatConv.py", line 261, in lift
-    alpha_r_lifted = alpha_r.index_select(0, col)
-IndexError: index out of range in self
+  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\models\convs\GatConv.py", line 155, in forward
+    out = self.propagate(edge_index=edge_index, x=x,
+  File "C:\Users\doria\anaconda3\envs\PSN\lib\site-packages\torch_geometric\nn\conv\message_passing.py", line 269, in propagate
+    out = self.message(**msg_kwargs)
+  File "c:\Users\doria\Desktop\ProseminarMA\multiscale-softattention\models\convs\GatConv.py", line 179, in message
+    alpha = softmax(alpha, index)
+RuntimeError: The following operation failed in the TorchScript interpreter.
+Traceback of TorchScript (most recent call last):
+  File "C:\Users\doria\anaconda3\envs\PSN\lib\site-packages\torch_geometric\utils\softmax.py", line 40, in softmax
+        out_sum = gather_csr(segment_csr(out, ptr, reduce='sum'), ptr)
+    elif index is not None:
+        N = maybe_num_nodes(index, num_nodes)
+            ~~~~~~~~~~~~~~~ <--- HERE
+        src_max = scatter(src, index, dim, dim_size=N, reduce='max')
+        src_max = src_max.index_select(dim, index)
+  File "C:\Users\doria\anaconda3\envs\PSN\lib\site-packages\torch_geometric\utils\num_nodes.py", line 25, in maybe_num_nodes
+        return num_nodes
+    elif isinstance(edge_index, Tensor):
+        return int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
+               ~~~ <--- HERE
+    else:
+        return max(edge_index.size(0), edge_index.size(1))
+RuntimeError: CUDA error: device-side assert triggered
+CUDA kernel errors might be asynchronously reported at some other API call,so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1.
+
