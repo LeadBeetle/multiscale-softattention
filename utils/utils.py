@@ -4,7 +4,6 @@ from torch_geometric.utils import to_dense_adj
 from torch_sparse import SparseTensor, set_diag
 from torch_geometric.utils import remove_self_loops, add_self_loops
 from utils.constants import * 
-import logging
                 
 def one_step(edge_index, x, num_nodes, device):
     edge_weight = None
