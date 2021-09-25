@@ -64,12 +64,15 @@ class Experimentor:
         self.criterion = F.nll_loss
         self.num_classes = self.dataset.num_classes
         self.num_features = self.dataset.num_features
-        
-        self.setLoaders(ngb_size = 10)
+
+        ngb_size = -1 if self.config["dataset_name"] == Dataset.OGBN_ARXIV else 10
+        self.setLoaders(ngb_size = ngb_size)
         self.setModel()
           
     def seed_worker(worker_id):
         worker_seed = 43
+        torch.manual_seed(43)
+        torch.seed(43)
         np.random.seed(worker_seed)
         random.seed(worker_seed)
 

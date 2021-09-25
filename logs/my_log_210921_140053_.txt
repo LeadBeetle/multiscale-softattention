@@ -27,3 +27,5 @@ Used Dataset: ogbn-products
 Run 01 for GatV1_K2_s and ogbn-products:
 
 Epoch 01| Loss: 1.0310| Acc: 0.7531| Train Time: 521.1129s
+Train: 0.8685| Val: 0.8633| Test: 0.7021| Eval Time: 1464.7592s
+Epoch 02| Loss: 0.5810| Acc: 0.8486| Train Time: 496.6792s
