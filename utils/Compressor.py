@@ -7,7 +7,10 @@ import json
 from mergedeep import merge
 
 resultPath = osp.abspath("results")
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 def visualize(): 
     pass
 
