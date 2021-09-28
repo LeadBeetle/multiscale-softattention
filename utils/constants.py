@@ -1,4 +1,3 @@
-
 import enum
 
 class AdjacencyMode(str, enum.Enum):

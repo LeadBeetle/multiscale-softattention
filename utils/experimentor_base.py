@@ -65,14 +65,11 @@ class Experimentor:
         self.num_classes = self.dataset.num_classes
         self.num_features = self.dataset.num_features
 
-        ngb_size = -1 if self.config["dataset_name"] == Dataset.OGBN_ARXIV else 10
-        self.setLoaders(ngb_size = ngb_size)
+        self.setLoaders(ngb_size = 10)
         self.setModel()
           
     def seed_worker(worker_id):
         worker_seed = 43
-        torch.manual_seed(43)
-        torch.seed(43)
         np.random.seed(worker_seed)
         random.seed(worker_seed)
 
@@ -83,10 +80,12 @@ class Experimentor:
         
         g = torch.Generator()
         g.manual_seed(43)
+
         if self.config["sparse"]:
             edge_weight = torch.ones(edge_index.size(1))
             edge_index  = SparseTensor(row = edge_index[0], col = edge_index[1], value=edge_weight, sparse_sizes=(self.num_nodes, self.num_nodes))
             edge_index = edge_index.set_diag()
+            
         self.train_loader = NeighborSampler(edge_index, node_idx=self.train_idx,
                                     sizes=[ngb_size] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
                                     shuffle=True, num_workers=self.config["num_workers"], worker_init_fn = self.seed_worker)
