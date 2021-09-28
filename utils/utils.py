@@ -1,8 +1,7 @@
 import torch
 torch.manual_seed(43)
 from torch_geometric.utils import to_dense_adj
-from torch_sparse import SparseTensor, set_diag
-from torch_geometric.utils import remove_self_loops, add_self_loops
+from torch_sparse import SparseTensor
 from utils.constants import * 
                 
 def one_step(edge_index, x, num_nodes, device):

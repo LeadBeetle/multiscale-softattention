@@ -25,6 +25,8 @@ def setConfig(dataset, model, config):
         specificConfig = merge(base_config, pub_config)
     elif dataset in [Dataset.CORA, Dataset.CITESEER]: 
         specificConfig = merge(base_config, coracite_config)
+        if dataset == Dataset.CORA:
+            specificConfig = merge(specificConfig, cora_config)
     elif dataset == Dataset.OGBN_ARXIV:
         specificConfig = merge(base_config, arxiv_config)
         if model == ModelType.TRANS:

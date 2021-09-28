@@ -3,7 +3,7 @@ from utils.constants import *
 base_config = {
     'num_of_epochs': 500,
     'num_of_runs': 10,
-    'patience_period': 50,
+    'patience_period': 30,
     'num_workers': 0,
     'force_cpu': False,
     'test_frequency': 1,
@@ -22,6 +22,10 @@ coracite_config = {
     'dropout': 0.6,  
     "use_layer_norm": False,
     "use_batch_norm": False,
+}
+
+cora_config = {
+    'force_cpu': True,
 }
 
 pub_config = {
@@ -90,4 +94,3 @@ proteins_trans_config = {
     'num_of_layers': 7,
     'num_of_runs': 1,
 }
-
