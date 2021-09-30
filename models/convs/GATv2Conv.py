@@ -65,7 +65,8 @@ class GATv2Conv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
     _alpha: OptTensor
-
+    __slots__ = ('in_channels', 'out_channels', 'heads', 'concat', 'negative_slope', 'dropout', 'add_self_loops', 'share_weights', 
+                'lin_l', 'lin_r', 'att', 'bias', '_alpha')
     def __init__(self, in_channels: int,
                  out_channels: int, heads: int = 1, concat: bool = True,
                  negative_slope: float = 0.2, dropout: float = 0.,

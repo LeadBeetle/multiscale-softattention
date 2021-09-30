@@ -11,6 +11,8 @@ from ogb.nodeproppred import Evaluator
 from utils.constants import * 
 
 class Experimentor_Planetoid(Experimentor):
+    __slots__ = ('__dict__', 'val_idx', 'test_idx', 'num_nodes')
+    
     def initData(self):
         root = osp.abspath('data')
         

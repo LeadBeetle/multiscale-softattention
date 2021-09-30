@@ -26,7 +26,10 @@ from utils.utils import one_step, one_step_sparse
 
 
 class Experimentor:
-    
+    __slots__ = ('evaluator', 'model', 'optimizer', 'dataset', 'data', 'config', 'x', 'y', 
+                'device', 'train_size', 'num_classes', 'num_features', 'train_loader', 
+                'test_loader', 'criterion', 'split_idx', 'train_idx', 'suffix', 
+                'baseName', 'dataset_name')
     def __init__(self, config):
         self.config = config
         
@@ -56,7 +59,6 @@ class Experimentor:
         self.data = self.dataset[0]
         self.num_nodes = self.data.num_nodes
         self.train_idx = self.split_idx['train']
-        self.val_idx = self.split_idx['valid']
 
         self.train_size = self.train_idx.size(0)
         
@@ -72,21 +74,13 @@ class Experimentor:
         np.random.seed(worker_seed)
         random.seed(worker_seed)
 
-    def setLoaders(self, ngb_size = -1):
-        self.x = self.data.x.to(self.device)
-        self.y = self.data.y.squeeze().to(self.device)
-        edge_index = self.data.edge_index
-        
-        g = torch.Generator()
-        g.manual_seed(43)
-
-
+    def applyOneStep(self, edge_index):
         if self.config["sparse"]:
             edge_weight = torch.ones(edge_index.size(1))
             edge_index  = SparseTensor(row = edge_index[0], col = edge_index[1], value=edge_weight, sparse_sizes=(self.num_nodes, self.num_nodes))
 
             start = time.time()
-            one_step_sparse(edge_index, self.config["nbor_degree"], self.x.size(0), "cpu")
+            edge_index , edge_weight = one_step_sparse(edge_index, self.config["nbor_degree"], self.x.size(0), "cpu")
             end = time.time()
 
             print("Duration of Adj computation:", end - start)
@@ -94,9 +88,20 @@ class Experimentor:
 
         else: 
             start = time.time()
-            one_step(edge_index, self.config["nbor_degree"], self.x.size(0), "cpu")
+            edge_index , edge_weight = one_step(edge_index, self.config["nbor_degree"], self.x.size(0), "cpu")
             end = time.time()
             print("Duration of Adj computation:", end - start)
+        return edge_index, edge_weight
+
+    def setLoaders(self, ngb_size = -1):
+        self.x = self.data.x.to(self.device)
+        self.y = self.data.y.squeeze().to(self.device)
+        
+        g = torch.Generator()
+        g.manual_seed(43)
+
+        edge_index, _ = self.applyOneStep(self.data.edge_index)
+        
 
         self.train_loader = NeighborSampler(edge_index, node_idx=self.train_idx,
                                     sizes=[ngb_size] * self.config["num_of_layers"], batch_size=self.config["batch_size"],

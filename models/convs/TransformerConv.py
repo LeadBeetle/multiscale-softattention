@@ -87,7 +87,8 @@ class TransformerConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
     _alpha: OptTensor
-
+    __slots__ = ('in_channels', 'out_channels', 'heads', 'beta', 'root_weight', 'concat', 'dropout', 'edge_dim', 
+                'lin_key', 'lin_query', 'lin_value', 'lin_edge', 'lin_skip', 'lin_beta')
     def __init__(self, in_channels: Union[int, Tuple[int,
                                                      int]], out_channels: int,
                  heads: int = 1, concat: bool = True, beta: bool = False,

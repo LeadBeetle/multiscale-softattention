@@ -3,9 +3,10 @@ torch.manual_seed(43)
 from torch.nn import Linear as Lin
 import torch.nn.functional as F
 from tqdm import tqdm
-from utils.utils import one_step, one_step_sparse
 
 class Net(torch.nn.Module):
+    __slots__ = ('device', 'num_layers', '_dropout', '_use_layer_norm', '_use_batch_norm', 'nbor_degree', 'adj_mode', 'sparse', 'skips')
+
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
                  heads, dropout, device, use_layer_norm=False, use_batch_norm=False, nbor_degree=1, adj_mode=None, sparse=True):
         super(Net, self).__init__()
