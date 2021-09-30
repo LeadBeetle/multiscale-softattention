@@ -22,6 +22,7 @@ import random
 import traceback
 from utils.constants import * 
 from utils.utils import * 
+from utils.utils import one_step, one_step_sparse
 
 
 class Experimentor:
@@ -33,13 +34,11 @@ class Experimentor:
         self.suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
         self.baseName = getResultFileName(self.config)
         filename = "_".join(["logs/my_log", self.suffix, ".txt"])
-                
         logging.basicConfig(level=logging.DEBUG, filename=filename, filemode="a+",
                                         format="%(message)s")
         logging.info(pp.pformat(config))
 
         logging.info("\ntorch.cuda is available: " + str(torch.cuda.is_available()))
-        
         
         self.dataset_name = config["dataset_name"]
         self.device = torch.device('cuda' if torch.cuda.is_available() and not self.config['force_cpu'] else 'cpu')
@@ -81,11 +80,24 @@ class Experimentor:
         g = torch.Generator()
         g.manual_seed(43)
 
+
         if self.config["sparse"]:
             edge_weight = torch.ones(edge_index.size(1))
             edge_index  = SparseTensor(row = edge_index[0], col = edge_index[1], value=edge_weight, sparse_sizes=(self.num_nodes, self.num_nodes))
+
+            start = time.time()
+            one_step_sparse(edge_index, self.config["nbor_degree"], self.x.size(0), "cpu")
+            end = time.time()
+
+            print("Duration of Adj computation:", end - start)
             edge_index = edge_index.set_diag()
-            
+
+        else: 
+            start = time.time()
+            one_step(edge_index, self.config["nbor_degree"], self.x.size(0), "cpu")
+            end = time.time()
+            print("Duration of Adj computation:", end - start)
+
         self.train_loader = NeighborSampler(edge_index, node_idx=self.train_idx,
                                     sizes=[ngb_size] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
                                     shuffle=True, num_workers=self.config["num_workers"], worker_init_fn = self.seed_worker)

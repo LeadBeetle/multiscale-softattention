@@ -19,7 +19,7 @@ class Net(torch.nn.Module):
         self.adj_mode = adj_mode
         self.sparse = sparse
         
-        self.one_step_gen = one_step_sparse if sparse else one_step
+        #self.one_step_gen = one_step_sparse if sparse else one_step
         
         self.skips = torch.nn.ModuleList()
         self.skips.append(Lin(in_channels, hidden_channels * heads))
@@ -42,11 +42,13 @@ class Net(torch.nn.Module):
         # and the size/shape `size` of the bipartite graph.
         # Target nodes are also included in the source nodes so that one can
         # easily apply skip-connections or add self-loops.
+        
         for i, (edge_index, _, size) in enumerate(adjs):
             x_target = x[:size[1]]  # Target nodes are always placed first.
-            edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
-            
-            x = self.convs[i]((x, x_target), edge_index, edge_weight)
+            #edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
+            if self.sparse:
+                    edge_index = edge_index.t()
+            x = self.convs[i]((x, x_target), edge_index, None)
             if self._use_layer_norm:
                 x = self.layer_normalizations[i](x)
             if self._use_batch_norm:
@@ -73,8 +75,10 @@ class Net(torch.nn.Module):
                 total_edges += edge_index.size(1)
                 x = x_all[n_id].to(self.device)
                 x_target = x[:size[1]]
-                edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
-                x = self.convs[i]((x, x_target), edge_index, edge_weight)
+                #edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
+                if self.sparse:
+                    edge_index = edge_index.t()
+                x = self.convs[i]((x, x_target), edge_index, None)
                 if self._use_layer_norm:
                     x = self.layer_normalizations[i](x)
                 if self._use_batch_norm:

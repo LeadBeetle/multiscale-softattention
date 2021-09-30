@@ -16,23 +16,28 @@ def one_step(edge_index, x, num_nodes, device):
             edge_weight_k = 1/k * torch.ones(edge_index_k.size(1))
             edge_index = torch.cat((edge_index, edge_index_k), dim=1)
             edge_weight = torch.cat((edge_weight, edge_weight_k), dim=0)
-    if edge_weight != None:
+    if edge_weight != None and edge_index.device() == device:
         edge_weight = edge_weight.to(device)
     return edge_index, edge_weight
 
 
 def one_step_sparse(edge_index: SparseTensor, x, num_nodes, device):
-    size = torch.Size([num_nodes, num_nodes])
-    edge_index = edge_index.sparse_resize((num_nodes, num_nodes))
-    adj = SparseTensor.to_torch_sparse_coo_tensor(edge_index)
+    edge_index.to(device)
     if x>1: 
-        adj_powers = [adj]
+        size = torch.Size([num_nodes, num_nodes])
+        edge_index = edge_index.sparse_resize((num_nodes, num_nodes))
+        base_adj = SparseTensor.to_torch_sparse_coo_tensor(edge_index)
+        current_adj_power = base_adj.detach().clone()
+        adj = base_adj.detach().clone()
         for k in range(2, x+1):
-            adj_powers.append(torch.sparse.mm(adj_powers[k-2], adj_powers[0]))
-            adj_k = adj_powers[k-1] - adj_powers[0]
+            print(k)
+            current_adj_power = torch.sparse.mm(current_adj_power, base_adj)
+            adj_k = current_adj_power - base_adj
             adj_k = torch.sparse_coo_tensor(adj_k._indices(), 1/k * (adj_k._values()>0)*1, size = size)
             adj = adj + adj_k 
-    return SparseTensor.from_torch_sparse_coo_tensor(adj).t(), None
+        return SparseTensor.from_torch_sparse_coo_tensor(adj), None
+    else: 
+        return edge_index, None
 
 
 def getResultFileName(config): 
