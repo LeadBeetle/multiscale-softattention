@@ -3,12 +3,13 @@ torch.manual_seed(43)
 from torch.nn import Linear as Lin
 import torch.nn.functional as F
 from tqdm import tqdm
+from utils.utils import one_step, one_step_sparse
 
 class Net(torch.nn.Module):
     __slots__ = ('device', 'num_layers', '_dropout', '_use_layer_norm', '_use_batch_norm', 'nbor_degree', 'adj_mode', 'sparse', 'skips')
 
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 heads, dropout, device, use_layer_norm=False, use_batch_norm=False, nbor_degree=1, adj_mode=None, sparse=True):
+                 heads, dropout, device, use_layer_norm=False, use_batch_norm=False, nbor_degree=1, adj_mode=None, sparse=True, computationBefore=True):
         super(Net, self).__init__()
 
         self.device = device
@@ -19,8 +20,9 @@ class Net(torch.nn.Module):
         self.nbor_degree = nbor_degree
         self.adj_mode = adj_mode
         self.sparse = sparse
+        self.computationBefore = computationBefore
         
-        #self.one_step_gen = one_step_sparse if sparse else one_step
+        self.one_step_gen = one_step_sparse if sparse else one_step
         
         self.skips = torch.nn.ModuleList()
         self.skips.append(Lin(in_channels, hidden_channels * heads))
@@ -46,10 +48,12 @@ class Net(torch.nn.Module):
         
         for i, (edge_index, _, size) in enumerate(adjs):
             x_target = x[:size[1]]  # Target nodes are always placed first.
-            #edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
+            edge_weight = None
+            if not self.computationBefore:
+                edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
             if self.sparse:
                     edge_index = edge_index.t()
-            x = self.convs[i]((x, x_target), edge_index, None)
+            x = self.convs[i]((x, x_target), edge_index, edge_weight)
             if self._use_layer_norm:
                 x = self.layer_normalizations[i](x)
             if self._use_batch_norm:
@@ -76,10 +80,12 @@ class Net(torch.nn.Module):
                 total_edges += edge_index.size(1)
                 x = x_all[n_id].to(self.device)
                 x_target = x[:size[1]]
-                #edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
+                edge_weight = None
+                if not self.computationBefore:
+                    edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
                 if self.sparse:
                     edge_index = edge_index.t()
-                x = self.convs[i]((x, x_target), edge_index, None)
+                x = self.convs[i]((x, x_target), edge_index, edge_weight)
                 if self._use_layer_norm:
                     x = self.layer_normalizations[i](x)
                 if self._use_batch_norm:

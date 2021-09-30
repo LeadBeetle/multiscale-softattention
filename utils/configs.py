@@ -9,7 +9,8 @@ base_config = {
     'test_frequency': 1,
     'console_log_freq': 1,
     'do_train_tqdm_logging': False,
-    'adj_mode': AdjacencyMode.OneStep
+    'adj_mode': AdjacencyMode.OneStep,
+    'computationBefore': True
 }
 
 coracite_config = {

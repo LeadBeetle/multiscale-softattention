@@ -27,7 +27,7 @@ from utils.utils import one_step, one_step_sparse
 
 class Experimentor:
     __slots__ = ('evaluator', 'model', 'optimizer', 'dataset', 'data', 'config', 'x', 'y', 
-                'device', 'train_size', 'num_classes', 'num_features', 'train_loader', 
+                'device', 'train_size', 'num_classes', 'num_features', 'num_nodes', 'train_loader', 
                 'test_loader', 'criterion', 'split_idx', 'train_idx', 'suffix', 
                 'baseName', 'dataset_name')
     def __init__(self, config):
@@ -79,18 +79,20 @@ class Experimentor:
             edge_weight = torch.ones(edge_index.size(1))
             edge_index  = SparseTensor(row = edge_index[0], col = edge_index[1], value=edge_weight, sparse_sizes=(self.num_nodes, self.num_nodes))
 
-            start = time.time()
-            edge_index , edge_weight = one_step_sparse(edge_index, self.config["nbor_degree"], self.x.size(0), "cpu")
-            end = time.time()
+            if self.config["computationBefore"]:
+                start = time.time()
+                edge_index , edge_weight = one_step_sparse(edge_index, self.config["nbor_degree"], self.x.size(0), "cpu")
+                end = time.time()
 
-            print("Duration of Adj computation:", end - start)
+                print("Duration of Adj computation:", end - start)
             edge_index = edge_index.set_diag()
 
         else: 
-            start = time.time()
-            edge_index , edge_weight = one_step(edge_index, self.config["nbor_degree"], self.x.size(0), "cpu")
-            end = time.time()
-            print("Duration of Adj computation:", end - start)
+            if self.config["computationBefore"]:
+                start = time.time()
+                edge_index , edge_weight = one_step(edge_index, self.config["nbor_degree"], self.x.size(0), "cpu")
+                end = time.time()
+                print("Duration of Adj computation:", end - start)
         return edge_index, edge_weight
 
     def setLoaders(self, ngb_size = -1):
