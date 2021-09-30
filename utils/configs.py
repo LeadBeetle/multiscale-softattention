@@ -76,7 +76,7 @@ proteins_config = {
     'batch_size': 64,
     'test_batch_size': 64,
     'lr': 0.01,
-    'num_of_layers': 6, 
+    'num_of_layers': 3, 
     'num_heads': 1,
     'hidden_size': 64,
     'dropout': 0.25,
