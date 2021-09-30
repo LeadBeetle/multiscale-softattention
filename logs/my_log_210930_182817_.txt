@@ -1,0 +1,33 @@
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.PUBMED: 'PubMed'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'force_cpu': False,
+    'hidden_size': 128,
+    'lr': 0.01,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 20,
+    'num_heads': 8,
+    'num_of_epochs': 500,
+    'num_of_layers': 2,
+    'num_of_runs': 10,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'use_batch_norm': False,
+    'use_layer_norm': False}
+
+torch.cuda is available: True
+Used Dataset: PubMed
+
+Run 01 for GatV1_K20_s and PubMed:
+
+Epoch 01| Loss: 1.0994| Acc: 0.3333| Train Time: 1.7225s
+Train: 0.9167| Val: 0.6520| Test: 0.6450| Eval Time: 11.3853s
+Epoch 02| Loss: 0.9178| Acc: 0.8167| Train Time: 1.1492s
+Train: 0.9500| Val: 0.7160| Test: 0.7060| Eval Time: 2.3241s

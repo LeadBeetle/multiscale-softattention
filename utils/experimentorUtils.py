@@ -30,11 +30,11 @@ def setConfig(dataset, model, config):
     elif dataset == Dataset.OGBN_ARXIV:
         specificConfig = merge(base_config, arxiv_config)
         if model == ModelType.TRANS:
-            specificConfig = merge(specificConfig, arxprod_trans_config)
+            specificConfig = merge(specificConfig, arx_trans_config)
     elif dataset == Dataset.OGBN_PRODUCTS:
         specificConfig = merge(base_config, products_config)
         if model == ModelType.TRANS:
-            specificConfig = merge(specificConfig, arxprod_trans_config)
+            specificConfig = merge(specificConfig, prod_trans_config)
     elif dataset == Dataset.OGBN_PROTEINS:
         specificConfig = merge(base_config, proteins_config)
         if model == ModelType.TRANS:

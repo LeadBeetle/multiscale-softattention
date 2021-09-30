@@ -75,6 +75,7 @@ class Experimentor:
         random.seed(worker_seed)
 
     def applyOneStep(self, edge_index):
+        edge_weight = None
         if self.config["sparse"]:
             edge_weight = torch.ones(edge_index.size(1))
             edge_index  = SparseTensor(row = edge_index[0], col = edge_index[1], value=edge_weight, sparse_sizes=(self.num_nodes, self.num_nodes))
@@ -93,6 +94,7 @@ class Experimentor:
                 edge_index , edge_weight = one_step(edge_index, self.config["nbor_degree"], self.x.size(0), "cpu")
                 end = time.time()
                 print("Duration of Adj computation:", end - start)
+        
         return edge_index, edge_weight
 
     def setLoaders(self, ngb_size = -1):
@@ -104,7 +106,6 @@ class Experimentor:
 
         edge_index, _ = self.applyOneStep(self.data.edge_index)
         
-
         self.train_loader = NeighborSampler(edge_index, node_idx=self.train_idx,
                                     sizes=[ngb_size] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
                                     shuffle=True, num_workers=self.config["num_workers"], worker_init_fn = self.seed_worker)

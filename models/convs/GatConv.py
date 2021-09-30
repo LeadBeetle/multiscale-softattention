@@ -61,8 +61,6 @@ class GATConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
     _alpha: OptTensor
-    __slots__ = ('in_channels', 'out_channels', 'heads', 'concat', 'negative_slope', 'dropout', 'add_self_loops',
-    'lin_l', 'lin_r', 'bias', '_alpha', 'att_l', 'att_r', )
     
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int, heads: int = 1, concat: bool = True,

@@ -1,0 +1,51 @@
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': True,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'force_cpu': True,
+    'hidden_size': 128,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 4,
+    'num_heads': 1,
+    'num_of_epochs': 500,
+    'num_of_layers': 2,
+    'num_of_runs': 10,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'use_batch_norm': False,
+    'use_layer_norm': False}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01 for GatV1_K4_s and Cora:
+
+Epoch 01| Loss: 1.9492| Acc: 0.1500| Train Time: 9.4883s
+Train: 0.9571| Val: 0.5580| Test: 0.5580| Eval Time: 4.2084s
+Epoch 02| Loss: 1.6814| Acc: 0.8643| Train Time: 9.2496s
+Train: 0.9857| Val: 0.6820| Test: 0.6870| Eval Time: 4.0236s
+Epoch 03| Loss: 1.4488| Acc: 0.9357| Train Time: 8.9513s
+Train: 0.9857| Val: 0.7080| Test: 0.7190| Eval Time: 3.9240s
+Epoch 04| Loss: 1.2264| Acc: 0.9786| Train Time: 9.2110s
+Train: 0.9786| Val: 0.7120| Test: 0.7330| Eval Time: 3.5671s
+Epoch 05| Loss: 1.0337| Acc: 0.9857| Train Time: 6.7840s
+Train: 0.9786| Val: 0.7160| Test: 0.7410| Eval Time: 3.2294s
+Epoch 06| Loss: 0.8437| Acc: 0.9714| Train Time: 7.4810s
+Train: 0.9857| Val: 0.7180| Test: 0.7340| Eval Time: 3.1838s
+Epoch 07| Loss: 0.6531| Acc: 0.9857| Train Time: 7.7814s
+Train: 0.9929| Val: 0.7200| Test: 0.7300| Eval Time: 3.2334s
+Epoch 08| Loss: 0.5290| Acc: 0.9786| Train Time: 7.6368s
+Train: 0.9929| Val: 0.7160| Test: 0.7240| Eval Time: 3.8250s
+Epoch 09| Loss: 0.3929| Acc: 0.9929| Train Time: 7.4142s
+Train: 0.9929| Val: 0.7180| Test: 0.7220| Eval Time: 3.3067s
+Epoch 10| Loss: 0.3084| Acc: 0.9643| Train Time: 7.6604s
+Train: 0.9929| Val: 0.7080| Test: 0.7270| Eval Time: 3.4987s
+Epoch 11| Loss: 0.2386| Acc: 0.9786| Train Time: 9.3313s
+Train: 0.9929| Val: 0.7020| Test: 0.7080| Eval Time: 6.3977s
