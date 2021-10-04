@@ -272,10 +272,14 @@ class Experimentor:
         data["eval_time_avg"]  = str(eval_times.mean().item())
         data["num_epochs_avg"] = str(epochs.mean().item())
 
-        base_dir = osp.join("results", self.config["dataset_name"], self.config["model_type"])
+        base_dir = None
+        if self.config["adj_mode"] != AdjacencyMode.Partial:
+            base_dir = osp.join("results", self.config["dataset_name"], "OneStep", self.config["model_type"])
+        else: 
+            base_dir = osp.join("results", self.config["dataset_name"], "Partial", self.config["model_type"])
         if not os.path.exists(base_dir):
-            os.mkdir(base_dir)
-        filename = osp.join("results", self.config["dataset_name"], self.config["model_type"], self.baseName + ".json")
+            os.makedirs(base_dir)
+        filename = osp.join(base_dir, self.baseName + ".json")
         with open(filename, 'w') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
 
