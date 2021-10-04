@@ -51,11 +51,10 @@ def runExperiments(models, datasets, degrees, sparse, num_layers, adj_modes, agg
                 config["dataset_name"] = dataset
                 for model in models:
                     config["model_type"] = model
-                    for degree in degrees:
-                        config["nbor_degree"] = degree
-                        for _num_layers in num_layers:
-                            config["num_of_layers"] = _num_layers   
-
+                    for _num_layers in num_layers:
+                        config["num_of_layers"] = _num_layers
+                        for degree in degrees:
+                            config["nbor_degree"] = degree
                             for isSparse in sparse:
                                 config["sparse"] = isSparse
                                 config = setConfig(dataset, model, config)

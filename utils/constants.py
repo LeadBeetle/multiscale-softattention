@@ -10,6 +10,7 @@ class ModelType(str, enum.Enum):
       TRANS = "TRANS"
       
 class AggrMode(str, enum.Enum):
+      NONE = "None",
       MEAN = "Mean",
       ADD  = "Add", 
       MAX  = "Max",

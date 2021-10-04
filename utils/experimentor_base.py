@@ -1,6 +1,5 @@
-from os import mkdir
+import os
 import os.path as osp
-
 import torch
 torch.manual_seed(43)
 from tqdm import tqdm
@@ -279,7 +278,7 @@ class Experimentor:
         if self.config["adj_mode"] != AdjacencyMode.Partial:
             base_dir = osp.join("results", self.config["dataset_name"], "OneStep", self.config["model_type"])
         else: 
-            base_dir = osp.join("results", self.config["dataset_name"], "Partial", self.config["model_type"])
+            base_dir = osp.join("results", self.config["dataset_name"], "Partial", self.config["model_type"], self.config["aggr_mode"])
         if not os.path.exists(base_dir):
             os.makedirs(base_dir)
         filename = osp.join(base_dir, self.baseName + ".json")

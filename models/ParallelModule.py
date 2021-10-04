@@ -9,12 +9,13 @@ class ParallelModule(torch.nn.Sequential):
     def __init__(self, aggr_mode):
         super(ParallelModule, self).__init__( )
         self.aggr_mode = aggr_mode
+        self.shared_weights = True
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index, edge_weight=None):
         output = []
         for i, module in enumerate(self):
             cur_edge_index: SparseTensor = edge_index[i]
-            output.append( module(x, cur_edge_index, edge_weight) )
+            output.append(module(x, cur_edge_index, edge_weight) )
 
         return self.aggregate(torch.stack(output, dim=0))
 
