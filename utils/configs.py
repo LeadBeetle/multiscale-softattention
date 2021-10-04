@@ -46,6 +46,7 @@ arxiv_config = {
     'test_batch_size': 20000,
     'lr': 0.01,
     #'num_of_layers': 3, 
+    'patience_period': 50,
     'num_heads': 1,
     'hidden_size': 256,
     'dropout': 0.25,  
@@ -58,9 +59,10 @@ arxiv_config = {
 
 products_config = {
     'batch_size': 128,
-    'test_batch_size': 64,
+    'test_batch_size': 128,
     'lr': 0.001,
     #'num_of_layers': 3, 
+    'patience_period': 50,
     'num_heads': 1,
     'hidden_size': 128,
     'dropout': 0.5,
@@ -75,6 +77,7 @@ proteins_config = {
     'batch_size': 64,
     'test_batch_size': 64,
     'lr': 0.01,
+    'patience_period': 50,
     #'num_of_layers': 3, 
     'num_heads': 8,
     'hidden_size': 64,
