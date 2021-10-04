@@ -9,7 +9,7 @@ class Net(torch.nn.Module):
     __slots__ = ('device', 'num_layers', '_dropout', '_use_layer_norm', '_use_batch_norm', 'nbor_degree', 'adj_mode', 'sparse', 'skips')
 
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 heads, dropout, device, use_layer_norm=False, use_batch_norm=False, nbor_degree=1, adj_mode=None, sparse=True, computationBefore=True):
+                 heads, dropout, device, use_layer_norm=False, use_batch_norm=False, nbor_degree=1, adj_mode=None, sparse=True, computationBefore=False):
         super(Net, self).__init__()
 
         self.device = device
@@ -50,6 +50,7 @@ class Net(torch.nn.Module):
             x_target = x[:size[1]]  # Target nodes are always placed first.
             edge_weight = None
             if not self.computationBefore:
+                
                 edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
             if self.sparse:
                     edge_index = edge_index.t()

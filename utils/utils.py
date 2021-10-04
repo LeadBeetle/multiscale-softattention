@@ -5,13 +5,13 @@ from torch_geometric.utils import to_dense_adj
 from torch_sparse import SparseTensor
 from utils.constants import *    
 
-def one_step(edge_index, x, num_nodes, device):
+def one_step(edge_index, degree, num_nodes, device):
     edge_weight = None
-    if x>1: 
+    if degree>1: 
         edge_weight = torch.ones(edge_index.size(1))
         adj = to_dense_adj(edge_index)[0]
         current_adj_power = adj.detach().clone()
-        for k in range(2,x+1):
+        for k in range(2,degree+1):
             #print("k=", k)
             current_adj_power = (torch.mm(current_adj_power, adj)>0)*1 - adj
             edge_index_k = (current_adj_power > 0).nonzero().t()
@@ -23,14 +23,14 @@ def one_step(edge_index, x, num_nodes, device):
     return edge_index, edge_weight
 
 
-def one_step_sparse(edge_index: SparseTensor, x, num_nodes, device):
-    if x>1: 
+def one_step_sparse(edge_index: SparseTensor, degree, num_nodes, device):
+    if degree>1: 
         size = torch.Size([num_nodes, num_nodes])
         edge_index = edge_index.sparse_resize((num_nodes, num_nodes))
         base_adj = SparseTensor.to_torch_sparse_coo_tensor(edge_index)
         current_adj_power = base_adj.detach().clone()
         adj = base_adj.detach().clone()
-        for k in range(2, x+1):
+        for k in range(2, degree+1):
             #print("k=", k)
             current_adj_power = torch.sparse.mm(current_adj_power, base_adj)
             adj_k = current_adj_power - base_adj
@@ -39,6 +39,20 @@ def one_step_sparse(edge_index: SparseTensor, x, num_nodes, device):
         return SparseTensor.from_torch_sparse_coo_tensor(adj), None
     else: 
         return edge_index, None
+
+def multi_step_sparse(edge_index: SparseTensor, degree, num_nodes):
+    if degree>1: 
+        adjs = []
+        edge_index = edge_index.sparse_resize((num_nodes, num_nodes))
+        base_adj = SparseTensor.to_torch_sparse_coo_tensor(edge_index)
+        current_adj_power = base_adj.detach().clone()
+        for k in range(2, degree+1):
+            current_adj_power = torch.sparse.mm(current_adj_power, base_adj)
+            adj_k = current_adj_power - base_adj
+            adjs.append(SparseTensor.from_torch_sparse_coo_tensor(adj_k))
+        return adjs
+    else: 
+        return [edge_index]
 
 
 def getResultFileName(config): 
