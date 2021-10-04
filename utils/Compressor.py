@@ -30,6 +30,7 @@ class Compressor():
         self.val_stds        = []
         self.train_time_avgs = []
         self.epochs          = []
+        self.num_of_layers   = 0
 
     def compressAll(self):
         for dataset in [Dataset.CORA, Dataset.PUBMED, Dataset.CITESEER]:
@@ -45,16 +46,19 @@ class Compressor():
             { 
                 model.name: 
                 {
-                    sparseStr: {
-                    "train_accs ": self.train_accs,
-                    "test_accs"  : self.test_accs,
-                    "val_accs"   : self.val_accs,
-                    "train_stds" : self.train_stds,
-                    "test_stds"  : self.test_stds,
-                    "val_stds"   : self.val_stds,
-                    "train_times": self.train_time_avgs,
-                    "epochs"     : self.epochs
+                    self.num_of_layers: {
+                        sparseStr: {
+                        "train_accs ": self.train_accs,
+                        "test_accs"  : self.test_accs,
+                        "val_accs"   : self.val_accs,
+                        "train_stds" : self.train_stds,
+                        "test_stds"  : self.test_stds,
+                        "val_stds"   : self.val_stds,
+                        "train_times": self.train_time_avgs,
+                        "epochs"     : self.epochs
+                        }
                     }
+                    
                 }
             }
         }
@@ -88,7 +92,7 @@ class Compressor():
             f = open(osp.join(self.folder, file))
             
             results = json.load(f)
-            
+            self.num_of_layers = results["num_of_layers"]
             if ft(results["dataset_name"]) == ft(dataset.name) and ft(results["sparse"]) == ft(sparse) and ft(results["model_type"]) == ft(model.name):
                 self.train_accs.append(results["train_acc_mean"])
                 self.val_accs.append(results["val_acc_mean"])
@@ -103,6 +107,5 @@ class Compressor():
                     epoch = results["num_epochs_avg"]
                     if epoch is not None:
                         self.epochs.append(epoch)
-
             f.close()
             

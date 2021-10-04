@@ -44,7 +44,7 @@ def getResultFileName(config):
     model  = config["model_type"]
     degree = config["nbor_degree"]
     sparse = config["sparse"]
-
+    num_layers = config["num_of_layers"]
     modelPart = ""
 
     if model == ModelType.GATV1:
@@ -58,6 +58,8 @@ def getResultFileName(config):
     degreePart = "".join(["K", str(degree)])
     assert(degreePart != "")
 
+    assert(num_layers > 0)
+    layerPart = "D" + str(num_layers)
     sparsePart = "s" if sparse == True else "ns"
-
-    return "_".join([modelPart, degreePart, sparsePart])
+    
+    return "_".join([modelPart, degreePart, layerPart, sparsePart])

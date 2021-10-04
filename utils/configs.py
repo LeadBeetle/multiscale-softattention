@@ -17,9 +17,9 @@ coracite_config = {
     'batch_size': 256,
     'test_batch_size': 256,
     'lr': 0.005,
-    'num_of_layers': 2, 
-    'num_heads': 1,
-    'hidden_size': 128,
+    'num_of_layers': 3, 
+    'num_heads': 4,
+    'hidden_size': 64,
     'dropout': 0.6,  
     "use_layer_norm": False,
     "use_batch_norm": False,
@@ -33,13 +33,12 @@ pub_config = {
     'batch_size': 256,
     'test_batch_size': 256,
     'lr': 0.01,
-    'num_of_layers': 2, 
-    'num_heads': 8,
+    'num_of_layers': 3, 
+    'num_heads': 4,
     'hidden_size': 128,
     'dropout': 0.6,  
     "use_layer_norm": False,
     "use_batch_norm": False,
-    'computationBefore': True
 }
 
 arxiv_config = {
@@ -77,11 +76,11 @@ proteins_config = {
     'test_batch_size': 64,
     'lr': 0.01,
     'num_of_layers': 3, 
-    'num_heads': 1,
+    'num_heads': 8,
     'hidden_size': 64,
     'dropout': 0.25,
     "use_layer_norm": False,
-    "use_batch_norm": True,
+    "use_batch_norm": False,
     'test_frequency': 10, 
     'num_of_runs': 1,
     'computationBefore': False

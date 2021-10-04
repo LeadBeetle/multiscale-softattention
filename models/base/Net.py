@@ -103,4 +103,4 @@ class Net(torch.nn.Module):
         pbar.close()
 
         return x_all
-
+        

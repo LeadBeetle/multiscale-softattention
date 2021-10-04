@@ -41,7 +41,7 @@ def setConfig(dataset, model, config):
             specificConfig = merge(specificConfig, proteins_trans_config)
     return merge(config, specificConfig)
 
-def runExperiments(models, datasets, degrees, sparse):
+def runExperiments(models, datasets, degrees, sparse, num_layers):
     config = {}
     for model in models:
         config["model_type"] = model
@@ -53,5 +53,7 @@ def runExperiments(models, datasets, degrees, sparse):
                 config["nbor_degree"] = degree
                 for isSparse in sparse:
                     config["sparse"] = isSparse
-                    experimentor = getExperimentor(config["dataset_name"])(config)
-                    experimentor.run_wrapper()
+                    for num_layers in num_layers:
+                        config["num_of_layers"] = num_layers
+                        experimentor = getExperimentor(config["dataset_name"])(config)
+                        experimentor.run_wrapper()

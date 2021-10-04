@@ -1,0 +1,169 @@
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.PUBMED: 'PubMed'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'force_cpu': False,
+    'hidden_size': 64,
+    'lr': 0.01,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 1,
+    'num_heads': 8,
+    'num_of_epochs': 500,
+    'num_of_layers': 3,
+    'num_of_runs': 10,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'use_batch_norm': False,
+    'use_layer_norm': False}
+
+torch.cuda is available: True
+Used Dataset: PubMed
+
+Run 01 for GatV1_K1_s and PubMed:
+
+Epoch 01| Loss: 1.1060| Acc: 0.3667| Train Time: 1.2624s
+Train: 0.3333| Val: 0.1960| Test: 0.1800| Eval Time: 7.7934s
+Epoch 02| Loss: 0.9933| Acc: 0.4333| Train Time: 1.1260s
+Train: 0.4500| Val: 0.4280| Test: 0.4140| Eval Time: 2.1791s
+Epoch 03| Loss: 1.5498| Acc: 0.4833| Train Time: 1.0370s
+Train: 0.7167| Val: 0.5560| Test: 0.5500| Eval Time: 1.8580s
+Epoch 04| Loss: 0.7174| Acc: 0.7167| Train Time: 0.0560s
+Train: 0.7500| Val: 0.4560| Test: 0.4390| Eval Time: 2.1040s
+Epoch 05| Loss: 0.6508| Acc: 0.7333| Train Time: 0.0640s
+Train: 0.9667| Val: 0.7360| Test: 0.7400| Eval Time: 1.9970s
+Epoch 06| Loss: 0.1823| Acc: 0.9667| Train Time: 0.0550s
+Train: 0.8333| Val: 0.6760| Test: 0.6910| Eval Time: 1.4690s
+Epoch 07| Loss: 0.3073| Acc: 0.8833| Train Time: 0.0510s
+Train: 0.9833| Val: 0.7720| Test: 0.7580| Eval Time: 1.4946s
+Epoch 08| Loss: 0.0731| Acc: 0.9667| Train Time: 0.0600s
+Train: 1.0000| Val: 0.7080| Test: 0.6990| Eval Time: 1.4492s
+Epoch 09| Loss: 0.0232| Acc: 1.0000| Train Time: 0.0470s
+Train: 0.9667| Val: 0.6440| Test: 0.6260| Eval Time: 1.4445s
+Epoch 10| Loss: 0.0962| Acc: 0.9333| Train Time: 0.0465s
+Train: 1.0000| Val: 0.6700| Test: 0.6640| Eval Time: 1.4488s
+Epoch 11| Loss: 0.0415| Acc: 0.9667| Train Time: 0.0450s
+Train: 1.0000| Val: 0.7340| Test: 0.7350| Eval Time: 1.3391s
+Epoch 12| Loss: 0.0015| Acc: 1.0000| Train Time: 0.0460s
+Train: 1.0000| Val: 0.7760| Test: 0.7650| Eval Time: 1.2826s
+Epoch 13| Loss: 0.0017| Acc: 1.0000| Train Time: 0.0490s
+Train: 1.0000| Val: 0.7860| Test: 0.7790| Eval Time: 1.3776s
+Epoch 14| Loss: 0.0018| Acc: 1.0000| Train Time: 0.0460s
+Train: 1.0000| Val: 0.7740| Test: 0.7760| Eval Time: 1.2895s
+Epoch 15| Loss: 0.0022| Acc: 1.0000| Train Time: 0.0420s
+Train: 1.0000| Val: 0.7760| Test: 0.7740| Eval Time: 1.9105s
+Epoch 16| Loss: 0.0002| Acc: 1.0000| Train Time: 0.0540s
+Train: 1.0000| Val: 0.7740| Test: 0.7680| Eval Time: 1.4356s
+Epoch 17| Loss: 0.0006| Acc: 1.0000| Train Time: 0.0460s
+Train: 1.0000| Val: 0.7740| Test: 0.7630| Eval Time: 1.3801s
+Epoch 18| Loss: 0.0002| Acc: 1.0000| Train Time: 0.0510s
+Train: 1.0000| Val: 0.7720| Test: 0.7610| Eval Time: 1.5443s
+Epoch 19| Loss: 0.0271| Acc: 0.9833| Train Time: 0.0550s
+Train: 1.0000| Val: 0.7720| Test: 0.7690| Eval Time: 1.3620s
+Epoch 20| Loss: 0.0003| Acc: 1.0000| Train Time: 0.0450s
+Train: 1.0000| Val: 0.7700| Test: 0.7600| Eval Time: 1.4905s
+Epoch 21| Loss: 0.0007| Acc: 1.0000| Train Time: 0.0540s
+Train: 1.0000| Val: 0.7640| Test: 0.7550| Eval Time: 1.3561s
+Epoch 22| Loss: 0.0002| Acc: 1.0000| Train Time: 0.0450s
+Train: 1.0000| Val: 0.7640| Test: 0.7510| Eval Time: 1.2870s
+Epoch 23| Loss: 0.0023| Acc: 1.0000| Train Time: 0.0450s
+Train: 1.0000| Val: 0.7580| Test: 0.7460| Eval Time: 1.2836s
+Epoch 24| Loss: 0.0001| Acc: 1.0000| Train Time: 0.0470s
+Train: 1.0000| Val: 0.7580| Test: 0.7430| Eval Time: 1.2472s
+Epoch 25| Loss: 0.0000| Acc: 1.0000| Train Time: 0.0440s
+Train: 1.0000| Val: 0.7560| Test: 0.7380| Eval Time: 1.2698s
+Epoch 26| Loss: 0.0276| Acc: 0.9833| Train Time: 0.0430s
+Train: 1.0000| Val: 0.7720| Test: 0.7490| Eval Time: 1.2905s
+Epoch 27| Loss: 0.0000| Acc: 1.0000| Train Time: 0.0440s
+Train: 1.0000| Val: 0.7600| Test: 0.7280| Eval Time: 1.2516s
+Epoch 28| Loss: 0.0000| Acc: 1.0000| Train Time: 0.0500s
+Train: 1.0000| Val: 0.7100| Test: 0.6980| Eval Time: 1.2870s
+Epoch 29| Loss: 0.0174| Acc: 0.9833| Train Time: 0.0430s
+Train: 1.0000| Val: 0.6940| Test: 0.6810| Eval Time: 1.2674s
+Epoch 30| Loss: 0.0144| Acc: 1.0000| Train Time: 0.0430s
+Train: 1.0000| Val: 0.7320| Test: 0.7130| Eval Time: 1.2457s
+Epoch 31| Loss: 0.0202| Acc: 0.9833| Train Time: 0.0460s
+Train: 1.0000| Val: 0.7340| Test: 0.7400| Eval Time: 1.3200s
+Epoch 32| Loss: 0.0000| Acc: 1.0000| Train Time: 0.0510s
+Train: 1.0000| Val: 0.7280| Test: 0.7360| Eval Time: 1.6330s
+Epoch 33| Loss: 0.0030| Acc: 1.0000| Train Time: 0.0610s
+Train: 1.0000| Val: 0.7200| Test: 0.7230| Eval Time: 1.8096s
+Epoch 34| Loss: 0.0576| Acc: 0.9833| Train Time: 0.0560s
+Train: 1.0000| Val: 0.7220| Test: 0.7540| Eval Time: 1.6081s
+Epoch 35| Loss: 0.0000| Acc: 1.0000| Train Time: 0.0480s
+Train: 1.0000| Val: 0.7520| Test: 0.7600| Eval Time: 1.3790s
+Epoch 36| Loss: 0.0000| Acc: 1.0000| Train Time: 0.0450s
+Train: 1.0000| Val: 0.7640| Test: 0.7610| Eval Time: 1.7711s
+Epoch 37| Loss: 0.0000| Acc: 1.0000| Train Time: 0.0520s
+Train: 1.0000| Val: 0.7760| Test: 0.7570| Eval Time: 1.3417s
+Epoch 38| Loss: 0.0000| Acc: 1.0000| Train Time: 0.0420s
+Train: 1.0000| Val: 0.7720| Test: 0.7630| Eval Time: 1.1806s
+Epoch 39| Loss: 0.0000| Acc: 1.0000| Train Time: 0.0430s
+Train: 1.0000| Val: 0.7800| Test: 0.7590| Eval Time: 1.2190s
+Epoch 40| Loss: 0.0000| Acc: 1.0000| Train Time: 0.0490s
+Train: 1.0000| Val: 0.7840| Test: 0.7570| Eval Time: 1.1921s
+Epoch 41| Loss: 0.0000| Acc: 1.0000| Train Time: 0.0470s
+Train: 1.0000| Val: 0.7820| Test: 0.7650| Eval Time: 1.2378s
+Epoch 42| Loss: 0.0000| Acc: 1.0000| Train Time: 0.0460s
+Train: 1.0000| Val: 0.7800| Test: 0.7570| Eval Time: 1.2088s
+Epoch 43| Loss: 0.0000| Acc: 1.0000| Train Time: 0.0450s
+Train: 1.0000| Val: 0.7800| Test: 0.7470| Eval Time: 1.5861s
+
+Run 02 for GatV1_K1_s and PubMed:
+
+Epoch 01| Loss: 1.1072| Acc: 0.3000| Train Time: 0.0560s
+Train: 0.5667| Val: 0.3500| Test: 0.3560| Eval Time: 1.4427s
+Epoch 02| Loss: 0.9906| Acc: 0.5667| Train Time: 0.0460s
+Train: 0.5333| Val: 0.4500| Test: 0.4550| Eval Time: 1.3950s
+Epoch 03| Loss: 1.0726| Acc: 0.5500| Train Time: 0.0580s
+Train: 0.6000| Val: 0.4720| Test: 0.4710| Eval Time: 1.4275s
+Epoch 04| Loss: 1.2949| Acc: 0.5667| Train Time: 0.0450s
+Train: 0.8500| Val: 0.6880| Test: 0.6840| Eval Time: 1.4732s
+Epoch 05| Loss: 0.3920| Acc: 0.8333| Train Time: 0.0490s
+Train: 0.9500| Val: 0.6400| Test: 0.6310| Eval Time: 1.4441s
+Epoch 06| Loss: 0.2425| Acc: 0.9333| Train Time: 0.0490s
+Train: 0.9833| Val: 0.7080| Test: 0.6860| Eval Time: 1.4150s
+Epoch 07| Loss: 0.1119| Acc: 0.9833| Train Time: 0.0440s
+Train: 1.0000| Val: 0.7920| Test: 0.7740| Eval Time: 1.3671s
+Epoch 08| Loss: 0.0534| Acc: 0.9833| Train Time: 0.0530s
+Train: 0.9667| Val: 0.7260| Test: 0.7320| Eval Time: 1.3910s
+Epoch 09| Loss: 0.1016| Acc: 0.9500| Train Time: 0.0430s
+Train: 1.0000| Val: 0.7440| Test: 0.7540| Eval Time: 1.3055s
+Epoch 10| Loss: 0.0457| Acc: 1.0000| Train Time: 0.0470s
+Train: 1.0000| Val: 0.7920| Test: 0.7620| Eval Time: 1.3456s
+Epoch 11| Loss: 0.0032| Acc: 1.0000| Train Time: 0.0420s
+Train: 0.9833| Val: 0.7860| Test: 0.7590| Eval Time: 1.2501s
+Epoch 12| Loss: 0.0025| Acc: 1.0000| Train Time: 0.0460s
+Train: 0.9833| Val: 0.7800| Test: 0.7560| Eval Time: 1.5236s
+Epoch 13| Loss: 0.0258| Acc: 0.9833| Train Time: 0.0550s
+Train: 0.9833| Val: 0.7700| Test: 0.7420| Eval Time: 1.4381s
+Epoch 14| Loss: 0.0216| Acc: 0.9833| Train Time: 0.0480s
+Train: 1.0000| Val: 0.7580| Test: 0.7270| Eval Time: 1.7946s
+Epoch 15| Loss: 0.0340| Acc: 0.9667| Train Time: 0.0470s
+Train: 1.0000| Val: 0.7780| Test: 0.7510| Eval Time: 1.4060s
+Epoch 16| Loss: 0.0001| Acc: 1.0000| Train Time: 0.0510s
+Train: 1.0000| Val: 0.7540| Test: 0.7500| Eval Time: 1.3100s
+Epoch 17| Loss: 0.0003| Acc: 1.0000| Train Time: 0.0450s
+Train: 1.0000| Val: 0.7420| Test: 0.7370| Eval Time: 1.3830s
+Epoch 18| Loss: 0.0050| Acc: 1.0000| Train Time: 0.0490s
+Train: 1.0000| Val: 0.7320| Test: 0.7200| Eval Time: 1.3966s
+Epoch 19| Loss: 0.0305| Acc: 0.9833| Train Time: 0.0480s
+Train: 1.0000| Val: 0.7280| Test: 0.7240| Eval Time: 1.3656s
+Epoch 20| Loss: 0.0238| Acc: 0.9833| Train Time: 0.0500s
+Train: 1.0000| Val: 0.7440| Test: 0.7470| Eval Time: 1.3285s
+Epoch 21| Loss: 0.0000| Acc: 1.0000| Train Time: 0.0470s
+Train: 1.0000| Val: 0.7500| Test: 0.7410| Eval Time: 1.3250s
+Epoch 22| Loss: 0.0002| Acc: 1.0000| Train Time: 0.0510s
+Train: 1.0000| Val: 0.7560| Test: 0.7430| Eval Time: 1.2975s
+Epoch 23| Loss: 0.0033| Acc: 1.0000| Train Time: 0.0490s
+Train: 1.0000| Val: 0.7620| Test: 0.7510| Eval Time: 1.3221s
+Epoch 24| Loss: 0.0002| Acc: 1.0000| Train Time: 0.0540s
+Train: 1.0000| Val: 0.7680| Test: 0.7550| Eval Time: 1.5862s
+Epoch 25| Loss: 0.0001| Acc: 1.0000| Train Time: 0.0660s
+Train: 1.0000| Val: 0.7660| Test: 0.7660| Eval Time: 2.0850s
+Epoch 26| Loss: 0.0000| Acc: 1.0000| Train Time: 0.0540s
