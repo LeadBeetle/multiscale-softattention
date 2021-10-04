@@ -9,6 +9,12 @@ class ModelType(str, enum.Enum):
       GATV2 = "GAT-V2", 
       TRANS = "TRANS"
       
+class AggrMode(str, enum.Enum):
+      MEAN = "Mean",
+      ADD  = "Add", 
+      MAX  = "Max",
+      MEDIAN = "Median"
+
 class Dataset(str, enum.Enum):
     OGBN_ARXIV = 'ogbn-arxiv',
     OGBN_PRODUCTS = 'ogbn-products',

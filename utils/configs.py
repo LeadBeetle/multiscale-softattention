@@ -2,14 +2,13 @@ from utils.constants import *
 
 base_config = {
     'num_of_epochs': 500,
-    'num_of_runs': 10,
+    'num_of_runs': 1,
     'patience_period': 30,
     'num_workers': 0,
     'force_cpu': False,
     'test_frequency': 1,
     'console_log_freq': 1,
     'do_train_tqdm_logging': False,
-    'adj_mode': AdjacencyMode.OneStep,
     'computationBefore': False
 }
 
