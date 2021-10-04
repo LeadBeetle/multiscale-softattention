@@ -1,0 +1,801 @@
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 1,
+    'num_heads': 4,
+    'num_of_epochs': 1,
+    'num_of_layers': 2,
+    'num_of_runs': 1,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'use_batch_norm': False,
+    'use_layer_norm': False}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01 for GatV1_K1_D2_s and Cora:
+
+Epoch 01| Loss: 1.9477| Acc: 0.1857| Train Time: 0.1990s
+Train: 0.9929| Val: 0.7080| Test: 0.7210| Eval Time: 0.1700s
+
+============================
+Final Train: 0.9929 ± nan
+Final Val: 0.7080 ± nan
+Final Test: 0.7210 ± nan
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'eval_time_avg': '0.169999361038208',
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 1,
+    'num_epochs_avg': 'nan',
+    'num_heads': 4,
+    'num_of_epochs': 1,
+    'num_of_layers': 3,
+    'num_of_runs': 1,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_acc_mean': '0.7210000157356262',
+    'test_acc_std': 'nan',
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'train_acc_mean': '0.9928571581840515',
+    'train_acc_std': 'nan',
+    'train_time_avg': '0.199005126953125',
+    'use_batch_norm': False,
+    'use_layer_norm': False,
+    'val_acc_mean': '0.7080000042915344',
+    'val_acc_std': 'nan'}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01 for GatV1_K1_D3_s and Cora:
+
+Epoch 01| Loss: 1.9656| Acc: 0.1571| Train Time: 0.1960s
+Train: 0.9000| Val: 0.7000| Test: 0.6870| Eval Time: 0.2460s
+
+============================
+Final Train: 0.9000 ± nan
+Final Val: 0.7000 ± nan
+Final Test: 0.6870 ± nan
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'eval_time_avg': '0.24599719047546387',
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 1,
+    'num_epochs_avg': 'nan',
+    'num_heads': 4,
+    'num_of_epochs': 1,
+    'num_of_layers': 4,
+    'num_of_runs': 1,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_acc_mean': '0.6869999766349792',
+    'test_acc_std': 'nan',
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'train_acc_mean': '0.8999999761581421',
+    'train_acc_std': 'nan',
+    'train_time_avg': '0.1959989070892334',
+    'use_batch_norm': False,
+    'use_layer_norm': False,
+    'val_acc_mean': '0.699999988079071',
+    'val_acc_std': 'nan'}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01 for GatV1_K1_D4_s and Cora:
+
+Epoch 01| Loss: 2.0341| Acc: 0.1357| Train Time: 0.3000s
+Train: 0.7929| Val: 0.5440| Test: 0.5620| Eval Time: 0.3380s
+
+============================
+Final Train: 0.7929 ± nan
+Final Val: 0.5440 ± nan
+Final Test: 0.5620 ± nan
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'eval_time_avg': '0.33800172805786133',
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 2,
+    'num_epochs_avg': 'nan',
+    'num_heads': 4,
+    'num_of_epochs': 1,
+    'num_of_layers': 2,
+    'num_of_runs': 1,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_acc_mean': '0.5619999766349792',
+    'test_acc_std': 'nan',
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'train_acc_mean': '0.7928571701049805',
+    'train_acc_std': 'nan',
+    'train_time_avg': '0.3000009059906006',
+    'use_batch_norm': False,
+    'use_layer_norm': False,
+    'val_acc_mean': '0.5440000295639038',
+    'val_acc_std': 'nan'}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01 for GatV1_K2_D2_s and Cora:
+
+Epoch 01| Loss: 1.9671| Acc: 0.1429| Train Time: 0.0670s
+Train: 0.9929| Val: 0.6880| Test: 0.7190| Eval Time: 0.1596s
+
+============================
+Final Train: 0.9929 ± nan
+Final Val: 0.6880 ± nan
+Final Test: 0.7190 ± nan
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'eval_time_avg': '0.15964436531066895',
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 2,
+    'num_epochs_avg': 'nan',
+    'num_heads': 4,
+    'num_of_epochs': 1,
+    'num_of_layers': 3,
+    'num_of_runs': 1,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_acc_mean': '0.718999981880188',
+    'test_acc_std': 'nan',
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'train_acc_mean': '0.9928571581840515',
+    'train_acc_std': 'nan',
+    'train_time_avg': '0.06696391105651855',
+    'use_batch_norm': False,
+    'use_layer_norm': False,
+    'val_acc_mean': '0.6880000233650208',
+    'val_acc_std': 'nan'}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01 for GatV1_K2_D3_s and Cora:
+
+Epoch 01| Loss: 2.0115| Acc: 0.1143| Train Time: 0.2400s
+Train: 0.9286| Val: 0.6900| Test: 0.7310| Eval Time: 0.2330s
+
+============================
+Final Train: 0.9286 ± nan
+Final Val: 0.6900 ± nan
+Final Test: 0.7310 ± nan
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'eval_time_avg': '0.23299789428710938',
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 2,
+    'num_epochs_avg': 'nan',
+    'num_heads': 4,
+    'num_of_epochs': 1,
+    'num_of_layers': 4,
+    'num_of_runs': 1,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_acc_mean': '0.7310000061988831',
+    'test_acc_std': 'nan',
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'train_acc_mean': '0.9285714030265808',
+    'train_acc_std': 'nan',
+    'train_time_avg': '0.23999714851379395',
+    'use_batch_norm': False,
+    'use_layer_norm': False,
+    'val_acc_mean': '0.6899999976158142',
+    'val_acc_std': 'nan'}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01 for GatV1_K2_D4_s and Cora:
+
+Epoch 01| Loss: 2.0748| Acc: 0.1214| Train Time: 0.3725s
+Train: 0.6714| Val: 0.4700| Test: 0.4390| Eval Time: 0.2760s
+
+============================
+Final Train: 0.6714 ± nan
+Final Val: 0.4700 ± nan
+Final Test: 0.4390 ± nan
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'eval_time_avg': '0.27599668502807617',
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 3,
+    'num_epochs_avg': 'nan',
+    'num_heads': 4,
+    'num_of_epochs': 1,
+    'num_of_layers': 2,
+    'num_of_runs': 1,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_acc_mean': '0.4390000104904175',
+    'test_acc_std': 'nan',
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'train_acc_mean': '0.6714285612106323',
+    'train_acc_std': 'nan',
+    'train_time_avg': '0.3725285530090332',
+    'use_batch_norm': False,
+    'use_layer_norm': False,
+    'val_acc_mean': '0.4699999988079071',
+    'val_acc_std': 'nan'}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01 for GatV1_K3_D2_s and Cora:
+
+Epoch 01| Loss: 1.9561| Acc: 0.1714| Train Time: 0.0720s
+Train: 0.9643| Val: 0.5860| Test: 0.5860| Eval Time: 0.1670s
+
+============================
+Final Train: 0.9643 ± nan
+Final Val: 0.5860 ± nan
+Final Test: 0.5860 ± nan
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'eval_time_avg': '0.16700458526611328',
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 3,
+    'num_epochs_avg': 'nan',
+    'num_heads': 4,
+    'num_of_epochs': 1,
+    'num_of_layers': 3,
+    'num_of_runs': 1,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_acc_mean': '0.5860000252723694',
+    'test_acc_std': 'nan',
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'train_acc_mean': '0.9642857313156128',
+    'train_acc_std': 'nan',
+    'train_time_avg': '0.07200098037719727',
+    'use_batch_norm': False,
+    'use_layer_norm': False,
+    'val_acc_mean': '0.5860000252723694',
+    'val_acc_std': 'nan'}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01 for GatV1_K3_D3_s and Cora:
+
+Epoch 01| Loss: 1.9615| Acc: 0.1429| Train Time: 0.2060s
+Train: 0.8857| Val: 0.6220| Test: 0.6350| Eval Time: 0.2800s
+
+============================
+Final Train: 0.8857 ± nan
+Final Val: 0.6220 ± nan
+Final Test: 0.6350 ± nan
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'eval_time_avg': '0.2800006866455078',
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 3,
+    'num_epochs_avg': 'nan',
+    'num_heads': 4,
+    'num_of_epochs': 1,
+    'num_of_layers': 4,
+    'num_of_runs': 1,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_acc_mean': '0.6349999904632568',
+    'test_acc_std': 'nan',
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'train_acc_mean': '0.8857142925262451',
+    'train_acc_std': 'nan',
+    'train_time_avg': '0.20598411560058594',
+    'use_batch_norm': False,
+    'use_layer_norm': False,
+    'val_acc_mean': '0.621999979019165',
+    'val_acc_std': 'nan'}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01 for GatV1_K3_D4_s and Cora:
+
+Epoch 01| Loss: 2.0747| Acc: 0.1357| Train Time: 0.3676s
+Train: 0.8000| Val: 0.5100| Test: 0.5320| Eval Time: 0.3641s
+
+============================
+Final Train: 0.8000 ± nan
+Final Val: 0.5100 ± nan
+Final Test: 0.5320 ± nan
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'eval_time_avg': '0.36405158042907715',
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 4,
+    'num_epochs_avg': 'nan',
+    'num_heads': 4,
+    'num_of_epochs': 1,
+    'num_of_layers': 2,
+    'num_of_runs': 1,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_acc_mean': '0.5320000052452087',
+    'test_acc_std': 'nan',
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'train_acc_mean': '0.800000011920929',
+    'train_acc_std': 'nan',
+    'train_time_avg': '0.3675508499145508',
+    'use_batch_norm': False,
+    'use_layer_norm': False,
+    'val_acc_mean': '0.5099999904632568',
+    'val_acc_std': 'nan'}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01 for GatV1_K4_D2_s and Cora:
+
+Epoch 01| Loss: 1.9545| Acc: 0.1500| Train Time: 0.0807s
+Train: 0.9643| Val: 0.6900| Test: 0.6940| Eval Time: 0.1750s
+
+============================
+Final Train: 0.9643 ± nan
+Final Val: 0.6900 ± nan
+Final Test: 0.6940 ± nan
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'eval_time_avg': '0.17500090599060059',
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 4,
+    'num_epochs_avg': 'nan',
+    'num_heads': 4,
+    'num_of_epochs': 1,
+    'num_of_layers': 3,
+    'num_of_runs': 1,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_acc_mean': '0.6940000057220459',
+    'test_acc_std': 'nan',
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'train_acc_mean': '0.9642857313156128',
+    'train_acc_std': 'nan',
+    'train_time_avg': '0.0806736946105957',
+    'use_batch_norm': False,
+    'use_layer_norm': False,
+    'val_acc_mean': '0.6899999976158142',
+    'val_acc_std': 'nan'}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01 for GatV1_K4_D3_s and Cora:
+
+Epoch 01| Loss: 1.9456| Acc: 0.1929| Train Time: 0.1910s
+Train: 0.9286| Val: 0.7020| Test: 0.7110| Eval Time: 0.2535s
+
+============================
+Final Train: 0.9286 ± nan
+Final Val: 0.7020 ± nan
+Final Test: 0.7110 ± nan
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'eval_time_avg': '0.25351929664611816',
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 4,
+    'num_epochs_avg': 'nan',
+    'num_heads': 4,
+    'num_of_epochs': 1,
+    'num_of_layers': 4,
+    'num_of_runs': 1,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_acc_mean': '0.7110000252723694',
+    'test_acc_std': 'nan',
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'train_acc_mean': '0.9285714030265808',
+    'train_acc_std': 'nan',
+    'train_time_avg': '0.19102978706359863',
+    'use_batch_norm': False,
+    'use_layer_norm': False,
+    'val_acc_mean': '0.7020000219345093',
+    'val_acc_std': 'nan'}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01 for GatV1_K4_D4_s and Cora:
+
+Epoch 01| Loss: 2.0398| Acc: 0.1429| Train Time: 0.4561s
+Train: 0.6786| Val: 0.6320| Test: 0.6370| Eval Time: 0.3870s
+
+============================
+Final Train: 0.6786 ± nan
+Final Val: 0.6320 ± nan
+Final Test: 0.6370 ± nan
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'eval_time_avg': '0.38699960708618164',
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 5,
+    'num_epochs_avg': 'nan',
+    'num_heads': 4,
+    'num_of_epochs': 1,
+    'num_of_layers': 2,
+    'num_of_runs': 1,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_acc_mean': '0.6370000243186951',
+    'test_acc_std': 'nan',
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'train_acc_mean': '0.6785714030265808',
+    'train_acc_std': 'nan',
+    'train_time_avg': '0.4561467170715332',
+    'use_batch_norm': False,
+    'use_layer_norm': False,
+    'val_acc_mean': '0.6320000290870667',
+    'val_acc_std': 'nan'}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01 for GatV1_K5_D2_s and Cora:
+
+Epoch 01| Loss: 1.9439| Acc: 0.1929| Train Time: 0.0840s
+Train: 0.9929| Val: 0.6800| Test: 0.7160| Eval Time: 0.2080s
+
+============================
+Final Train: 0.9929 ± nan
+Final Val: 0.6800 ± nan
+Final Test: 0.7160 ± nan
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'eval_time_avg': '0.2080063819885254',
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 5,
+    'num_epochs_avg': 'nan',
+    'num_heads': 4,
+    'num_of_epochs': 1,
+    'num_of_layers': 3,
+    'num_of_runs': 1,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_acc_mean': '0.7160000205039978',
+    'test_acc_std': 'nan',
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'train_acc_mean': '0.9928571581840515',
+    'train_acc_std': 'nan',
+    'train_time_avg': '0.08399820327758789',
+    'use_batch_norm': False,
+    'use_layer_norm': False,
+    'val_acc_mean': '0.6800000071525574',
+    'val_acc_std': 'nan'}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01 for GatV1_K5_D3_s and Cora:
+
+Epoch 01| Loss: 1.9719| Acc: 0.1214| Train Time: 0.2500s
+Train: 0.9286| Val: 0.7200| Test: 0.7480| Eval Time: 0.2821s
+
+============================
+Final Train: 0.9286 ± nan
+Final Val: 0.7200 ± nan
+Final Test: 0.7480 ± nan
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'eval_time_avg': '0.2820618152618408',
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 5,
+    'num_epochs_avg': 'nan',
+    'num_heads': 4,
+    'num_of_epochs': 1,
+    'num_of_layers': 4,
+    'num_of_runs': 1,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_acc_mean': '0.7480000257492065',
+    'test_acc_std': 'nan',
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'train_acc_mean': '0.9285714030265808',
+    'train_acc_std': 'nan',
+    'train_time_avg': '0.2499985694885254',
+    'use_batch_norm': False,
+    'use_layer_norm': False,
+    'val_acc_mean': '0.7200000286102295',
+    'val_acc_std': 'nan'}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01 for GatV1_K5_D4_s and Cora:
+
+Epoch 01| Loss: 2.0245| Acc: 0.1071| Train Time: 0.4080s
+Train: 0.7643| Val: 0.6240| Test: 0.6340| Eval Time: 0.3390s
+
+============================
+Final Train: 0.7643 ± nan
+Final Val: 0.6240 ± nan
+Final Test: 0.6340 ± nan
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'eval_time_avg': '0.3390004634857178',
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 6,
+    'num_epochs_avg': 'nan',
+    'num_heads': 4,
+    'num_of_epochs': 1,
+    'num_of_layers': 2,
+    'num_of_runs': 1,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_acc_mean': '0.6340000033378601',
+    'test_acc_std': 'nan',
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'train_acc_mean': '0.7642857432365417',
+    'train_acc_std': 'nan',
+    'train_time_avg': '0.408001184463501',
+    'use_batch_norm': False,
+    'use_layer_norm': False,
+    'val_acc_mean': '0.6240000128746033',
+    'val_acc_std': 'nan'}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01 for GatV1_K6_D2_s and Cora:
+
+Epoch 01| Loss: 1.9849| Acc: 0.1000| Train Time: 0.0890s
+Train: 0.9714| Val: 0.6760| Test: 0.7150| Eval Time: 0.2280s
+
+============================
+Final Train: 0.9714 ± nan
+Final Val: 0.6760 ± nan
+Final Test: 0.7150 ± nan
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'eval_time_avg': '0.22800135612487793',
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 6,
+    'num_epochs_avg': 'nan',
+    'num_heads': 4,
+    'num_of_epochs': 1,
+    'num_of_layers': 3,
+    'num_of_runs': 1,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_acc_mean': '0.7149999737739563',
+    'test_acc_std': 'nan',
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'train_acc_mean': '0.9714285731315613',
+    'train_acc_std': 'nan',
+    'train_time_avg': '0.08899593353271484',
+    'use_batch_norm': False,
+    'use_layer_norm': False,
+    'val_acc_mean': '0.6759999990463257',
+    'val_acc_std': 'nan'}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01 for GatV1_K6_D3_s and Cora:
+
+Epoch 01| Loss: 1.9787| Acc: 0.1286| Train Time: 0.3980s
+Train: 0.8929| Val: 0.5720| Test: 0.5960| Eval Time: 0.3646s
+
+============================
+Final Train: 0.8929 ± nan
+Final Val: 0.5720 ± nan
+Final Test: 0.5960 ± nan
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'eval_time_avg': '0.3645594120025635',
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 6,
+    'num_epochs_avg': 'nan',
+    'num_heads': 4,
+    'num_of_epochs': 1,
+    'num_of_layers': 4,
+    'num_of_runs': 1,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_acc_mean': '0.5960000157356262',
+    'test_acc_std': 'nan',
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'train_acc_mean': '0.8928571343421936',
+    'train_acc_std': 'nan',
+    'train_time_avg': '0.39800024032592773',
+    'use_batch_norm': False,
+    'use_layer_norm': False,
+    'val_acc_mean': '0.5720000267028809',
+    'val_acc_std': 'nan'}
+
+torch.cuda is available: True
+Used Dataset: Cora
+
+Run 01 for GatV1_K6_D4_s and Cora:
+
+Epoch 01| Loss: 1.9971| Acc: 0.1214| Train Time: 0.5736s
+Train: 0.7500| Val: 0.5420| Test: 0.5330| Eval Time: 0.4211s
+
+============================
+Final Train: 0.7500 ± nan
+Final Val: 0.5420 ± nan
+Final Test: 0.5330 ± nan
