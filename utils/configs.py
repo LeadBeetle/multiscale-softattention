@@ -17,7 +17,7 @@ coracite_config = {
     'batch_size': 256,
     'test_batch_size': 256,
     'lr': 0.005,
-    'num_of_layers': 3, 
+    #'num_of_layers': 3, 
     'num_heads': 4,
     'hidden_size': 64,
     'dropout': 0.6,  
@@ -33,7 +33,7 @@ pub_config = {
     'batch_size': 256,
     'test_batch_size': 256,
     'lr': 0.01,
-    'num_of_layers': 3, 
+    #'num_of_layers': 3, 
     'num_heads': 4,
     'hidden_size': 128,
     'dropout': 0.6,  
@@ -45,7 +45,7 @@ arxiv_config = {
     'batch_size': 20000,
     'test_batch_size': 20000,
     'lr': 0.01,
-    'num_of_layers': 3, 
+    #'num_of_layers': 3, 
     'num_heads': 1,
     'hidden_size': 256,
     'dropout': 0.25,  
@@ -60,7 +60,7 @@ products_config = {
     'batch_size': 128,
     'test_batch_size': 64,
     'lr': 0.001,
-    'num_of_layers': 3, 
+    #'num_of_layers': 3, 
     'num_heads': 1,
     'hidden_size': 128,
     'dropout': 0.5,
@@ -75,7 +75,7 @@ proteins_config = {
     'batch_size': 64,
     'test_batch_size': 64,
     'lr': 0.01,
-    'num_of_layers': 3, 
+    #'num_of_layers': 3, 
     'num_heads': 8,
     'hidden_size': 64,
     'dropout': 0.25,
@@ -91,7 +91,7 @@ arx_trans_config = {
     'dropout': 0.3,
     'hidden_size': 128, 
     'num_heads' : 4,
-    'num_of_layers': 3,
+    #'num_of_layers': 3,
     'num_of_runs': 1
 }
 
@@ -100,7 +100,7 @@ prod_trans_config = {
     'dropout': 0.3,
     'hidden_size': 128,
     'num_heads' : 4,
-    'num_of_layers': 3,
+    #'num_of_layers': 3,
     'num_of_runs': 1
 }
 
@@ -109,6 +109,6 @@ proteins_trans_config = {
     'dropout': 0.1,
     'hidden_size': 64,
     'num_heads' : 4,
-    'num_of_layers': 4,
+    #'num_of_layers': 4,
     'num_of_runs': 1
 }

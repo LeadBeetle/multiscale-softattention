@@ -43,17 +43,20 @@ def setConfig(dataset, model, config):
 
 def runExperiments(models, datasets, degrees, sparse, num_layers):
     config = {}
-    for model in models:
-        config["model_type"] = model
-        for dataset in datasets:
-            config["dataset_name"] = dataset
-            config = setConfig(dataset, model, config)
-                
-            for degree in degrees:
-                config["nbor_degree"] = degree
-                for isSparse in sparse:
-                    config["sparse"] = isSparse
-                    for num_layers in num_layers:
-                        config["num_of_layers"] = num_layers
+    for degree in degrees:
+        config["nbor_degree"] = degree
+        for num_layers in num_layers:
+            
+            config["num_of_layers"] = num_layers
+
+            for model in models:
+                config["model_type"] = model
+                for dataset in datasets:
+                    config["dataset_name"] = dataset
+                    
+
+                    for isSparse in sparse:
+                        config["sparse"] = isSparse
+                        config = setConfig(dataset, model, config)
                         experimentor = getExperimentor(config["dataset_name"])(config)
                         experimentor.run_wrapper()
