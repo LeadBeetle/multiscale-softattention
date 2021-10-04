@@ -1,3 +1,4 @@
+from os import mkdir
 import os.path as osp
 
 import torch
@@ -271,8 +272,10 @@ class Experimentor:
         data["eval_time_avg"]  = str(eval_times.mean().item())
         data["num_epochs_avg"] = str(epochs.mean().item())
 
-
-        filename = osp.join("results", self.config["dataset_name"], self.baseName + ".json")
+        base_dir = osp.join("results", self.config["dataset_name"], self.config["model_type"])
+        if not os.path.exists(base_dir):
+            os.mkdir(base_dir)
+        filename = osp.join("results", self.config["dataset_name"], self.config["model_type"], self.baseName + ".json")
         with open(filename, 'w') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
 

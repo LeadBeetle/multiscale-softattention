@@ -1,3 +1,4 @@
+import os
 import torch
 torch.manual_seed(43)
 from torch_geometric.utils import to_dense_adj
