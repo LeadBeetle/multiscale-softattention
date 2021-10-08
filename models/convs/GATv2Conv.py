@@ -152,9 +152,8 @@ class GATv2Conv(MessagePassing):
                 edge_index, edge_weight = add_self_loops(edge_index, edge_weight=edge_weight, num_nodes=num_nodes)
             
 
-        x = self.lift(x_l, x_r, edge_index)
-        # propagate_type: (x: PairTensor)
-        out = self.propagate(edge_index, x=x, size=size, edge_weight=edge_weight)
+        x_l, x_r = self.lift(x_l, x_r, edge_index)
+        out = self.propagate(edge_index, x_l = x_l, x_r=x_r, size=size, edge_weight=edge_weight)
 
         alpha = self._alpha
         self._alpha = None
@@ -176,16 +175,16 @@ class GATv2Conv(MessagePassing):
         else:
             return out
 
-    def message(self, x: Tensor, 
+    def message(self, x_l: Tensor, x_r: Tensor,
                 index: Tensor, ptr: OptTensor,
                 size_i: Optional[int], edge_weight: Tensor) -> Tensor:
-        x = F.leaky_relu(x, self.negative_slope)
+        x = F.leaky_relu(x_l + x_r, self.negative_slope)
         alpha = (x * self.att).sum(dim=-1)
         alpha = softmax(alpha, index, ptr, size_i)
         self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
         edge_weight = edge_weight.view(-1, 1) if edge_weight != None else 1
-        return  x * (edge_weight*alpha).unsqueeze(-1)
+        return  x_l * (edge_weight*alpha).unsqueeze(-1)
 
     def aggregate(self, inputs: Tensor, index: Tensor,
                   ptr: Optional[Tensor] = None,
@@ -269,7 +268,7 @@ class GATv2Conv(MessagePassing):
             x_r_lifted = x_r.index_select(0, trg_nodes_index)
         
         #x_r_lifted not needed here
-        return x_l_lifted + x_r_lifted
+        return x_l_lifted, x_r_lifted
 
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,
