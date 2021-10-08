@@ -1,6 +1,5 @@
-from os import mkdir
+import os
 import os.path as osp
-
 import torch
 torch.manual_seed(43)
 from tqdm import tqdm
@@ -119,17 +118,17 @@ class Experimentor:
             self.model = GAT(self.num_features, self.config["hidden_size"], self.num_classes, num_layers=self.config["num_of_layers"],
                 heads=self.config["num_heads"], dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
                 use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"], 
-                computationBefore=self.config["computationBefore"])
+                computationBefore=self.config["computationBefore"], aggr_mode = self.config["aggr_mode"])
         elif self.config["model_type"] == ModelType.GATV2:
             self.model = GATV2(self.num_features, self.config["hidden_size"], self.num_classes, num_layers=self.config["num_of_layers"],
                 heads=self.config["num_heads"], dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
                 use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"],
-                computationBefore=self.config["computationBefore"])  
+                computationBefore=self.config["computationBefore"], aggr_mode = self.config["aggr_mode"])  
         elif self.config["model_type"] == ModelType.TRANS:
             self.model = Transformer(self.num_features, self.config["hidden_size"], self.num_classes, num_layers=self.config["num_of_layers"],
                 heads=self.config["num_heads"], dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
                 use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"],
-                computationBefore=self.config["computationBefore"])    
+                computationBefore=self.config["computationBefore"], aggr_mode = self.config["aggr_mode"])    
         self.model = self.model.to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.config["lr"])
                
@@ -279,7 +278,7 @@ class Experimentor:
         if self.config["adj_mode"] != AdjacencyMode.Partial:
             base_dir = osp.join("results", self.config["dataset_name"], "OneStep", self.config["model_type"])
         else: 
-            base_dir = osp.join("results", self.config["dataset_name"], "Partial", self.config["model_type"])
+            base_dir = osp.join("results", self.config["dataset_name"], "Partial", self.config["model_type"], self.config["aggr_mode"])
         if not os.path.exists(base_dir):
             os.makedirs(base_dir)
         filename = osp.join(base_dir, self.baseName + ".json")
