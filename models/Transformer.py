@@ -17,8 +17,6 @@ class Transformer(Net):
 
         self.add_conv(TransformerConv(in_channels, hidden_channels,
                                   heads, dropout=dropout))
-        self.convs.append(TransformerConv(in_channels, hidden_channels,
-                                  heads, dropout=dropout))
         
         self._layers_normalization = []
         if self._use_layer_norm:

@@ -169,8 +169,8 @@ class TransformerConv(MessagePassing):
                 index: Tensor, ptr: OptTensor,
                 size_i: Optional[int]) -> Tensor:
 
-        query = self.lin_query(x_l).view(-1, self.heads, self.out_channels)
-        key = self.lin_key(x_r).view(-1, self.heads, self.out_channels)
+        query = self.lin_query(x_r).view(-1, self.heads, self.out_channels)
+        key = self.lin_key(x_l).view(-1, self.heads, self.out_channels)
 
         if self.lin_edge is not None:
             assert edge_attr is not None
@@ -182,7 +182,7 @@ class TransformerConv(MessagePassing):
         alpha = softmax(alpha, index, ptr, size_i)
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
-        out = self.lin_value(x_r).view(-1, self.heads, self.out_channels)
+        out = self.lin_value(x_l).view(-1, self.heads, self.out_channels)
         
         # if edge_attr is not None:
         #     out += edge_attr
