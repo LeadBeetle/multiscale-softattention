@@ -68,9 +68,9 @@ class Compressor():
         self.folder = osp.join(resultPath, dataset.name)
         self.reset()
 
-        for _, _, files in os.walk(self.folder):
+        for path, _, files in os.walk(self.folder):
             for file in files:
-                self.getDataFromResultFile(file, dataset, model, num_of_layers, aggr_mode)
+                self.getDataFromResultFile(path, file, dataset, model, num_of_layers, aggr_mode)
         filename = osp.join(self.folder, "CompressedResults" + ".json")
         res = self.setCompressed(dataset, model, num_of_layers, aggr_mode)
         
@@ -85,9 +85,9 @@ class Compressor():
         with open(filename, 'w') as f:
             json.dump(currentState, f, ensure_ascii=False, indent=4)
 
-    def getDataFromResultFile(self, file, dataset, model, num_of_layers, aggr_mode):
+    def getDataFromResultFile(self, path, file, dataset, model, num_of_layers, aggr_mode):
         if not "Compressed" in file:
-            f = open(osp.join(self.folder, file))
+            f = open(osp.join(path, file))
             
             results = json.load(f)
             matchDataset = ft(results["dataset_name"]) == ft(dataset.name)
