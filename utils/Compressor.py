@@ -35,17 +35,19 @@ class Compressor():
     def compressAll(self):
         for dataset in [Dataset.CORA, Dataset.PUBMED, Dataset.CITESEER]:
             for model in [ModelType.GATV1, ModelType.GATV2, ModelType.TRANS]:
-                for aggr_mode in [AggrMode.NONE, AggrMode.MEAN, AggrMode.MAX, AggrMode.ADD, AggrMode.MEDIAN]:
+                for aggr_mode in [AggrMode.NONE]:
                     for num_of_layers in [2,3,4]:
                         self.compressResults(dataset, model, num_of_layers, aggr_mode) 
         
 
     def setCompressed(self, dataset, model, num_of_layers, aggr_mode): 
+        if len(self.test_accs) == 0: return None
+
         res = {
             dataset.name: 
             { 
                 model.name: 
-                {
+                {   
                     aggr_mode.name: {
                         "NumOfLayers_" + str(num_of_layers): {
                         "train_accs ": self.train_accs,
@@ -56,7 +58,7 @@ class Compressor():
                         "val_stds"   : self.val_stds,
                         "train_times": self.train_time_avgs,
                         "epochs"     : self.epochs
-                        }
+                        } 
                     }
                     
                 }
@@ -70,20 +72,21 @@ class Compressor():
 
         for path, _, files in os.walk(self.folder):
             for file in files:
+                
                 self.getDataFromResultFile(path, file, dataset, model, num_of_layers, aggr_mode)
         filename = osp.join(self.folder, "CompressedResults" + ".json")
         res = self.setCompressed(dataset, model, num_of_layers, aggr_mode)
-        
-        currentState = None
-        if osp.exists(filename):
-            f = open(filename)
-            currentState = merge(json.load(f), res)
-            f.close()
-        else:
-            currentState = res
+        if res is not None:
+            currentState = None
+            if osp.exists(filename):
+                f = open(filename)
+                currentState = merge(json.load(f), res)
+                f.close()
+            else:
+                currentState = res
 
-        with open(filename, 'w') as f:
-            json.dump(currentState, f, ensure_ascii=False, indent=4)
+            with open(filename, 'w') as f:
+                json.dump(currentState, f, ensure_ascii=False, indent=4)
 
     def getDataFromResultFile(self, path, file, dataset, model, num_of_layers, aggr_mode):
         if not "Compressed" in file:
@@ -92,9 +95,15 @@ class Compressor():
             results = json.load(f)
             matchDataset = ft(results["dataset_name"]) == ft(dataset.name)
             matchModel = ft(results["model_type"]) == ft(model.name)
-            matchNumLayers = ft(results["num_of_layers"]) == ft(num_of_layers)
-            matchAggr = ft(results["aggr_mode"]) == ft(aggr_mode)
+            matchNumLayers = int(results["num_of_layers"]) == int(num_of_layers)
+
+            _aggrMode = AggrMode.NONE.name
+            if "aggr_mode" in results:
+                _aggrMode = ft(results["aggr_mode"])
+            matchAggr = ft(_aggrMode) == ft(aggr_mode.name)
+            
             if matchDataset and matchModel and matchNumLayers and matchAggr:
+                
                 self.train_accs.append(results["train_acc_mean"])
                 self.val_accs.append(results["val_acc_mean"])
                 self.test_accs.append(results["test_acc_mean"])
