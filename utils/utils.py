@@ -60,6 +60,7 @@ def getResultFileName(config):
     model  = config["model_type"]
     degree = config["nbor_degree"]
     sparse = config["sparse"]
+    aggr_mode = config["aggr_mode"]
     num_layers = config["num_of_layers"]
     modelPart = ""
 
@@ -78,4 +79,7 @@ def getResultFileName(config):
     layerPart = "D" + str(num_layers)
     sparsePart = "s" if sparse == True else "ns"
     
-    return "_".join([modelPart, degreePart, layerPart, sparsePart])
+    aggr_part = ""
+    if config["adj_mode"] == AdjacencyMode.Partial:
+        aggr_part = str(aggr_mode)
+    return "_".join([modelPart, degreePart, layerPart, sparsePart, aggr_part])

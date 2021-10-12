@@ -35,19 +35,16 @@ class Compressor():
     def compressAll(self):
         for dataset in [Dataset.CORA, Dataset.PUBMED, Dataset.CITESEER]:
             for model in [ModelType.GATV1, ModelType.GATV2, ModelType.TRANS]:
-                for sparse in [False, True]:
-
-                    self.compressResults(dataset, model, sparse) 
+                self.compressResults(dataset, model) 
         
 
-    def setCompressed(self, dataset, model, sparseStr): 
+    def setCompressed(self, dataset, model): 
         res = {
             dataset.name: 
             { 
                 model.name: 
                 {
                     self.num_of_layers: {
-                        sparseStr: {
                         "train_accs ": self.train_accs,
                         "test_accs"  : self.test_accs,
                         "val_accs"   : self.val_accs,
@@ -56,25 +53,21 @@ class Compressor():
                         "val_stds"   : self.val_stds,
                         "train_times": self.train_time_avgs,
                         "epochs"     : self.epochs
-                        }
                     }
-                    
                 }
             }
         }
         return res
 
-    def compressResults(self, dataset: Dataset, model: ModelType, sparse: bool):
+    def compressResults(self, dataset: Dataset, model: ModelType):
         self.folder = osp.join(resultPath, dataset.name)#
         self.reset()
 
         for _, _, files in os.walk(self.folder):
             for file in files:
-                self.getDataFromResultFile(file, dataset, sparse, model)
+                self.getDataFromResultFile(file, dataset, model)
         filename = osp.join(self.folder, "CompressedResults" + ".json")
-        sparseStr = "sparse" if sparse else "dense"
-
-        res = self.setCompressed(dataset, model, sparseStr)
+        res = self.setCompressed(dataset, model)
         
         currentState = None
         if osp.exists(filename):
@@ -87,13 +80,13 @@ class Compressor():
         with open(filename, 'w') as f:
             json.dump(currentState, f, ensure_ascii=False, indent=4)
 
-    def getDataFromResultFile(self, file, dataset, sparse, model):
+    def getDataFromResultFile(self, file, dataset, model):
         if not "Compressed" in file:
             f = open(osp.join(self.folder, file))
             
             results = json.load(f)
             self.num_of_layers = results["num_of_layers"]
-            if ft(results["dataset_name"]) == ft(dataset.name) and ft(results["sparse"]) == ft(sparse) and ft(results["model_type"]) == ft(model.name):
+            if ft(results["dataset_name"]) == ft(dataset.name) and ft(results["model_type"]) == ft(model.name):
                 self.train_accs.append(results["train_acc_mean"])
                 self.val_accs.append(results["val_acc_mean"])
                 self.test_accs.append(results["test_acc_mean"])

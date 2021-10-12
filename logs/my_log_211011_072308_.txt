@@ -18395,3 +18395,15 @@ Epoch 20| Loss: 0.0385| Acc: 0.9857| Train Time: 77.7822s
 Train: 0.8714| Val: 0.6560| Test: 0.7070| Eval Time: 4.0137s
 Epoch 21| Loss: 0.3034| Acc: 0.9714| Train Time: 75.3039s
 Train: 0.8929| Val: 0.6600| Test: 0.7000| Eval Time: 4.2108s
+Epoch 22| Loss: 0.2959| Acc: 0.9929| Train Time: 68.0717s
+Train: 0.9000| Val: 0.6600| Test: 0.6970| Eval Time: 4.2293s
+Epoch 23| Loss: 0.0120| Acc: 1.0000| Train Time: 71.2867s
+Train: 0.9000| Val: 0.6680| Test: 0.7030| Eval Time: 4.1099s
+Epoch 24| Loss: 0.0195| Acc: 0.9929| Train Time: 70.4067s
+Train: 0.9143| Val: 0.6720| Test: 0.7140| Eval Time: 3.6717s
+Epoch 25| Loss: 0.0106| Acc: 1.0000| Train Time: 69.2829s
+Train: 0.9214| Val: 0.6760| Test: 0.7280| Eval Time: 3.7298s
+Epoch 26| Loss: 0.0113| Acc: 1.0000| Train Time: 71.2923s
+Train: 0.9214| Val: 0.6920| Test: 0.7450| Eval Time: 3.7210s
+Epoch 27| Loss: 0.0772| Acc: 0.9929| Train Time: 70.2745s
+Train: 0.9500| Val: 0.7080| Test: 0.7570| Eval Time: 3.8031s
