@@ -16,7 +16,6 @@ coracite_config = {
     'batch_size': 256,
     'test_batch_size': 256,
     'lr': 0.005,
-    'num_of_layers': 3, 
     'num_heads': 4,
     'hidden_size': 64,
     'dropout': 0.6,  
@@ -31,8 +30,7 @@ cora_config = {
 pub_config = {
     'batch_size': 256,
     'test_batch_size': 256,
-    'lr': 0.01,
-    'num_of_layers': 2, 
+    'lr': 0.01, 
     'num_heads': 1,
     'hidden_size': 128,
     'dropout': 0.6,  
