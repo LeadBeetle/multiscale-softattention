@@ -35,7 +35,7 @@ class Compressor():
     def compressAll(self):
         for dataset in [Dataset.CORA, Dataset.PUBMED, Dataset.CITESEER]:
             for model in [ModelType.GATV1, ModelType.GATV2, ModelType.TRANS]:
-                for aggr_mode in [AggrMode.NONE]:
+                for aggr_mode in [AggrMode.NONE, AggrMode.MEAN, AggrMode.MAX]:
                     for num_of_layers in [2,3,4]:
                         self.compressResults(dataset, model, num_of_layers, aggr_mode) 
         

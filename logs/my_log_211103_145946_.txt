@@ -11220,3 +11220,36 @@ Epoch 18| Loss: 0.1966| Acc: 0.9500| Train Time: 17.1062s
 Train: 0.9667| Val: 0.6460| Test: 0.6320| Eval Time: 7.0918s
 Epoch 19| Loss: 0.2879| Acc: 0.9500| Train Time: 17.0125s
 Train: 0.9667| Val: 0.6100| Test: 0.6220| Eval Time: 8.1861s
+Epoch 20| Loss: 0.1707| Acc: 0.9750| Train Time: 17.7156s
+Train: 0.9917| Val: 0.6160| Test: 0.6270| Eval Time: 8.2756s
+Epoch 21| Loss: 0.0915| Acc: 0.9750| Train Time: 19.0164s
+Train: 0.9917| Val: 0.6240| Test: 0.6380| Eval Time: 8.6955s
+Epoch 22| Loss: 0.0659| Acc: 0.9750| Train Time: 18.4992s
+Train: 0.9833| Val: 0.6240| Test: 0.6370| Eval Time: 9.7729s
+Epoch 23| Loss: 0.1535| Acc: 0.9500| Train Time: 18.5305s
+Train: 0.9833| Val: 0.6020| Test: 0.6230| Eval Time: 8.1994s
+Epoch 24| Loss: 0.0632| Acc: 0.9917| Train Time: 18.3915s
+Train: 0.9750| Val: 0.5780| Test: 0.5740| Eval Time: 7.1897s
+Epoch 25| Loss: 0.0559| Acc: 0.9667| Train Time: 18.9848s
+Train: 0.9750| Val: 0.5540| Test: 0.5520| Eval Time: 8.2203s
+Epoch 26| Loss: 0.0601| Acc: 0.9917| Train Time: 19.0943s
+Train: 0.9917| Val: 0.5460| Test: 0.5400| Eval Time: 7.2858s
+Epoch 27| Loss: 0.0734| Acc: 0.9833| Train Time: 19.1984s
+Train: 0.9917| Val: 0.5700| Test: 0.5510| Eval Time: 8.3021s
+Epoch 28| Loss: 0.1203| Acc: 0.9750| Train Time: 18.6062s
+Train: 0.9917| Val: 0.5940| Test: 0.5690| Eval Time: 8.1870s
+Epoch 29| Loss: 0.1142| Acc: 0.9583| Train Time: 18.8096s
+Train: 0.9917| Val: 0.6300| Test: 0.5980| Eval Time: 7.6847s
+Epoch 30| Loss: 0.1143| Acc: 0.9917| Train Time: 18.2099s
+Train: 0.9917| Val: 0.6320| Test: 0.6140| Eval Time: 9.5698s
+Epoch 31| Loss: 0.1053| Acc: 0.9750| Train Time: 18.8204s
+Train: 0.9917| Val: 0.6360| Test: 0.6150| Eval Time: 8.4890s
+Epoch 32| Loss: 0.1503| Acc: 0.9667| Train Time: 18.4068s
+Train: 1.0000| Val: 0.6240| Test: 0.6120| Eval Time: 8.1982s
+
+Run 03 for GatV1_K4_D4_s_AggrMode.MEAN and CiteSeer:
+
+Epoch 01| Loss: 1.8032| Acc: 0.1750| Train Time: 18.6376s
+Train: 0.8250| Val: 0.5100| Test: 0.4860| Eval Time: 8.7095s
+Epoch 02| Loss: 1.2816| Acc: 0.6167| Train Time: 18.6999s
+Train: 0.7917| Val: 0.6520| Test: 0.6630| Eval Time: 8.3071s
