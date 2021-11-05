@@ -1,6 +1,10 @@
+import os
 import os.path as osp
+<<<<<<< HEAD
 from networkx.algorithms.clique import graph_clique_number
 from networkx.classes.function import degree_histogram
+=======
+>>>>>>> master
 import torch
 torch.manual_seed(43)
 from tqdm import tqdm
@@ -23,11 +27,15 @@ import random
 import traceback
 from utils.constants import * 
 from utils.utils import * 
+from utils.utils import one_step, one_step_sparse
 
 
 
 class Experimentor:
-    
+    __slots__ = ('evaluator', 'model', 'optimizer', 'dataset', 'data', 'config', 'x', 'y', 
+                'device', 'train_size', 'num_classes', 'num_features', 'num_nodes', 'train_loader', 
+                'test_loader', 'criterion', 'split_idx', 'train_idx', 'suffix', 
+                'baseName', 'dataset_name')
     def __init__(self, config):
         self.config = config
         
@@ -35,13 +43,11 @@ class Experimentor:
         self.suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
         self.baseName = getResultFileName(self.config)
         filename = "_".join(["logs/my_log", self.suffix, ".txt"])
-                
         logging.basicConfig(level=logging.DEBUG, filename=filename, filemode="a+",
                                         format="%(message)s")
         logging.info(pp.pformat(config))
 
         logging.info("\ntorch.cuda is available: " + str(torch.cuda.is_available()))
-        
         
         self.dataset_name = config["dataset_name"]
         self.device = torch.device('cuda' if torch.cuda.is_available() and not self.config['force_cpu'] else 'cpu')
@@ -59,7 +65,6 @@ class Experimentor:
         self.data = self.dataset[0]
         self.num_nodes = self.data.num_nodes
         self.train_idx = self.split_idx['train']
-        self.val_idx = self.split_idx['valid']
 
         self.train_size = self.train_idx.size(0)
         
@@ -67,28 +72,51 @@ class Experimentor:
         self.num_classes = self.dataset.num_classes
         self.num_features = self.dataset.num_features
 
-        ngb_size = -1 if self.config["dataset_name"] == Dataset.OGBN_ARXIV else 10
-        self.setLoaders(ngb_size = ngb_size)
+        self.setLoaders(ngb_size = 10)
         self.setModel()
           
     def seed_worker(worker_id):
         worker_seed = 43
-        torch.manual_seed(43)
-        torch.seed(43)
         np.random.seed(worker_seed)
         random.seed(worker_seed)
+
+    def applyOneStep(self, edge_index):
+        edge_weight = None
+        if self.config["sparse"]:
+            edge_weight = torch.ones(edge_index.size(1))
+            edge_index  = SparseTensor(row = edge_index[0], col = edge_index[1], value=edge_weight, sparse_sizes=(self.num_nodes, self.num_nodes))
+
+            if self.config["computationBefore"]:
+                start = time.time()
+                edge_index , edge_weight = one_step_sparse(edge_index, self.config["nbor_degree"], self.x.size(0), "cpu")
+                end = time.time()
+
+                print("Duration of Adj computation:", end - start)
+            edge_index = edge_index.set_diag()
+
+        else: 
+            if self.config["computationBefore"]:
+                start = time.time()
+                edge_index , edge_weight = one_step(edge_index, self.config["nbor_degree"], self.x.size(0), "cpu")
+                end = time.time()
+                print("Duration of Adj computation:", end - start)
+        
+        return edge_index, edge_weight
 
     def setLoaders(self, ngb_size = -1):
         self.x = self.data.x.to(self.device)
         self.y = self.data.y.squeeze().to(self.device)
+<<<<<<< HEAD
         edge_index = self.data.edge_index
                        
+=======
+        
+>>>>>>> master
         g = torch.Generator()
         g.manual_seed(43)
-        if self.config["sparse"]:
-            edge_weight = torch.ones(edge_index.size(1))
-            edge_index  = SparseTensor(row = edge_index[0], col = edge_index[1], value=edge_weight, sparse_sizes=(self.num_nodes, self.num_nodes))
-            edge_index = edge_index.set_diag()
+
+        edge_index, _ = self.applyOneStep(self.data.edge_index)
+        
         self.train_loader = NeighborSampler(edge_index, node_idx=self.train_idx,
                                     sizes=[ngb_size] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
                                     shuffle=True, num_workers=self.config["num_workers"], worker_init_fn = self.seed_worker)
@@ -100,15 +128,18 @@ class Experimentor:
         if self.config["model_type"] == ModelType.GATV1:
             self.model = GAT(self.num_features, self.config["hidden_size"], self.num_classes, num_layers=self.config["num_of_layers"],
                 heads=self.config["num_heads"], dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
-                use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"])
+                use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"], 
+                computationBefore=self.config["computationBefore"], aggr_mode = self.config["aggr_mode"])
         elif self.config["model_type"] == ModelType.GATV2:
             self.model = GATV2(self.num_features, self.config["hidden_size"], self.num_classes, num_layers=self.config["num_of_layers"],
                 heads=self.config["num_heads"], dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
-                use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"])  
+                use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"],
+                computationBefore=self.config["computationBefore"], aggr_mode = self.config["aggr_mode"])  
         elif self.config["model_type"] == ModelType.TRANS:
             self.model = Transformer(self.num_features, self.config["hidden_size"], self.num_classes, num_layers=self.config["num_of_layers"],
                 heads=self.config["num_heads"], dropout = self.config["dropout"], device = self.device, use_layer_norm=self.config["use_layer_norm"], 
-                use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"])    
+                use_batch_norm=self.config["use_layer_norm"], nbor_degree = self.config["nbor_degree"], adj_mode = self.config["adj_mode"], sparse = self.config["sparse"],
+                computationBefore=self.config["computationBefore"], aggr_mode = self.config["aggr_mode"])    
         self.model = self.model.to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.config["lr"])
                
@@ -254,8 +285,14 @@ class Experimentor:
         data["eval_time_avg"]  = str(eval_times.mean().item())
         data["num_epochs_avg"] = str(epochs.mean().item())
 
-
-        filename = osp.join("results", self.config["dataset_name"], self.baseName + ".json")
+        base_dir = None
+        if self.config["adj_mode"] != AdjacencyMode.Partial:
+            base_dir = osp.join("results", self.config["dataset_name"], "OneStep", self.config["model_type"])
+        else: 
+            base_dir = osp.join("results", self.config["dataset_name"], "Partial", self.config["model_type"], self.config["aggr_mode"])
+        if not os.path.exists(base_dir):
+            os.makedirs(base_dir)
+        filename = osp.join(base_dir, self.baseName + ".json")
         with open(filename, 'w') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
 

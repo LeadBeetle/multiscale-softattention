@@ -12,14 +12,15 @@ import time
 from utils.constants import * 
 
 class Experimentor_Proteins(Experimentor):
-
-    def setLoaders(self):
+    __slots__ = ('__dict__')
+    
+    def setLoaders(self, ngb_size=10):
         self.setProteinsData()
-        
-        self.train_loader = NeighborSampler(self.data.edge_index, node_idx=self.train_idx,
-                                    sizes=[10] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
+        edge_index, _ = self.applyOneStep(self.data.edge_index)
+        self.train_loader = NeighborSampler(edge_index, node_idx=self.train_idx,
+                                    sizes=[ngb_size] * self.config["num_of_layers"], batch_size=self.config["batch_size"],
                                     shuffle=True, num_workers=self.config["num_workers"])
-        self.test_loader = NeighborSampler(self.data.edge_index, node_idx=None, sizes=[-1],
+        self.test_loader = NeighborSampler(edge_index, node_idx=None, sizes=[-1],
                                         batch_size=self.config["test_batch_size"], shuffle=False,
                                         num_workers=self.config["num_workers"])  
             

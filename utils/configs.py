@@ -2,38 +2,41 @@ from utils.constants import *
 
 base_config = {
     'num_of_epochs': 500,
-    'num_of_runs': 10,
-    'patience_period': 50,
+    'num_of_runs': 3,
+    'patience_period': 30,
     'num_workers': 0,
     'force_cpu': False,
     'test_frequency': 1,
     'console_log_freq': 1,
     'do_train_tqdm_logging': False,
-    'adj_mode': AdjacencyMode.OneStep
+    'computationBefore': False
 }
 
 coracite_config = {
     'batch_size': 256,
     'test_batch_size': 256,
     'lr': 0.005,
-    'num_of_layers': 2, 
-    'num_heads': 1,
-    'hidden_size': 128,
+    'num_heads': 4,
+    'hidden_size': 64,
     'dropout': 0.6,  
     "use_layer_norm": False,
-    "use_batch_norm": False,
+    "use_batch_norm": False
+}
+
+cora_config = {
+    'force_cpu': True,
 }
 
 pub_config = {
     'batch_size': 256,
     'test_batch_size': 256,
-    'lr': 0.01,
-    'num_of_layers': 2, 
-    'num_heads': 8,
+    'lr': 0.01, 
+    'num_heads': 1,
     'hidden_size': 128,
     'dropout': 0.6,  
     "use_layer_norm": False,
     "use_batch_norm": False,
+    'force_cpu': True
 }
 
 arxiv_config = {
@@ -41,6 +44,7 @@ arxiv_config = {
     'test_batch_size': 20000,
     'lr': 0.01,
     'num_of_layers': 3, 
+    'patience_period': 50,
     'num_heads': 1,
     'hidden_size': 256,
     'dropout': 0.25,  
@@ -48,13 +52,15 @@ arxiv_config = {
     "use_batch_norm": False,
     'test_frequency': 5,
     'num_of_runs': 3,
+    'computationBefore': False
 }
 
 products_config = {
     'batch_size': 128,
-    'test_batch_size': 64,
+    'test_batch_size': 128,
     'lr': 0.001,
-    'num_of_layers': 3, 
+    #'num_of_layers': 3, 
+    'patience_period': 50,
     'num_heads': 1,
     'hidden_size': 128,
     'dropout': 0.5,
@@ -62,32 +68,48 @@ products_config = {
     "use_batch_norm": False,
     'test_frequency': 10,
     'num_of_runs': 1,
+    'computationBefore': False
 }
 
 proteins_config = {
     'batch_size': 64,
     'test_batch_size': 64,
     'lr': 0.01,
-    'num_of_layers': 6, 
-    'num_heads': 1,
+    'patience_period': 50,
+    #'num_of_layers': 3, 
+    'num_heads': 8,
     'hidden_size': 64,
     'dropout': 0.25,
     "use_layer_norm": False,
-    "use_batch_norm": True,
+    "use_batch_norm": False,
     'test_frequency': 10, 
     'num_of_runs': 1,
+    'computationBefore': False
 }
 
-arxprod_trans_config = {
+arx_trans_config = {
+    'lr': 0.001,
+    'dropout': 0.3,
+    'hidden_size': 128, 
+    'num_heads' : 4,
+    #'num_of_layers': 3,
+    'num_of_runs': 1
+}
+
+prod_trans_config = {
+    'lr': 0.001,
+    'dropout': 0.3,
     'hidden_size': 128,
-    'dropout': 0.625,
-    'num_of_runs': 1,
+    'num_heads' : 4,
+    #'num_of_layers': 3,
+    'num_of_runs': 1
 }
 
 proteins_trans_config = {
     'lr': 0.001,
-    'dropout': 0.5,
-    'num_of_layers': 7,
-    'num_of_runs': 1,
+    'dropout': 0.1,
+    'hidden_size': 64,
+    'num_heads' : 4,
+    #'num_of_layers': 4,
+    'num_of_runs': 1
 }
-

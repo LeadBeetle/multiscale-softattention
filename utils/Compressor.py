@@ -29,66 +29,80 @@ class Compressor():
         self.val_stds        = []
         self.train_time_avgs = []
         self.epochs          = []
+        self.num_of_layers   = 0
 
     def compressAll(self):
         for dataset in [Dataset.CORA, Dataset.PUBMED, Dataset.CITESEER]:
             for model in [ModelType.GATV1, ModelType.GATV2, ModelType.TRANS]:
-                for sparse in [False, True]:
-
-                    self.compressResults(dataset, model, sparse) 
+                for aggr_mode in [AggrMode.NONE, AggrMode.MEAN, AggrMode.MAX]:
+                    for num_of_layers in [2,3,4]:
+                        self.compressResults(dataset, model, num_of_layers, aggr_mode) 
         
 
-    def setCompressed(self, dataset, model, sparseStr): 
+    def setCompressed(self, dataset, model, num_of_layers, aggr_mode): 
+        if len(self.test_accs) == 0: return None
+
         res = {
             dataset.name: 
             { 
                 model.name: 
-                {
-                    sparseStr: {
-                    "train_accs ": self.train_accs,
-                    "test_accs"  : self.test_accs,
-                    "val_accs"   : self.val_accs,
-                    "train_stds" : self.train_stds,
-                    "test_stds"  : self.test_stds,
-                    "val_stds"   : self.val_stds,
-                    "train_times": self.train_time_avgs,
-                    "epochs"     : self.epochs
+                {   
+                    aggr_mode.name: {
+                        "NumOfLayers_" + str(num_of_layers): {
+                        "train_accs ": self.train_accs,
+                        "test_accs"  : self.test_accs,
+                        "val_accs"   : self.val_accs,
+                        "train_stds" : self.train_stds,
+                        "test_stds"  : self.test_stds,
+                        "val_stds"   : self.val_stds,
+                        "train_times": self.train_time_avgs,
+                        "epochs"     : self.epochs
+                        } 
                     }
+                    
                 }
             }
         }
         return res
 
-    def compressResults(self, dataset: Dataset, model: ModelType, sparse: bool):
-        self.folder = osp.join(resultPath, dataset.name)#
+    def compressResults(self, dataset: Dataset, model: ModelType, num_of_layers, aggr_mode):
+        self.folder = osp.join(resultPath, dataset.name)
         self.reset()
 
-        for _, _, files in os.walk(self.folder):
+        for path, _, files in os.walk(self.folder):
             for file in files:
-                self.getDataFromResultFile(file, dataset, sparse, model)
+                
+                self.getDataFromResultFile(path, file, dataset, model, num_of_layers, aggr_mode)
         filename = osp.join(self.folder, "CompressedResults" + ".json")
-        sparseStr = "sparse" if sparse else "dense"
+        res = self.setCompressed(dataset, model, num_of_layers, aggr_mode)
+        if res is not None:
+            currentState = None
+            if osp.exists(filename):
+                f = open(filename)
+                currentState = merge(json.load(f), res)
+                f.close()
+            else:
+                currentState = res
 
-        res = self.setCompressed(dataset, model, sparseStr)
-        
-        currentState = None
-        if osp.exists(filename):
-            f = open(filename)
-            currentState = merge(json.load(f), res)
-            f.close()
-        else:
-            currentState = res
+            with open(filename, 'w') as f:
+                json.dump(currentState, f, ensure_ascii=False, indent=4)
 
-        with open(filename, 'w') as f:
-            json.dump(currentState, f, ensure_ascii=False, indent=4)
-
-    def getDataFromResultFile(self, file, dataset, sparse, model):
+    def getDataFromResultFile(self, path, file, dataset, model, num_of_layers, aggr_mode):
         if not "Compressed" in file:
-            f = open(osp.join(self.folder, file))
+            f = open(osp.join(path, file))
             
             results = json.load(f)
+            matchDataset = ft(results["dataset_name"]) == ft(dataset.name)
+            matchModel = ft(results["model_type"]) == ft(model.name)
+            matchNumLayers = int(results["num_of_layers"]) == int(num_of_layers)
+
+            _aggrMode = AggrMode.NONE.name
+            if "aggr_mode" in results:
+                _aggrMode = ft(results["aggr_mode"])
+            matchAggr = ft(_aggrMode) == ft(aggr_mode.name)
             
-            if ft(results["dataset_name"]) == ft(dataset.name) and ft(results["sparse"]) == ft(sparse) and ft(results["model_type"]) == ft(model.name):
+            if matchDataset and matchModel and matchNumLayers and matchAggr:
+                
                 self.train_accs.append(results["train_acc_mean"])
                 self.val_accs.append(results["val_acc_mean"])
                 self.test_accs.append(results["test_acc_mean"])
@@ -102,6 +116,5 @@ class Compressor():
                     epoch = results["num_epochs_avg"]
                     if epoch is not None:
                         self.epochs.append(epoch)
-
             f.close()
             

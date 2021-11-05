@@ -1,15 +1,24 @@
 import torch
+
+from utils.constants import *
 torch.manual_seed(43)
 from torch.nn import Linear as Lin
 import torch.nn.functional as F
 from tqdm import tqdm
-from utils.utils import one_step, one_step_sparse
+from utils.utils import one_step, one_step_sparse, multi_step_sparse
+
+from utils.constants import AdjacencyMode
+from models.ParallelModule import *
+
 
 class Net(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 heads, dropout, device, use_layer_norm=False, use_batch_norm=False, nbor_degree=1, adj_mode=None, sparse=True):
-        super(Net, self).__init__()
+    __slots__ = ('device', 'num_layers', '_dropout', '_use_layer_norm', '_use_batch_norm', 'nbor_degree', 'adj_mode', 'sparse', 'skips')
 
+    def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
+                 heads, dropout, device, use_layer_norm=False, use_batch_norm=False, nbor_degree=1, 
+                 adj_mode=None, sparse=True, computationBefore=False, aggr_mode = AggrMode.MEAN):
+        super(Net, self).__init__()
+        
         self.device = device
         self.num_layers = num_layers
         self._dropout = dropout
@@ -18,6 +27,8 @@ class Net(torch.nn.Module):
         self.nbor_degree = nbor_degree
         self.adj_mode = adj_mode
         self.sparse = sparse
+        self.computationBefore = computationBefore
+        self.aggr_mode = aggr_mode
         
         self.one_step_gen = one_step_sparse if sparse else one_step
         
@@ -27,7 +38,15 @@ class Net(torch.nn.Module):
             self.skips.append(
                 Lin(hidden_channels * heads, hidden_channels * heads))
         self.skips.append(Lin(hidden_channels * heads, out_channels))
-        
+
+    def add_conv(self, module): 
+        if self.adj_mode == AdjacencyMode.OneStep:
+            self.convs.append(module)
+        elif self.adj_mode == AdjacencyMode.Partial:
+            parallelConvs = ParallelModule(aggr_mode = self.aggr_mode)
+            for i in range(self.nbor_degree):
+                parallelConvs.add_module(name = str(i+1), module = module)
+            self.convs.append(parallelConvs)
 
     def reset_parameters(self):
         for conv in self.convs:
@@ -42,10 +61,16 @@ class Net(torch.nn.Module):
         # and the size/shape `size` of the bipartite graph.
         # Target nodes are also included in the source nodes so that one can
         # easily apply skip-connections or add self-loops.
+        
         for i, (edge_index, _, size) in enumerate(adjs):
             x_target = x[:size[1]]  # Target nodes are always placed first.
-            edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
-            
+            edge_weight = None
+            if self.adj_mode == AdjacencyMode.Partial:
+                edge_index = multi_step_sparse(edge_index, self.nbor_degree, x.size(0))
+            elif not self.computationBefore:
+                edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
+            if self.sparse and self.adj_mode != AdjacencyMode.Partial:
+                    edge_index = edge_index.t()
             x = self.convs[i]((x, x_target), edge_index, edge_weight)
             if self._use_layer_norm:
                 x = self.layer_normalizations[i](x)
@@ -73,7 +98,13 @@ class Net(torch.nn.Module):
                 total_edges += edge_index.size(1)
                 x = x_all[n_id].to(self.device)
                 x_target = x[:size[1]]
-                edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
+                edge_weight = None
+                if self.adj_mode == AdjacencyMode.Partial:
+                    edge_index = multi_step_sparse(edge_index, self.nbor_degree, x.size(0))
+                elif not self.computationBefore:
+                    edge_index, edge_weight = self.one_step_gen(edge_index, self.nbor_degree, x.size(0), self.device)
+                if self.sparse and self.adj_mode != AdjacencyMode.Partial:
+                    edge_index = edge_index.t()
                 x = self.convs[i]((x, x_target), edge_index, edge_weight)
                 if self._use_layer_norm:
                     x = self.layer_normalizations[i](x)
@@ -92,4 +123,4 @@ class Net(torch.nn.Module):
         pbar.close()
 
         return x_all
-
+        

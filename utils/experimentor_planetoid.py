@@ -5,15 +5,16 @@ import torch
 torch.manual_seed(43)
 import torch.nn.functional as F
 from torch_geometric.datasets import Planetoid
-from torch_geometric.loader import NeighborSampler
 import time
 from ogb.nodeproppred import Evaluator
 
 from utils.constants import * 
 
 class Experimentor_Planetoid(Experimentor):
+    __slots__ = ('__dict__', 'val_idx', 'test_idx', 'num_nodes')
+    
     def initData(self):
-        root = osp.abspath( 'data')
+        root = osp.abspath('data')
         
         self.dataset = Planetoid(root, name=datasetMapping[self.dataset_name])
         self.evaluator = Evaluator(name="ogbn-arxiv")
@@ -29,7 +30,7 @@ class Experimentor_Planetoid(Experimentor):
         self.num_classes = self.dataset.num_classes
         self.num_features = self.dataset.num_features
         
-        self.setLoaders(-1)
+        self.setLoaders(ngb_size = -1)
         self.setModel()
 
     @torch.no_grad()

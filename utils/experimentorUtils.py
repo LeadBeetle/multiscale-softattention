@@ -25,31 +25,38 @@ def setConfig(dataset, model, config):
         specificConfig = merge(base_config, pub_config)
     elif dataset in [Dataset.CORA, Dataset.CITESEER]: 
         specificConfig = merge(base_config, coracite_config)
+        if dataset == Dataset.CORA:
+            specificConfig = merge(specificConfig, cora_config)
     elif dataset == Dataset.OGBN_ARXIV:
         specificConfig = merge(base_config, arxiv_config)
         if model == ModelType.TRANS:
-            specificConfig = merge(specificConfig, arxprod_trans_config)
+            specificConfig = merge(specificConfig, arx_trans_config)
     elif dataset == Dataset.OGBN_PRODUCTS:
         specificConfig = merge(base_config, products_config)
         if model == ModelType.TRANS:
-            specificConfig = merge(specificConfig, arxprod_trans_config)
+            specificConfig = merge(specificConfig, prod_trans_config)
     elif dataset == Dataset.OGBN_PROTEINS:
         specificConfig = merge(base_config, proteins_config)
         if model == ModelType.TRANS:
             specificConfig = merge(specificConfig, proteins_trans_config)
     return merge(config, specificConfig)
 
-def runExperiments(models, datasets, degrees, sparse):
+def runExperiments(models, datasets, degrees, sparse, num_layers, adj_modes, aggr_modes):
     config = {}
-    for model in models:
-        config["model_type"] = model
-        for dataset in datasets:
-            config["dataset_name"] = dataset
-            config = setConfig(dataset, model, config)
-                
-            for degree in degrees:
-                config["nbor_degree"] = degree
-                for isSparse in sparse:
-                    config["sparse"] = isSparse
-                    experimentor = getExperimentor(config["dataset_name"])(config)
-                    experimentor.run_wrapper()
+    for aggr_mode in aggr_modes:
+        config["aggr_mode"] = aggr_mode 
+        for adj_mode in adj_modes:
+            config["adj_mode"] = adj_mode    
+            for dataset in datasets:
+                config["dataset_name"] = dataset
+                for model in models:
+                    config["model_type"] = model
+                    for _num_layers in num_layers:
+                        config["num_of_layers"] = _num_layers
+                        for degree in degrees:
+                            config["nbor_degree"] = degree
+                            for isSparse in sparse:
+                                config["sparse"] = isSparse
+                                config = setConfig(dataset, model, config)
+                                experimentor = getExperimentor(config["dataset_name"])(config)
+                                experimentor.run_wrapper()
