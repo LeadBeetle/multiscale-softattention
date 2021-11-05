@@ -1,5 +1,10 @@
 import os
 import os.path as osp
+<<<<<<< HEAD
+from networkx.algorithms.clique import graph_clique_number
+from networkx.classes.function import degree_histogram
+=======
+>>>>>>> master
 import torch
 torch.manual_seed(43)
 from tqdm import tqdm
@@ -23,6 +28,7 @@ import traceback
 from utils.constants import * 
 from utils.utils import * 
 from utils.utils import one_step, one_step_sparse
+
 
 
 class Experimentor:
@@ -100,7 +106,12 @@ class Experimentor:
     def setLoaders(self, ngb_size = -1):
         self.x = self.data.x.to(self.device)
         self.y = self.data.y.squeeze().to(self.device)
+<<<<<<< HEAD
+        edge_index = self.data.edge_index
+                       
+=======
         
+>>>>>>> master
         g = torch.Generator()
         g.manual_seed(43)
 
