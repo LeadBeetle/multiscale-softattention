@@ -21,13 +21,13 @@
     "use_batch_norm": false,
     "nbor_degree": 1,
     "sparse": true,
-    "train_acc_mean": "0.9971427917480469",
-    "val_acc_mean": "0.7758000493049622",
-    "test_acc_mean": "0.7954000234603882",
-    "train_acc_std": "0.003688547760248184",
-    "val_acc_std": "0.009114100597798824",
-    "test_acc_std": "0.008758488111197948",
-    "train_time_avg": "0.03157063573598862",
-    "eval_time_avg": "0.2219044268131256",
-    "num_epochs_avg": "9.5"
+    "train_acc_mean": "0.9964286088943481",
+    "val_acc_mean": "0.7770000100135803",
+    "test_acc_mean": "0.7908999919891357",
+    "train_acc_std": "0.0050507658161222935",
+    "val_acc_std": "0.013374924659729004",
+    "test_acc_std": "0.00955045036971569",
+    "train_time_avg": "0.0653160959482193",
+    "eval_time_avg": "0.17901557683944702",
+    "num_epochs_avg": "9.203125"
 }
