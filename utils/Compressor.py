@@ -7,7 +7,6 @@ import json
 from mergedeep import merge
 
 resultPath = osp.abspath("results")
-
 def visualize(): 
     pass
 
