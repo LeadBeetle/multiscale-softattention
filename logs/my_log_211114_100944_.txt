@@ -1,0 +1,30 @@
+{   'adj_mode': <AdjacencyMode.OneStep: 'OneStep'>,
+    'aggr_mode': <AggrMode.NONE: 'None'>,
+    'batch_size': 128,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.OGBN_PRODUCTS: 'ogbn-products'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.5,
+    'force_cpu': False,
+    'hidden_size': 128,
+    'lr': 0.001,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 4,
+    'num_heads': 1,
+    'num_of_epochs': 500,
+    'num_of_layers': 2,
+    'num_of_runs': 1,
+    'num_workers': 0,
+    'patience_period': 50,
+    'sparse': True,
+    'test_batch_size': 128,
+    'test_frequency': 10,
+    'use_batch_norm': False,
+    'use_layer_norm': False}
+
+torch.cuda is available: True
+Used Dataset: ogbn-products
+
+Run 01 for GatV1_K4_D2_s_ and ogbn-products:
+
