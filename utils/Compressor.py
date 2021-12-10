@@ -32,7 +32,7 @@ class Compressor():
         self.num_of_layers   = 0
 
     def compressAll(self):
-        for dataset in [Dataset.CORA, Dataset.PUBMED, Dataset.CITESEER]:
+        for dataset in [Dataset.CORA, Dataset.PUBMED, Dataset.CITESEER, Dataset.OGBN_PRODUCTS]:
             for model in [ModelType.GATV1, ModelType.GATV2, ModelType.TRANS]:
                 for aggr_mode in [AggrMode.NONE, AggrMode.MEAN, AggrMode.MAX]:
                     for num_of_layers in [2,3,4]:
@@ -49,14 +49,14 @@ class Compressor():
                 {   
                     aggr_mode.name: {
                         "NumOfLayers_" + str(num_of_layers): {
-                        "train_accs ": self.train_accs,
-                        "test_accs"  : self.test_accs,
-                        "val_accs"   : self.val_accs,
-                        "train_stds" : self.train_stds,
-                        "test_stds"  : self.test_stds,
-                        "val_stds"   : self.val_stds,
-                        "train_times": self.train_time_avgs,
-                        "epochs"     : self.epochs
+                            "train_accs ": self.train_accs,
+                            "test_accs"  : self.test_accs,
+                            "val_accs"   : self.val_accs,
+                            "train_stds" : self.train_stds,
+                            "test_stds"  : self.test_stds,
+                            "val_stds"   : self.val_stds,
+                            "train_times": self.train_time_avgs,
+                            "epochs"     : self.epochs
                         } 
                     }
                     
@@ -71,8 +71,8 @@ class Compressor():
 
         for path, _, files in os.walk(self.folder):
             for file in files:
-                
-                self.getDataFromResultFile(path, file, dataset, model, num_of_layers, aggr_mode)
+                if not "checkpoint" in file:
+                    self.getDataFromResultFile(path, file, dataset, model, num_of_layers, aggr_mode)
         filename = osp.join(self.folder, "CompressedResults" + ".json")
         res = self.setCompressed(dataset, model, num_of_layers, aggr_mode)
         if res is not None:
@@ -102,7 +102,9 @@ class Compressor():
             matchAggr = ft(_aggrMode) == ft(aggr_mode.name)
             
             if matchDataset and matchModel and matchNumLayers and matchAggr:
-                
+                # if ft(results["dataset_name"]) == "pubmed" and ft(dataset.name)=="pubmed" and int(num_of_layers)==2 and int(results["num_of_layers"])==2 and ft(results["model_type"])=="gatv1" and ft(model.name) == "gatv1" and ft(_aggrMode) == "none"  and ft(_aggrMode) == "none":
+                #     print(file, path, results)
+
                 self.train_accs.append(results["train_acc_mean"])
                 self.val_accs.append(results["val_acc_mean"])
                 self.test_accs.append(results["test_acc_mean"])

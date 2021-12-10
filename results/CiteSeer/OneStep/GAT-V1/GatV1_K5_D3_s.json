@@ -1,4 +1,5 @@
 {
+    
     "aggr_mode": "None",
     "adj_mode": "OneStep",
     "dataset_name": "CiteSeer",
