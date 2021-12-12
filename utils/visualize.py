@@ -10,7 +10,7 @@ import numpy as np
 
 
         
-def getAccuracies(dataset, model, matrix, accuracy ):
+def getAccuracies(dataset, model,aggregation,NumOfLayers, accuracy ):
     newDir = ".\\results\\"+dataset
     cwd =os.getcwd()
     os.chdir(newDir)
@@ -22,22 +22,25 @@ def getAccuracies(dataset, model, matrix, accuracy ):
                 if model== "all" or model == key1:
                     d3=d2[key1]
                     for key2 in d3:
-                        if matrix== "all" or matrix == key2:
+                        if aggregation== "all" or aggregation == key2:
                             d4=d3[key2]
                             for key3 in d4:
-                                if key3 == accuracy:
-                                    d5=d4[key3]                            
+                                if NumOfLayers== "all" or NumOfLayers == key3:
+                                    d5=d4[key3]
+                                    for key4 in d5:
+                                        if key4 == accuracy:
+                                            d5=d4[key4]                            
                                     #print(key +"  "+ key1 +"  "+ key2+"  "+key3)    
-                                    if accuracy== "val_accs":
-                                        accuracyLabel= "validation accuracy"
-                                    elif accuracy =="test_accs":
-                                        accuracyLabel= "validation accuracy"
-                                    elif accuracy== "train_accs ":
-                                        accuracyLabel= "trainings accuracy"
-                                    else:
-                                        accuracyLabel= accuracy
+                                            if accuracy== "val_accs":
+                                                accuracyLabel= "validation accuracy"
+                                            elif accuracy =="test_accs":
+                                                accuracyLabel= "validation accuracy"
+                                            elif accuracy== "train_accs ":
+                                                accuracyLabel= "trainings accuracy"
+                                            else:
+                                                accuracyLabel= accuracy
                                     
-                                    title= "Dataset: "+ dataset +"   Model: "+key1+ "  Matrix Aithmetic: "+key2+ "  "+accuracyLabel
+                                    title= "Dataset: "+ dataset +"   Model: "+key1+ "  Aggregation: "+key2+ " NumberOfLayers: "+key3+"  "+accuracyLabel
                                     valAtr = list(map(float,d5))
                                     karray=[]
                                     for x in range(len(valAtr)):
@@ -96,7 +99,7 @@ def plot (valArr, descArr, title, yAxisDenom, xAxisDenom):
     plt.title(title)
     plt.xlabel(xAxisDenom)
     plt.ylabel(yAxisDenom)
-    plt.ylim(0.6, 0.75)
+    plt.ylim(0.6, 0.99)
     #plt.yscale('log')
 
 
