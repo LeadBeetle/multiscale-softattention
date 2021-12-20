@@ -106,7 +106,7 @@ class GATConv(MessagePassing):
         zeros(self.bias)
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj, edge_weight=None,
-                size: Size = None, return_attention_weights=None):
+                size: Size = None, return_attention_weights=True):
         # type: (Union[Tensor, OptPairTensor], Tensor, Tensor, Size, NoneType) -> Tensor  # noqa
         # type: (Union[Tensor, OptPairTensor], SparseTensor, Size, NoneType) -> Tensor  # noqa
         # type: (Union[Tensor, OptPairTensor], Tensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
@@ -163,6 +163,7 @@ class GATConv(MessagePassing):
             out = out.mean(dim=1)
         if self.bias is not None:
             out += self.bias
+        return errorr
 
         if isinstance(return_attention_weights, bool):
             assert alpha is not None
@@ -171,6 +172,7 @@ class GATConv(MessagePassing):
             elif isinstance(edge_index, SparseTensor):
                 return out, edge_index.set_value(alpha, layout='coo')
         else:
+            
             return out
 
     def message(self, x: Tensor, alpha,
