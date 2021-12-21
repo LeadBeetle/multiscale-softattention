@@ -1,10 +1,10 @@
 {
+    "nbor_degree": 2,
     "aggr_mode": "Max",
     "adj_mode": "Partial",
     "dataset_name": "Cora",
     "model_type": "TRANS",
     "num_of_layers": 2,
-    "nbor_degree": 2,
     "sparse": true,
     "num_of_epochs": 500,
     "num_of_runs": 3,
@@ -24,12 +24,12 @@
     "use_layer_norm": false,
     "use_batch_norm": false,
     "train_acc_mean": "1.0",
-    "val_acc_mean": "0.7486667037010193",
-    "test_acc_mean": "0.746666669845581",
+    "val_acc_mean": "0.750666618347168",
+    "test_acc_mean": "0.7540000081062317",
     "train_acc_std": "0.0",
-    "val_acc_std": "0.013316656462848186",
-    "test_acc_std": "0.01644182950258255",
-    "train_time_avg": "2.056171417236328",
-    "eval_time_avg": "1.9140480756759644",
-    "num_epochs_avg": "15.3359375"
+    "val_acc_std": "0.010263219475746155",
+    "test_acc_std": "0.01734934374690056",
+    "train_time_avg": "1.1381847858428955",
+    "eval_time_avg": "0.7946337461471558",
+    "num_epochs_avg": "12.3359375"
 }

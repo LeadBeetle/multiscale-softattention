@@ -1,0 +1,166 @@
+{   'adj_mode': <AdjacencyMode.Partial: 'Partial'>,
+    'aggr_mode': <AggrMode.MAX: 'Max'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV1: 'GAT-V1'>,
+    'nbor_degree': 2,
+    'num_heads': 4,
+    'num_of_epochs': 500,
+    'num_of_layers': 2,
+    'num_of_runs': 3,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'use_batch_norm': False,
+    'use_layer_norm': False}
+
+torch.cuda is available: False
+Used Dataset: Cora
+
+Run 01 for GatV1_K2_D2_s_AggrMode.MAX and Cora:
+
+Printing only the traceback above the current stack frame
+Traceback (most recent call last):
+  File "c:\Users\Projektseminar\VS-Code\multiscale-softattention\utils\experimentor_base.py", line 291, in run_wrapper
+    self.run()
+  File "c:\Users\Projektseminar\VS-Code\multiscale-softattention\utils\experimentor_base.py", line 221, in run
+    loss, acc, train_time = self.train(epoch)
+  File "c:\Users\Projektseminar\VS-Code\multiscale-softattention\utils\experimentor_base.py", line 148, in train
+    out = self.model(self.x[n_id], adjs)
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\torch\nn\modules\module.py", line 1051, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "c:\Users\Projektseminar\VS-Code\multiscale-softattention\models\base\Net.py", line 74, in forward
+    x = self.convs[i]((x, x_target), edge_index, edge_weight)
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\torch\nn\modules\module.py", line 1051, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "c:\Users\Projektseminar\VS-Code\multiscale-softattention\models\ParallelModule.py", line 18, in forward
+    output.append(module(x, cur_edge_index, edge_weight) )
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\torch\nn\modules\module.py", line 1051, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "c:\Users\Projektseminar\VS-Code\multiscale-softattention\models\convs\GatConv.py", line 169, in forward
+    return Stop
+NameError: name 'Stop' is not defined
+
+
+Printing the full traceback as if we had not caught it here...
+Traceback (most recent call last):
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\ipykernel_launcher.py", line 16, in <module>
+    app.launch_new_instance()
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\traitlets\config\application.py", line 846, in launch_instance
+    app.start()
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\ipykernel\kernelapp.py", line 677, in start
+    self.io_loop.start()
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\tornado\platform\asyncio.py", line 199, in start
+    self.asyncio_loop.run_forever()
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\asyncio\base_events.py", line 570, in run_forever
+    self._run_once()
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\asyncio\base_events.py", line 1859, in _run_once
+    handle._run()
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\asyncio\events.py", line 81, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\ipykernel\kernelbase.py", line 457, in dispatch_queue
+    await self.process_one()
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\ipykernel\kernelbase.py", line 446, in process_one
+    await dispatch(*args)
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\ipykernel\kernelbase.py", line 353, in dispatch_shell
+    await result
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\ipykernel\kernelbase.py", line 648, in execute_request
+    reply_content = await reply_content
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\ipykernel\ipkernel.py", line 353, in do_execute
+    res = shell.run_cell(code, store_history=store_history, silent=silent)
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\ipykernel\zmqshell.py", line 533, in run_cell
+    return super(ZMQInteractiveShell, self).run_cell(*args, **kwargs)
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\IPython\core\interactiveshell.py", line 2898, in run_cell
+    result = self._run_cell(
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\IPython\core\interactiveshell.py", line 2944, in _run_cell
+    return runner(coro)
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\IPython\core\async_helpers.py", line 68, in _pseudo_sync_runner
+    coro.send(None)
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\IPython\core\interactiveshell.py", line 3169, in run_cell_async
+    has_raised = await self.run_ast_nodes(code_ast.body, cell_name,
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\IPython\core\interactiveshell.py", line 3361, in run_ast_nodes
+    if (await self.run_code(code, result,  async_=asy)):
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\IPython\core\interactiveshell.py", line 3441, in run_code
+    exec(code_obj, self.user_global_ns, self.user_ns)
+  File "C:\Users\PROJEK~1\AppData\Local\Temp/ipykernel_20984/3740305507.py", line 9, in <module>
+    runExperiments(models, datasets, degrees, sparse, num_layers, adj_modes, aggr_modes)
+  File "c:\Users\Projektseminar\VS-Code\multiscale-softattention\utils\experimentorUtils.py", line 62, in runExperiments
+    experimentor.run_wrapper()
+  File "c:\Users\Projektseminar\VS-Code\multiscale-softattention\utils\experimentor_base.py", line 291, in run_wrapper
+    self.run()
+  File "c:\Users\Projektseminar\VS-Code\multiscale-softattention\utils\experimentor_base.py", line 221, in run
+    loss, acc, train_time = self.train(epoch)
+  File "c:\Users\Projektseminar\VS-Code\multiscale-softattention\utils\experimentor_base.py", line 148, in train
+    out = self.model(self.x[n_id], adjs)
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\torch\nn\modules\module.py", line 1051, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "c:\Users\Projektseminar\VS-Code\multiscale-softattention\models\base\Net.py", line 74, in forward
+    x = self.convs[i]((x, x_target), edge_index, edge_weight)
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\torch\nn\modules\module.py", line 1051, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "c:\Users\Projektseminar\VS-Code\multiscale-softattention\models\ParallelModule.py", line 18, in forward
+    output.append(module(x, cur_edge_index, edge_weight) )
+  File "C:\Users\Projektseminar\anaconda3\envs\PSN\lib\site-packages\torch\nn\modules\module.py", line 1051, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "c:\Users\Projektseminar\VS-Code\multiscale-softattention\models\convs\GatConv.py", line 169, in forward
+    return Stop
+NameError: name 'Stop' is not defined
+{   'adj_mode': <AdjacencyMode.Partial: 'Partial'>,
+    'aggr_mode': <AggrMode.MAX: 'Max'>,
+    'batch_size': 256,
+    'computationBefore': False,
+    'console_log_freq': 1,
+    'dataset_name': <Dataset.CORA: 'Cora'>,
+    'do_train_tqdm_logging': False,
+    'dropout': 0.6,
+    'force_cpu': True,
+    'hidden_size': 64,
+    'lr': 0.005,
+    'model_type': <ModelType.GATV2: 'GAT-V2'>,
+    'nbor_degree': 2,
+    'num_heads': 4,
+    'num_of_epochs': 500,
+    'num_of_layers': 2,
+    'num_of_runs': 3,
+    'num_workers': 0,
+    'patience_period': 30,
+    'sparse': True,
+    'test_batch_size': 256,
+    'test_frequency': 1,
+    'use_batch_norm': False,
+    'use_layer_norm': False}
+
+torch.cuda is available: False
+Used Dataset: Cora
+
+Run 01 for GatV2_K2_D2_s_AggrMode.MAX and Cora:
+
+Epoch 01| Loss: 1.9419| Acc: 0.1643| Train Time: 0.5565s
+Train: 0.9643| Val: 0.6760| Test: 0.6720| Eval Time: 0.7467s
+Epoch 02| Loss: 1.4952| Acc: 0.8857| Train Time: 0.4995s
+Train: 0.9929| Val: 0.7560| Test: 0.7770| Eval Time: 0.6336s
+Epoch 03| Loss: 1.0375| Acc: 0.9571| Train Time: 0.4855s
+Train: 0.9929| Val: 0.7740| Test: 0.7920| Eval Time: 0.6346s
+Epoch 04| Loss: 0.6822| Acc: 0.9929| Train Time: 0.4684s
+Train: 1.0000| Val: 0.7800| Test: 0.7980| Eval Time: 0.6266s
+Epoch 05| Loss: 0.4129| Acc: 0.9929| Train Time: 0.4784s
+Train: 1.0000| Val: 0.7780| Test: 0.8020| Eval Time: 0.6426s
+Epoch 06| Loss: 0.2224| Acc: 0.9929| Train Time: 0.5055s
+Train: 1.0000| Val: 0.7780| Test: 0.8090| Eval Time: 0.6446s
+Epoch 07| Loss: 0.1202| Acc: 0.9929| Train Time: 0.4934s
+Train: 1.0000| Val: 0.7760| Test: 0.8050| Eval Time: 0.6366s
+Epoch 08| Loss: 0.0736| Acc: 1.0000| Train Time: 0.5475s
+Train: 1.0000| Val: 0.7760| Test: 0.8040| Eval Time: 0.6506s

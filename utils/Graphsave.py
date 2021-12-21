@@ -49,24 +49,61 @@ class Graphsave:
             scndNode = edge_index[1][j]
             Graph.add_edge(frstNode.item(),scndNode.item())
         Graph.remove_node(hghstNode)
-        print(degree_histogram(Graph))
+        #print(Graph.nodes[1]['cat'])
+        name="DS_"+self.dataset_name+"_NB_1"
+        #self.store(Graph, name)
+        self.plotGraph(Graph,save=True,name=name)
+        #print(degree_histogram(Graph))
+        #self.getCentralNodes(Graph, 5)
         return Graph
+    
+    
+    def getCentralNodes(self, Graph, NumbOfNodes):
+        d=dict(Graph.degree())
+        # highest degree:
+        mkey=max(d, key=lambda k: d[k])
+        # try for succeeding
+        degrees = [Graph.degree(n) for n in Graph.nodes()]
+        degreesArray=np.array(degrees)
+        pNoN=NumbOfNodes*-1
+        print(degreesArray)
+        ind=np.argpartition(degreesArray, pNoN)[pNoN:]
+        print(ind)
+        print(degreesArray[ind])
+
+        
+
+        
+        
+        
+    
+    def store(self, Graph, name="undefined"):
+        savePath="savedGraphs/"+name+".gpickle"
+        nx.write_gpickle(Graph,savePath)
+        newGraph = nx.read_gpickle(savePath)
+
          
-    def plotGraph(self, Graph):
+    def plotGraph(self, Graph,save=False,name="testfile"):
         groups = set(nx.get_node_attributes(Graph,'cat').values())
         mapping = dict(zip(sorted(groups),count()))
-        d=dict(Graph.degree)
+        d=dict(Graph.degree())
         
         colors = [mapping[Graph.nodes[n]['cat']] for n in range(len(Graph.nodes()))]
         
         pos = nx.kamada_kawai_layout(Graph,scale=1000)
-        ec = nx.draw_networkx_edges(Graph, pos, width=0.01)
-        nc = nx.draw_networkx_nodes(Graph, pos, nodelist=Graph.nodes(), node_color=colors, node_size=1 , cmap=plt.cm.jet)
-        #node_size=[v*5 for v in d.values()]
+        ec = nx.draw_networkx_edges(Graph, pos, width=0.5)
+        nc = nx.draw_networkx_nodes(Graph, pos, nodelist=Graph.nodes(), node_color=colors, node_size=[v*5 for v in d.values()] , cmap=plt.cm.jet)
+        
         plt.colorbar(nc)
         plt.axis('off')
-        plt.show()
+        savePath="savedGraphs/"+self.dataset_name+".png"
+
+        if save:
+            plt.savefig(savePath,format="PNG")
+    
+
         
+          
     def plotHistogramm(self, Graph):
         print(degree_histogram(Graph))    
         degrees = [Graph.degree(n) for n in Graph.nodes()]
