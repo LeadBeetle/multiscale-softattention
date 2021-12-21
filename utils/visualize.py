@@ -80,30 +80,32 @@ def getAccuraciesScatter(dataset, model,aggregation,NumOfLayers, accuracy ):
                                             JasonFIleAccuracy=JasonFileLayers[accuracyName]                           
                                              #print(key +"  "+ key1 +"  "+ key2+"  "+key3)                            
                                             valAtr = list(map(float,JasonFIleAccuracy))
-                                            if AggregationName == 'NONE':
-                                                stellen=4
-                                            else:
-                                                stellen=3
-                                            if len(valAtr)<stellen:
-                                                stellen=len(valAtr)                                    
-                                            for x in range(stellen):
-                                            #for x in range(len(valAtr)):
+                                            #if AggregationName == 'NONE':
+                                            #    stellen=4
+                                            #else:
+                                            #    stellen=3
+                                            #if len(valAtr)<stellen:
+                                            #    stellen=len(valAtr)                                    
+                                            #for x in range(stellen):
+                                            for x in range(len(valAtr)):
                                                 if AggregationName == "NONE":
                                                     KVal.append(x+1)
                                                 else:
                                                     KVal.append(x+2)
                                                 acc.append(valAtr[x])
                                                 NoL.append(layerDict[Layers])
+                                                print(acc)
+                                                print(KVal)
                             title= DataSetName + "   " + ModelName + "   " + AggregationName
                             
-                            plt.subplot(position,xlabel="Neighbourdegree",ylabel="Test accuracy",title=title)
+                            plt.subplot(position,xlabel="Neighbourdegree",ylabel="Avg. epoch time in seconds",title=title)
                             plt.locator_params(axis='x',integer=True )
                             scatterplot(NoL, KVal, acc)
                             #heatplot(NoL,KVal,acc)
                                                        
     os.chdir(cwd)
     os.chdir(".\\savedPlots\\")
-    plt.savefig(dataset+'--'+model+'--scatter-layer-degree.png')
+    plt.savefig(dataset+'--'+model+'--'+accuracy+'--'+NumOfLayers+'--scatter-layer-degree.png')
     os.chdir(cwd)
     
     
@@ -188,9 +190,9 @@ def scatterplot(NumberofLayers, kValues, accuracyValues):
     Mapcolors = ListedColormap(['r','g','b','y'])
     scatter = plt.scatter(kValues,accuracyValues,c=colors,cmap=Mapcolors,)
     lowerbound= min(accuracyValues)*0.9
-    upperbound= max(accuracyValues)+(1-max(accuracyValues))/3
+    upperbound= max(accuracyValues)*1.1
     plt.ylim(lowerbound,upperbound)
-    plt.legend(handles=scatter.legend_elements()[0], labels=classes, loc="lower left")
+    plt.legend(handles=scatter.legend_elements()[0], labels=classes, loc="upper left")
     
     #fig, ax= plt.subplots()
     #scatter= ax.scatter(kValues,accuracyValues,s=size,c=colors)
