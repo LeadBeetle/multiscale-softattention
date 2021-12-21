@@ -157,6 +157,7 @@ class GATConv(MessagePassing):
 
         alpha = self._alpha
         self._alpha = None
+        
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)
         else:

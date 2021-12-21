@@ -14,6 +14,8 @@ def visualize():
 def ft(string):
     string = str(string).lower()
     string = ''.join(e for e in string if e.isalnum())
+    string = string.replace("_", "")
+    string = string.replace("-", "")
     return string    
 
 class Compressor(): 
@@ -68,7 +70,6 @@ class Compressor():
     def compressResults(self, dataset: Dataset, model: ModelType, num_of_layers, aggr_mode):
         self.folder = osp.join(resultPath, dataset.name)
         self.reset()
-
         for path, _, files in os.walk(self.folder):
             for file in files:
                 if not "checkpoint" in file:
