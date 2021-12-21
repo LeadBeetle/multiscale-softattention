@@ -145,7 +145,7 @@ class Experimentor:
             adjs = [adj.to(self.device) for adj in adjs]
 
             self.optimizer.zero_grad()
-            out = self.model(self.x[n_id], adjs)
+            out= self.model(self.x[n_id], adjs)
             loss = self.criterion(out, self.y[n_id[:batch_size]])
             loss.backward()
             self.optimizer.step()

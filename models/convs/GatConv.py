@@ -163,7 +163,6 @@ class GATConv(MessagePassing):
             out = out.mean(dim=1)
         if self.bias is not None:
             out += self.bias
-        return errorr
 
         if isinstance(return_attention_weights, bool):
             assert alpha is not None
