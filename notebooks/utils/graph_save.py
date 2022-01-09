@@ -75,8 +75,8 @@ class Graphsave:
         
 
     def showTensors(self):
-        attention= torch.load('attention.pt')
-        edges= torch.load('edgeIndex.pt')
+        attention= torch.load('data/pts/attention.pt')
+        edges= torch.load('data/pts/edgeIndex.pt')
         #edges=edges.to_dense()
         print("attention weights:")
         print(attention.size())   

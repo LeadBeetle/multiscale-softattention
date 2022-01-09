@@ -165,8 +165,8 @@ class GATConv(MessagePassing):
         if self.bias is not None:
             out += self.bias
         
-        torch.save(edge_index, 'edgeIndex.pt')
-        torch.save(alpha, 'attention.pt')
+        torch.save(edge_index, 'pts/edgeIndex.pt')
+        torch.save(alpha, 'pts/attention.pt')
 
         if isinstance(return_attention_weights, bool):
             assert alpha is not None
