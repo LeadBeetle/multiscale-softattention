@@ -87,7 +87,7 @@ class Experimentor:
                 end = time.time()
 
                 print("Duration of Adj computation:", end - start)
-            edge_index = edge_index.set_diag()
+            edge_index = edge_index.set_diag(1)
 
         else: 
             if self.config["computationBefore"]:
@@ -104,8 +104,9 @@ class Experimentor:
         
         g = torch.Generator()
         g.manual_seed(43)
-
+        
         edge_index, _ = self.applyOneStep(self.data.edge_index)
+        self.edge_index = edge_index
         
         self.train_loader = NeighborSampler(edge_index, node_idx=self.train_idx,
                                     sizes=[ngb_size] * self.config["num_of_layers"], batch_size=self.config["batch_size"],

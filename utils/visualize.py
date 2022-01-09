@@ -12,7 +12,7 @@ from utils.constants import Dataset
 
 
         
-def getAccuracies(dataset, model,aggregation,NumOfLayers, accuracy ):
+def getAccuracies(dataset, model, aggregation,NumOfLayers, accuracy ):
     newDir = ".\\results\\"+dataset
     cwd =os.getcwd()
     os.chdir(newDir)
