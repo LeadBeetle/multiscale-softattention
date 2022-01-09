@@ -9,6 +9,7 @@ from ogb.nodeproppred import PygNodePropPredDataset
 from utils.constants import * 
 from utils.utils import * 
 from torch_geometric.datasets import Planetoid
+import torch
 
 
 class Graphsave:
@@ -52,7 +53,7 @@ class Graphsave:
         #print(Graph.nodes[1]['cat'])
         name="DS_"+self.dataset_name+"_NB_1"
         #self.store(Graph, name)
-        self.plotGraph(Graph,save=True,name=name)
+        #self.plotGraph(Graph,save=True,name=name)
         #print(degree_histogram(Graph))
         #self.getCentralNodes(Graph, 5)
         return Graph
@@ -73,7 +74,27 @@ class Graphsave:
 
         
 
-        
+    def showTensors(self):
+        attention= torch.load('attention.pt')
+        edges= torch.load('edgeIndex.pt')
+        #edges=edges.to_dense()
+        print("attention weights:")
+        print(attention.size())   
+        print("edges:")
+        print(edges.to_dense())
+
+    
+    def dijkstra(self,graph):
+        length=dict(nx.all_pairs_shortest_path_length(graph))
+        i=0
+        sum=0
+        for key in length:
+            l2=length[key]
+            for key2 in l2:
+                
+                sum=sum+l2[key2]
+                i=i+1
+        print(sum/i)
         
         
     
@@ -81,6 +102,10 @@ class Graphsave:
         savePath="savedGraphs/"+name+".gpickle"
         nx.write_gpickle(Graph,savePath)
         newGraph = nx.read_gpickle(savePath)
+    
+    def load(self, name):
+        path="savedGraphs/"+name+".gpickle"
+        return nx.read_gpickle(path)
 
          
     def plotGraph(self, Graph,save=False,name="testfile"):

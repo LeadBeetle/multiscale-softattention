@@ -12,10 +12,12 @@ from utils.constants import Dataset
 
 
         
-def getAccuracies(dataset, model,aggregation,NumOfLayers, accuracy ):
+def getAccuracies(dataset, model, aggregation,NumOfLayers, accuracy ):
     newDir = ".\\results\\"+dataset
     cwd =os.getcwd()
     os.chdir(newDir)
+    position = 310
+    plt.figure(figsize=(20,20))
     with open('CompressedResults.json') as f:
         d = json.loads(f.read())
         for key in d:
@@ -41,13 +43,17 @@ def getAccuracies(dataset, model,aggregation,NumOfLayers, accuracy ):
                                                 accuracyLabel= "trainings accuracy"
                                             else:
                                                 accuracyLabel= accuracy
-                                    
+                                    position=position+1
                                     title= "Dataset: "+ dataset +"   Model: "+key1+ "  Aggregation: "+key2+ " NumberOfLayers: "+key3+"  "+accuracyLabel
                                     valAtr = list(map(float,d6))
                                     karray=[]
                                     for x in range(len(valAtr)):
-                                        karray.append(x+1)    
-                                    plot(valAtr,karray, title, accuracyLabel, "k-Value")                        
+                                        karray.append(x+1)
+                                    plt.subplot(position,xlabel="Neighbourdegree",ylabel="Avg. train times",title=title)    
+                                    plot(valAtr,karray, title, accuracyLabel, "Neighbourdegree")                        
+    os.chdir(cwd)
+    os.chdir(".\\savedPlotsMaxSize\\")
+    plt.savefig(dataset+'--'+model+'--'+accuracy+'--'+NumOfLayers+'--2D-layer-degree.png')
     os.chdir(cwd)
 
 
@@ -94,17 +100,17 @@ def getAccuraciesScatter(dataset, model,aggregation,NumOfLayers, accuracy ):
                                                     KVal.append(x+2)
                                                 acc.append(valAtr[x])
                                                 NoL.append(layerDict[Layers])
-                                                print(acc)
-                                                print(KVal)
+                                                #print(acc)
+                                                #print(KVal)
                             title= DataSetName + "   " + ModelName + "   " + AggregationName
                             
-                            plt.subplot(position,xlabel="Neighbourdegree",ylabel="Avg. epoch time in seconds",title=title)
+                            plt.subplot(position,xlabel="Neighbourdegree",ylabel="Avg. train times",title=title)
                             plt.locator_params(axis='x',integer=True )
                             scatterplot(NoL, KVal, acc)
                             #heatplot(NoL,KVal,acc)
                                                        
     os.chdir(cwd)
-    os.chdir(".\\savedPlots\\")
+    os.chdir(".\\savedPlotsMaxSize\\")
     plt.savefig(dataset+'--'+model+'--'+accuracy+'--'+NumOfLayers+'--scatter-layer-degree.png')
     os.chdir(cwd)
     
@@ -169,12 +175,10 @@ def getKBranchScatter(dataset,model):
 def plot (valArr, descArr, title, yAxisDenom, xAxisDenom):
 
     #print(karray)
-    plt.figure(figsize=(len(valArr), 3))
     plt.bar(descArr, valArr)
-    plt.title(title)
-    plt.xlabel(xAxisDenom)
-    plt.ylabel(yAxisDenom)
-    plt.ylim(0.6, 0.99)
+    lowerbound= min(valArr)*0.9
+    upperbound= max(valArr)*1.1
+    plt.ylim(lowerbound,upperbound)
     #plt.yscale('log')
 
 
