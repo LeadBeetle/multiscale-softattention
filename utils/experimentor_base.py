@@ -101,7 +101,8 @@ class Experimentor:
     def setLoaders(self, ngb_size = -1):
         self.x = self.data.x.to(self.device)
         self.y = self.data.y.squeeze().to(self.device)
-        
+        print(self.num_nodes)
+        print(self.data.edge_index.size())
         g = torch.Generator()
         g.manual_seed(43)
 
